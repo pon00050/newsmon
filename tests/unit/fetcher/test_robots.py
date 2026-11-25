@@ -51,4 +51,7 @@ def test_robotparser_control_disagrees():
     rp.parse(ROBOTS.splitlines())
     stdlib_says = rp.can_fetch("other", "https://example.com/rss")
     ours = is_allowed(rules_for(parse_robots(ROBOTS), "other"), "/rss")
-    assert ours is True and stdlib_says is False
+    assert ours is True
+    if stdlib_says is True:  # Python 3.14 fixed the stdlib parser; the control no longer has a wrong answer to show
+        pytest.skip("this Python's urllib.robotparser no longer has the '/r?' bug the control demonstrates")
+    assert stdlib_says is False
