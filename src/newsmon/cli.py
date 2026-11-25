@@ -36,8 +36,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     for stream in (sys.stdout, sys.stderr):
-        # redirected output on Windows defaults to a legacy code page that cannot encode Korean; a console is left alone
-        if hasattr(stream, "reconfigure") and not stream.isatty():
+        # redirected output on Windows defaults to a legacy code page that cannot encode Korean. A real console already
+        # writes UTF-8 and is left alone; the NUL device claims to be a tty but still uses the legacy code page.
+        enc = (getattr(stream, "encoding", None) or "").lower().replace("-", "")
+        if hasattr(stream, "reconfigure") and (not stream.isatty() or enc != "utf8"):
             stream.reconfigure(encoding="utf-8", errors="replace")
     _load_builtin_commands()
     parser = build_parser()

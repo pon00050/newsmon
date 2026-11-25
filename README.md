@@ -9,6 +9,18 @@ everything in one SQLite file.
 - Download: **https://github.com/pon00050/newsmon/releases**
 - Licence: Apache-2.0 (software); CC BY 4.0 (research documents and synthetic demo data)
 
+## Screenshots
+
+The local application, running on the synthetic demo wire (every item is fictional). The interface is in Korean
+because it was built for a Korean foreign-news desk.
+
+| | |
+|---|---|
+| ![The queue: English, Korean and Chinese items ranked into flash, report and review bands](site/static/screenshots/local-queue.png) | ![An item's page listing the rules and keywords that ranked it](site/static/screenshots/local-item-detail.png) |
+| **The queue.** Deduplicated items in three languages, ranked into bands (속보 flash, 보고 report, 검토 review) by the desk's rules. | **Why it ranked.** Each item lists the topics, watch entities, wire urgency and recency that placed it. |
+| ![Korean search for 관세 (tariff)](site/static/screenshots/local-search-korean.png) | ![The public dashboard on the project website](site/static/screenshots/dashboard-synthetic.png) |
+| **Korean and Chinese search** with CJK bigrams. | **The public dashboard** on the project website: statistics, source coverage and permissions, searchable items. |
+
 ## The problem it addresses
 
 A foreign-news desk watches dozens of English, Korean and Chinese sources and newswires during every shift. The
