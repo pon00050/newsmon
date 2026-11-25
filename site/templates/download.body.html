@@ -1,0 +1,44 @@
+<h1>Download Newsmon</h1>
+<p class="lead">Version {{version}}. Releases are published on GitHub. On Windows, use the portable app or the double-click launcher; on any system, install from source.</p>
+<div class="cta-row">
+  <a class="btn" href="{{repo_url}}/releases/latest" rel="noopener">Latest release on GitHub</a>
+  <a class="btn secondary" href="{{repo_url}}/releases" rel="noopener">All releases</a>
+</div>
+<div class="notice">
+  <p><strong>Before you collect anything.</strong> Newsmon ships with example configuration only. Add sources you hold a licence for, and check each source's terms for storage, display and AI use.</p>
+</div>
+
+<h2>Windows: portable app (no installation)</h2>
+<ol class="steps">
+  <li><strong>Download</strong> <code>newsmon-{{version}}-windows-portable.zip</code> from the latest release, under <em>Assets</em>.</li>
+  <li><strong>Extract</strong> it to a folder you own. Do not run it from inside the zip viewer.</li>
+  <li><strong>Double-click</strong> <code>Newsmon\Newsmon.exe</code>. A console window opens, the server starts on this computer only, and your browser opens <code>http://127.0.0.1:8765/</code>. Close the window or press Ctrl+C to stop.</li>
+  <li><strong>Choose what to monitor</strong> by editing <code>%LOCALAPPDATA%\Newsmon\config\sources.yaml</code> and <code>profiles\</code>. Settings and data stay there when you update or move the program.</li>
+</ol>
+<p>The build is not code-signed, so Windows SmartScreen may show "Windows protected your PC": choose <em>More info</em>, then <em>Run anyway</em>. Check the zip first against <code>SHA256SUMS.txt</code> from the same release (PowerShell: <code>Get-FileHash .\newsmon-{{version}}-windows-portable.zip</code>).</p>
+
+<h2>Windows: double-click launcher from the source archive</h2>
+<ol class="steps">
+  <li><strong>Download</strong> <code>newsmon-{{version}}-source.zip</code> and extract it. Paths with spaces are fine.</li>
+  <li><strong>Double-click</strong> <code>Start-Newsmon.cmd</code>. On first use it offers to install <a href="https://docs.astral.sh/uv/" rel="noopener">uv</a> for your account (no administrator rights), then downloads Python and the libraries once, which takes a few minutes. Later starts take seconds.</li>
+</ol>
+<p>Neither option needs an AI key or an account.</p>
+
+<h2>From source (any system)</h2>
+<p>Requires <a href="https://docs.astral.sh/uv/" rel="noopener">uv</a>. uv selects a suitable Python (3.12 or newer) automatically.</p>
+<pre><code>git clone {{repo_url}}.git
+cd newsmon
+uv sync --frozen
+uv run newsmon init
+uv run newsmon serve --auto-collect</code></pre>
+<p>Then open the address the command prints. Run <code>uv run newsmon --help</code> to list every command. The example configuration is in <code>config.example/</code>.</p>
+
+<h2>Verify what you downloaded</h2>
+<ul>
+  <li>Download only from the <a href="{{repo_url}}/releases" rel="noopener">releases page</a> of the repository linked in this site's footer.</li>
+  <li>Compare checksums when the release notes list them.</li>
+  <li>Prefer the source install if you want to read the code first.</li>
+</ul>
+
+<h2>Problems</h2>
+<p>Open an <a href="{{repo_url}}/issues" rel="noopener">issue</a> and say which download you used and what you saw. Do not paste licensed article text or credentials into a public issue.</p>

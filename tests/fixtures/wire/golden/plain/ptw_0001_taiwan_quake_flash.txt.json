@@ -1,0 +1,25 @@
+{
+  "format": "plain",
+  "items": [
+    {
+      "uri": "PTW-20261124-0001",
+      "version": 1,
+      "type": "text",
+      "headline": "FLASH: Strong earthquake strikes off east coast of Taiwan",
+      "slugline": "TAIWAN-QUAKE",
+      "located": "TAIPEI, Taiwan",
+      "language": "en",
+      "urgency": 1,
+      "versioncreated": "2026-11-24T14:47:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "A strong earthquake struck off the east coast of Taiwan on Tuesday night, the island's weather agency said. More to follow.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

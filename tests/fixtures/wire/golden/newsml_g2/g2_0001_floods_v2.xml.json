@@ -1,0 +1,25 @@
+{
+  "format": "newsml_g2",
+  "items": [
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0001",
+      "version": 2,
+      "type": "text",
+      "headline": "Floods force thousands from homes in northern Italy as river crests",
+      "slugline": "ITALY-FLOODS",
+      "located": "Bologna",
+      "language": "en",
+      "urgency": 2,
+      "versioncreated": "2026-11-24T12:05:00Z",
+      "firstcreated": "2026-11-24T08:40:00Z",
+      "pubstatus": "usable",
+      "description_text": "Evacuations widen in Emilia-Romagna; one person missing.",
+      "body_text": "More than 4,000 people were moved from their homes in the northern Italian region of Emilia-Romagna on Tuesday as the Reno river crested after two days of heavy rain, civil protection officials said.\n\nOne elderly man was reported missing near the town of Budrio after his car was swept off a flooded road, the regional government said.\n\nSchools in seven towns will stay closed on Wednesday and rail services between Bologna and Ferrara were suspended.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

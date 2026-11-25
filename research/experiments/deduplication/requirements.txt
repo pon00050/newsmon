@@ -1,0 +1,3 @@
+courlan==1.5.0
+datasketch==2.0.0
+numpy==2.5.5

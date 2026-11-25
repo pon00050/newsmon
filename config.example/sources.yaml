@@ -1,0 +1,436 @@
+# Source registry (FR-01; spec 12 section 6). 27 public seed rows + 2 synthetic mock wire rows.
+# Flags are the values of spec 12 section 6: a safety choice for unread terms, not a claim about any contract.
+# The customer enters its own licensed sources at onboarding with that customer's terms (FR-30).
+# Release A (P-011): http_api rows (fedreg_api, gdelt_lastupdate) load inactive until T-16 is built.
+# Directory paths are relative to this config directory unless absolute.
+# AI (Release A.1, P-013): only rows whose flags explicitly permit an op are ever sent to a hosted model. Public feeds
+# keep permitted_ops: [] (unread terms; conservative). The SEC / Federal Register rows carry ai_processing: yes in
+# spec 12 section 6 (SEC reuse VERIFIED; US federal works) and so list explicit ops here.
+sources:
+- key: sec_edgar_atom_8k
+  name: SEC EDGAR current filings Atom (8-K)
+  access_method: feed
+  lang: en
+  url: https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=8-K&company=&dateb=&owner=include&start=0&count=40&output=atom
+  poll_seconds: 600
+  storage: full
+  display: full
+  ai_processing: 'yes'
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+  tos_url: https://www.sec.gov/about/webmaster-frequently-asked-questions
+  active: false
+  permitted_ops:
+  - classify
+  - summarise
+  - translate
+- key: sec_pressreleases
+  name: SEC press releases RSS
+  access_method: feed
+  lang: en
+  url: https://www.sec.gov/news/pressreleases.rss
+  poll_seconds: 600
+  storage: full
+  display: full
+  ai_processing: 'yes'
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+  tos_url: https://www.sec.gov/about/webmaster-frequently-asked-questions
+  permitted_ops:
+  - classify
+  - summarise
+  - translate
+- key: fedreg_api
+  name: Federal Register API latest documents
+  access_method: http_api
+  lang: en
+  url: https://www.federalregister.gov/api/v1/documents.json?per_page=5&order=newest
+  poll_seconds: 600
+  storage: full
+  display: full
+  ai_processing: 'yes'
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+  permitted_ops:
+  - classify
+  - summarise
+  - translate
+- key: un_press
+  name: UN Meetings Coverage and Press Releases
+  access_method: feed
+  lang: en
+  url: https://press.un.org/en/rss.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: gdelt_lastupdate
+  name: GDELT 2.0 lastupdate.txt (15-min files)
+  access_method: http_api
+  lang: en
+  url: http://data.gdeltproject.org/gdeltv2/lastupdate.txt
+  poll_seconds: 900
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+  tos_url: https://www.gdeltproject.org/about.html
+- key: guardian_world
+  name: Guardian World
+  access_method: feed
+  lang: en
+  url: https://www.theguardian.com/world/rss
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  tos_url: https://www.theguardian.com/help/feeds
+  live_patterns:
+  - '(?i)\blive\b\s*:'
+  - (?i)as it happened
+- key: bbc_world
+  name: BBC News World
+  access_method: feed
+  lang: en
+  url: https://feeds.bbci.co.uk/news/world/rss.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: aljazeera_all
+  name: Al Jazeera English all
+  access_method: feed
+  lang: en
+  url: https://www.aljazeera.com/xml/rss/all.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: dw_en_all
+  name: DW English all
+  access_method: feed
+  lang: en
+  url: https://rss.dw.com/rdf/rss-en-all
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: france24_en
+  name: France 24 English
+  access_method: feed
+  lang: en
+  url: https://www.france24.com/en/rss
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: cna_sg_all
+  name: CNA (Singapore) all
+  access_method: feed
+  lang: en
+  url: https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  tos_url: https://www.channelnewsasia.com/rss
+- key: npr_news
+  name: NPR News
+  access_method: feed
+  lang: en
+  url: https://feeds.npr.org/1001/rss.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: scmp_world
+  name: SCMP World
+  access_method: feed
+  lang: en
+  url: https://www.scmp.com/rss/5/feed
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: yna_news
+  name: 연합뉴스 최신기사
+  access_method: feed
+  lang: ko
+  url: https://www.yna.co.kr/rss/news.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: false
+  allowed_contexts:
+  - private
+  tos_url: https://www.yna.co.kr/rss/index
+  story_key_rule: \s*\((종합|[0-9]+보)\)\s*$
+- key: yna_intl
+  name: 연합뉴스 국제
+  access_method: feed
+  lang: ko
+  url: https://www.yna.co.kr/rss/international.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: false
+  allowed_contexts:
+  - private
+  tos_url: https://www.yna.co.kr/rss/index
+  story_key_rule: \s*\((종합|[0-9]+보)\)\s*$
+- key: yna_nk
+  name: 연합뉴스 북한
+  access_method: feed
+  lang: ko
+  url: https://www.yna.co.kr/rss/northkorea.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: false
+  allowed_contexts:
+  - private
+  tos_url: https://www.yna.co.kr/rss/index
+  story_key_rule: \s*\((종합|[0-9]+보)\)\s*$
+- key: khan_total
+  name: 경향신문 전체
+  access_method: feed
+  lang: ko
+  url: https://www.khan.co.kr/rss/rssdata/total_news.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  tos_url: https://www.khan.co.kr/help/help_rss.html
+- key: donga_intl
+  name: 동아일보 국제
+  access_method: feed
+  lang: ko
+  url: https://rss.donga.com/international.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: hankyung_intl
+  name: 한국경제 국제
+  access_method: feed
+  lang: ko
+  url: https://www.hankyung.com/feed/international
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: rfi_zh
+  name: RFI 中文
+  access_method: feed
+  lang: zh
+  url: https://www.rfi.fr/cn/rss
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: voa_zh
+  name: VOA 中文 Top Stories
+  access_method: feed
+  lang: zh
+  url: https://www.voachinese.com/api/
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: bbc_zh_simp
+  name: BBC 中文 (simplified)
+  access_method: feed
+  lang: zh
+  url: https://feeds.bbci.co.uk/zhongwen/simp/rss.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: dw_zh_all
+  name: DW 中文 all
+  access_method: feed
+  lang: zh
+  url: https://rss.dw.com/rdf/rss-chi-all
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: cna_tw_intl
+  name: 中央社 國際
+  access_method: feed
+  lang: zh
+  url: https://feeds.feedburner.com/rsscna/intworld
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  tos_url: https://www.cna.com.tw/about/rss.aspx
+- key: cna_tw_mainland
+  name: 中央社 兩岸
+  access_method: feed
+  lang: zh
+  url: https://feeds.feedburner.com/rsscna/mainland
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  tos_url: https://www.cna.com.tw/about/rss.aspx
+- key: scmp_china
+  name: SCMP China
+  access_method: feed
+  lang: en
+  url: https://www.scmp.com/rss/4/feed
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: cgtn_china
+  name: CGTN China
+  access_method: feed
+  lang: en
+  url: https://www.cgtn.com/subscribe/rss/section/china.xml
+  poll_seconds: 600
+  storage: metadata
+  display: headline
+  ai_processing: unknown
+  external_ai_allowed: true
+  allowed_contexts:
+  - private
+  - internal
+- key: mock_wire_gated
+  name: Mock wire (gated)
+  access_method: directory
+  is_wire: true
+  storage: full
+  display: full
+  ai_processing: 'yes'
+  permitted_ops: []
+  external_ai_allowed: false
+  redistribution: none
+  third_party_processors_allowed: false
+  authorised_users: internal
+  licence_owner: tenant
+  retention_days: 7
+  licence_holder: Synthetic Test Org
+  agreement_ref: SYNTH-GATED-001
+  valid_until: '2027-12-31'
+  attested_by: fixture-loader
+  attested_on: '2026-11-25'
+  synthetic: true
+  allowed_contexts:
+  - private
+  - internal
+  path: inbox/mock_wire_gated
+  lang: en
+- key: mock_wire_demo
+  name: Mock wire (demo)
+  access_method: directory
+  is_wire: true
+  storage: full
+  display: full
+  ai_processing: 'yes'
+  permitted_ops:
+  - classify
+  - summarise
+  - translate
+  - embed
+  external_ai_allowed: true
+  redistribution: internal
+  third_party_processors_allowed: false
+  authorised_users: internal
+  licence_owner: tenant
+  retention_days: 30
+  licence_holder: Synthetic Test Org
+  agreement_ref: SYNTH-DEMO-001
+  valid_until: '2027-12-31'
+  attested_by: fixture-loader
+  attested_on: '2026-11-25'
+  synthetic: true
+  allowed_contexts:
+  - private
+  - internal
+  path: inbox/mock_wire_demo
+  lang: en

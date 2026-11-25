@@ -1,0 +1,25 @@
+{
+  "format": "nitf",
+  "items": [
+    {
+      "uri": "nitf-synth-20261124-0002",
+      "version": 1,
+      "type": "text",
+      "headline": "Indonesia raises alert level at erupting volcano",
+      "slugline": "INDONESIA-VOLCANO",
+      "located": "Ternate",
+      "language": "en",
+      "urgency": 3,
+      "versioncreated": "2026-11-24T02:20:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": "Authorities widen exclusion zone to six kilometres.",
+      "body_text": "Indonesia raised the alert at Mount Gamalama on Ternate island to its highest level on Tuesday after a series of eruptions sent an ash column about three kilometres into the sky.\n\nThe volcanology agency widened the exclusion zone to six kilometres and the local airport was closed until further notice.\n\nOfficials said there were no immediate reports of casualties.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

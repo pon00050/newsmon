@@ -1,0 +1,18 @@
+# Watch-list entities with KO/EN/ZH aliases (deterministic matching; no model). Extended by T-26.
+entities:
+  - id: kim_yo_jong
+    kind: PERSON
+    names: {en: ["Kim Yo Jong", "Kim Yo-jong"], ko: [김여정], zh: [金與正, 金与正]}
+  - id: kim_jong_un
+    kind: PERSON
+    names: {en: ["Kim Jong Un", "Kim Jong-un"], ko: [김정은], zh: [金正恩]}
+  - id: xi_jinping
+    kind: PERSON
+    names: {en: ["Xi Jinping"], ko: [시진핑], zh: [习近平, 習近平]}
+  - id: us_commerce_dept
+    kind: ORG
+    names: {en: ["Commerce Department", "Department of Commerce"], ko: [미국 상무부, 상무부], zh: [美国商务部, 商务部]}
+  - id: north_korea
+    kind: GPE
+    country: KP
+    names: {en: ["North Korea", Pyongyang, DPRK], ko: [북한, 평양], zh: [朝鲜, 平壤]}

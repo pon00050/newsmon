@@ -1,0 +1,5 @@
+Task: editorial relevance triage against the desk profile below. Judge only from the title and opening of the article.
+Give score (integer 0-100), matched_topics, priority, and a one-sentence Korean reason.
+
+Desk profile:
+{DESK_PROFILE}

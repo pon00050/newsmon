@@ -1,0 +1,25 @@
+{
+  "format": "newsml_g2",
+  "items": [
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0001",
+      "version": 1,
+      "type": "text",
+      "headline": "Floods force evacuations in northern Italy",
+      "slugline": "ITALY-FLOODS",
+      "located": "Bologna",
+      "language": "en",
+      "urgency": 3,
+      "versioncreated": "2026-11-24T08:40:00Z",
+      "firstcreated": "2026-11-24T08:40:00Z",
+      "pubstatus": "usable",
+      "description_text": "Rising rivers in Emilia-Romagna prompt overnight evacuations.",
+      "body_text": "Authorities in the northern Italian region of Emilia-Romagna ordered the evacuation of several riverside neighbourhoods early on Tuesday after two days of heavy rain pushed rivers close to the top of their banks.\n\nCivil protection officials said about 1,200 people had left their homes overnight and that schools in four towns would stay closed.\n\nNo casualties had been reported by mid-morning, officials said.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

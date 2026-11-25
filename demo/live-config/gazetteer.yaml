@@ -1,0 +1,13 @@
+entities:
+  - id: north_korea
+    kind: GPE
+    names: {en: ["North Korea", DPRK, Pyongyang, "North Korean"]}
+  - id: china
+    kind: GPE
+    names: {en: [China, PRC, Chinese, Beijing]}
+  - id: south_korea
+    kind: GPE
+    names: {en: ["South Korea", "Republic of Korea", Seoul, Korean]}
+  - id: russia
+    kind: GPE
+    names: {en: [Russia, Russian, Moscow]}

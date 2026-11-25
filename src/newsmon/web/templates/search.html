@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}검색{% endblock %}
+{% block content %}
+<form class="filters" method="get" action="/search">
+  <input type="search" name="q" value="{{ q }}" placeholder="검색어 (한/영/중)" size="40" autofocus>
+  <select name="lang"><option value="">언어 전체</option>
+    {% for code, ko in lang_ko.items() %}<option value="{{ code }}" {% if lang == code %}selected{% endif %}>{{ ko }}</option>{% endfor %}
+  </select>
+  <select name="source"><option value="">소스 전체</option>
+    {% for k in source_keys %}<option value="{{ k }}" {% if source == k %}selected{% endif %}>{{ k }}</option>{% endfor %}
+  </select>
+  <button type="submit">검색</button>
+</form>
+{% if aliases %}<div class="muted">별칭 확장: {{ aliases|join(', ') }}</div>{% endif %}
+{% if q %}<div class="muted">결과 {{ rows|length }}건 (BM25 순)</div>{% endif %}
+<table id="queue">
+  <thead><tr><th>등급</th><th>언어</th><th>제목</th><th>소스</th><th class="hide-sm">수집(KST)</th><th class="hide-sm"></th></tr></thead>
+  <tbody>
+  {% for r in rows %}{% include "_row.html" %}{% else %}
+  {% if q %}<tr><td colspan="6" class="muted">결과가 없습니다.</td></tr>{% endif %}
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

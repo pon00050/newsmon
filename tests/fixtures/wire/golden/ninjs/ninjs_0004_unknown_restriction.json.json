@@ -1,0 +1,25 @@
+{
+  "format": "ninjs",
+  "items": [
+    {
+      "uri": "urn:synthetic:ninjs:7f3e9a13",
+      "version": 1,
+      "type": "text",
+      "headline": "South Africa names new head of state power utility",
+      "slugline": "SAFRICA-POWER-CEO",
+      "located": "Johannesburg, South Africa",
+      "language": "en",
+      "urgency": 4,
+      "versioncreated": "2026-11-24T11:30:00Z",
+      "firstcreated": "2026-11-24T11:30:00Z",
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "South Africa's government on Tuesday named a former grid operator executive as chief executive of the state power utility, which has struggled with rolling blackouts.\n\nThe appointment takes effect on Jan. 1, the public enterprises ministry said.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": "ZZ-UNKNOWN-RESTRICTION",
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

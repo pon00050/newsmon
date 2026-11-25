@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: project-made text, not agency copy -->
+<nitf version="-//IPTC//DTD NITF 3.6//EN" change.date="2012-10-01" change.time="19:30" baselang="en">
+  <head>
+    <title>Farmers in Kenya turn to drought-resistant sorghum</title>
+    <docdata management-status="usable">
+      <doc-id regsrc="SYNTH" id-string="nitf-synth-20261124-0003"/>
+      <urgency ed-urg="5"/>
+      <date.issue norm="20261124T090000+0300"/>
+      <du-key generation="1" part="1" version="1" key="KENYA-DROUGHT-SORGHUM"/>
+      <doc.copyright year="2026" holder="Synthetic Test Org"/>
+    </docdata>
+  </head>
+  <body>
+    <body.head>
+      <hedline>
+        <hl1>Farmers in Kenya turn to drought-resistant sorghum</hl1>
+      </hedline>
+      <abstract>
+        <p>Video script: smallholders replace maize after three failed rainy seasons.</p>
+      </abstract>
+      <dateline>
+        <location><city>Kitui</city></location>
+      </dateline>
+    </body.head>
+    <body.content>
+      <block class="story">
+        <p>Smallholder farmers in Kenya's Kitui county are replacing maize with drought-resistant sorghum after three failed rainy seasons, agricultural officers said.</p>
+        <p>A local cooperative said yields from the new seed had held up even with half the usual rainfall, and that a brewery had agreed to buy part of the harvest.</p>
+      </block>
+      <block class="shotlist">
+        <p>1. Wide of dry maize field under clear sky</p>
+        <p>2. Mid of farmer walking between sorghum rows</p>
+        <p>3. Close-up of sorghum heads</p>
+        <p>4. SOUNDBITE (Kamba) farmer, cooperative member: "Last year we lost everything. This year we will harvest."</p>
+        <p>5. Various of women threshing grain at cooperative store</p>
+        <p>6. Wide of trucks being loaded with sacks</p>
+      </block>
+    </body.content>
+  </body>
+</nitf>

@@ -1,0 +1,69 @@
+{
+ "claude-haiku-5-5|907a7a594dc4|clean": {
+  "scores": [
+   62,
+   35,
+   35,
+   42,
+   35
+  ],
+  "mean": 41.8,
+  "min": 35,
+  "max": 62
+ },
+ "claude-haiku-5-5|907a7a594dc4|A2_score": {
+  "scores": [
+   58,
+   55,
+   60,
+   74,
+   75
+  ],
+  "mean": 64.4,
+  "min": 55,
+  "max": 75
+ },
+ "claude-haiku-5-5|2a1422ea57bb|clean": {
+  "scores": [
+   78,
+   78,
+   78,
+   78,
+   72
+  ],
+  "mean": 76.8,
+  "min": 72,
+  "max": 78
+ },
+ "claude-haiku-5-5|2a1422ea57bb|A2_score": {
+  "scores": [
+   72,
+   72,
+   72,
+   75,
+   72
+  ],
+  "mean": 72.6,
+  "min": 72,
+  "max": 75
+ },
+ "claude-sonnet-5-5|2a1422ea57bb|clean": {
+  "scores": [
+   62,
+   66
+  ],
+  "mean": 64,
+  "min": 62,
+  "max": 66
+ },
+ "claude-sonnet-5-5|2a1422ea57bb|A2_score": {
+  "scores": [
+   72,
+   72
+  ],
+  "mean": 72,
+  "min": 72,
+  "max": 72
+ },
+ "_cost_usd": 0.0284
+}

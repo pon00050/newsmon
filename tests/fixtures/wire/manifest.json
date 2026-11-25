@@ -1,0 +1,28 @@
+{
+  "x_synthetic": true,
+  "note": "Roles of specific fixture files, so tests do not have to guess them. Paths are relative to inbox/.",
+  "g2_version_pair": {
+    "v1": "newsml_g2/g2_0001_floods_v1.xml",
+    "v2": "newsml_g2/g2_0001_floods_v2.xml"
+  },
+  "g2_kill": {
+    "kill": "newsml_g2/g2_0003_lithium_kill.xml",
+    "killed": "newsml_g2/g2_message_0002_0003.xml"
+  },
+  "nitf_shotlist": "nitf/nitf_0003_kenya_sorghum_video_script.xml",
+  "ninjs_video": {
+    "sidecar": "ninjs/a1b2c3d4e5f6--2--f9e8d7c6.json",
+    "media": "ninjs/a1b2c3d4e5f6--2--0c4d2e7a.mp4"
+  },
+  "ninjs_unknown_restriction": "ninjs/ninjs_0004_unknown_restriction.json",
+  "ninjs_renditions_roundtrip": "ninjs/a1b2c3d4e5f6--2--f9e8d7c6.json",
+  "plain_flash": "plain/ptw_0001_taiwan_quake_flash.txt",
+  "plain_korean": "plain/ptw_0002_bok_rate_ko.txt",
+  "cross_format_pairs": [
+    [
+      "newsml_g2/g2_0004_peru_copper.xml",
+      "plain/ptw_0003_peru_copper.txt"
+    ]
+  ],
+  "cross_channel_un_sudan": "plain/ptw_0004_un_sudan_session.txt"
+}

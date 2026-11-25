@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE newsItem [
+  <!ENTITY xxe SYSTEM "file:///C:/Windows/win.ini">
+]>
+<!-- SYNTHETIC FIXTURE: project-made text, not agency copy -->
+<newsItem xmlns="http://iptc.org/std/nar/2006-10-01/" guid="urn:newsml:synthetic.example:xxe:0001" version="1">
+  <itemMeta>
+    <itemClass qcode="ninat:text"/>
+    <versionCreated>2026-11-24T09:00:00Z</versionCreated>
+    <pubStatus qcode="stat:usable"/>
+  </itemMeta>
+  <contentMeta>
+    <headline>&xxe;</headline>
+  </contentMeta>
+</newsItem>

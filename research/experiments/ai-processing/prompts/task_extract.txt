@@ -1,0 +1,4 @@
+Task: structured extraction and Korean summary.
+Produce: headline_ko (one line), summary_ko (3-4 sentences, Korean, factual, attributed), source_language,
+who / what / where / when, event_type, and up to 5 key claims with attribution.
+For "when", give each time expression as written and a normalized YYYY-MM-DD date if the article makes it determinable, else "".

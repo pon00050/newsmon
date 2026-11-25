@@ -1,0 +1,6 @@
+# CONTROL (TS-ARCH-06): SQL built by string formatting.
+def find(con, uid, table):
+    con.execute(f"SELECT * FROM {table} WHERE uid = '{uid}'")
+    con.execute("SELECT * FROM article WHERE uid = '%s'" % uid)
+    sql = "SELECT * FROM {} WHERE uid = ?".format(table)
+    con.execute(sql, (uid,))

@@ -1,0 +1,2 @@
+jieba==0.42.1
+# sqlite3 from the Python 3.13.7 stdlib, SQLite 3.50.4 (FTS5 + trigram tokenizer built in)

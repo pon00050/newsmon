@@ -1,0 +1,25 @@
+{
+  "format": "nitf",
+  "items": [
+    {
+      "uri": "nitf-synth-20261124-0001",
+      "version": 1,
+      "type": "text",
+      "headline": "Aid convoy reaches besieged town in eastern Congo",
+      "slugline": "CONGO-AID-CONVOY",
+      "located": "Goma",
+      "language": "en",
+      "urgency": 4,
+      "versioncreated": "2026-11-24T05:55:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "A convoy of 14 trucks carrying food and medical supplies reached the town of Sake in eastern Congo on Tuesday, the first aid to arrive in three weeks, a humanitarian coordinator said.\n\nFighting between government forces and rebels had cut the main road west of Goma, leaving an estimated 40,000 displaced people without regular supplies.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

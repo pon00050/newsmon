@@ -1,0 +1,25 @@
+{
+  "format": "ninjs",
+  "items": [
+    {
+      "uri": "urn:synthetic:ninjs:7f3e9a10",
+      "version": 1,
+      "type": "text",
+      "headline": "Ukraine and Poland agree grain transit corridor",
+      "slugline": "UKRAINE-POLAND-GRAIN",
+      "located": "Warsaw, Poland",
+      "language": "en",
+      "urgency": 4,
+      "versioncreated": "2026-11-24T09:15:00Z",
+      "firstcreated": "2026-11-24T09:15:00Z",
+      "pubstatus": "usable",
+      "description_text": "Deal ends months of border protests by Polish farmers.",
+      "body_text": "Ukraine and Poland agreed on Tuesday to create a sealed transit corridor for Ukrainian grain bound for Baltic ports, the two agriculture ministries said in a joint statement.\n\nUnder the deal, grain will be inspected at the border and moved by rail without entering the Polish market.\n\nFarmers' groups said they would suspend protests while the arrangement is tested.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

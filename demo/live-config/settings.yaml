@@ -1,0 +1,34 @@
+# newsmon settings (11 §9, IR-05). All ai.capabilities false = O1, fully deterministic, no AI provider.
+# Secrets never go here (DEP-04): put them in .env or the environment and refer to them by name (*_secret_name).
+workspace_name: public-live
+use_context: private          # private | internal (sources whose allowed_contexts exclude it are inactive)
+deployment_model: CH          # CH (customer-hosted) | MP (managed private) | SaaS
+timezone: Asia/Seoul          # display only; storage is UTC
+auth_mode: local              # local | static_users
+bind_host: 127.0.0.1
+bind_port: 8765
+allowed_recipient_domains: [internal]   # sends elsewhere need one-click approval
+ai:
+  # Release A.1 optional enrichment: set enrich: true AND provide ANTHROPIC_API_KEY (environment or <config>/.env).
+  # Only items whose source flags permit it are sent; the UI's AI page can pause it at any time.
+  capabilities: {triage: false, enrich: false, embed: false, digest_draft: false, query_rewrite: false}
+  enrich_model: claude-haiku-5-5
+  selection: {min_band: review, max_items_per_cycle: 20, sources: []}
+  request_timeout_seconds: 30
+  max_retries: 1
+  region: global
+  customer_endpoint: null     # customer-hosted endpoint: design only
+  daily_cap_usd: 5.0
+  entity_masking: false
+smtp:
+  host: null                  # null = email disabled (in-app alerts only)
+  port: 25
+  from_addr: newsmon@localhost
+  password_secret_name: SMTP_PASSWORD
+fetch:
+  user_agent: "newsmon/0.1 (open-source news monitor public demo; +https://github.com/pon00050/newsmon)"
+  default_poll_seconds: 600
+inbox:
+  scan_seconds: 10
+backup:
+  keep_daily: 14

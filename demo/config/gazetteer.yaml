@@ -1,0 +1,10 @@
+# Demo watch list: places only (the synthetic items name no real people or companies).
+entities:
+  - id: north_korea
+    kind: GPE
+    country: KP
+    names: {en: ["North Korea", Pyongyang, DPRK], ko: [북한, 평양], zh: [朝鲜, 平壤]}
+  - id: taiwan
+    kind: GPE
+    country: TW
+    names: {en: [Taiwan, "Taiwan Strait"], ko: [대만, 대만해협], zh: [台湾, 台湾海峡]}

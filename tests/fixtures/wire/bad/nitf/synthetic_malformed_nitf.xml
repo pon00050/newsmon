@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: project-made text, not agency copy -->
+<nitf>
+  <head>
+    <docdata><doc-id id-string="nitf-synth-bad-0001"/></docdata>
+  </head>
+  <body>
+    <body.head><hedline><hl1>Mismatched tags & a bare ampersand</hl2></hedline></body.head>
+  </body>

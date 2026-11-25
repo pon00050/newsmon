@@ -1,0 +1,24 @@
+# Live public dashboard sources. Only sources with a documented basis for public redistribution are listed, and only
+# headline + original link + times + Newsmon's own labels are published (docs/PUBLICATION_POLICY.md).
+# U.S. Department of Justice news was evaluated and left out: its headlines name people who are charged, not
+# convicted, and republishing them can raise defamation risk regardless of copyright status.
+# Bases were checked on 2026-11-25; re-check them before adding a source or if a publisher changes its terms.
+# US federal works are not protected by copyright in the United States (17 U.S.C. 105); logos, seals and third-party
+# material inside releases are excluded by publishing headlines and links only.
+sources:
+- key: nasa_news
+  name: NASA news releases
+  access_method: feed
+  lang: en
+  country: US
+  url: https://www.nasa.gov/news-release/feed/
+  poll_seconds: 3600
+  storage: metadata
+  display: headline
+  licence_owner: public-domain
+  allowed_contexts: [private, internal]
+  tos_url: https://www.nasa.gov/nasa-brand-center/images-and-media/
+  attribution_text: "Source: NASA (nasa.gov). Use does not imply NASA endorsement."
+  public_redistribution: headline
+  public_redistribution_basis: "NASA: material on nasa.gov is generally not subject to copyright in the United States (NASA media usage guidelines; 17 U.S.C. 105). Insignia and third-party material are not published."
+  public_redistribution_url: https://www.nasa.gov/nasa-brand-center/images-and-media/

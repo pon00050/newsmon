@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="{{root}}favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{{root}}css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{{root}}index.html">Newsmon<small>v{{version}}</small></a>
+    <nav class="main-nav" aria-label="Main">
+      {{nav_html}}
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+{{content_html}}
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <ul>
+      <li><a href="{{repo_url}}" rel="noopener">Source repository</a></li>
+      <li><a href="{{repo_url}}/issues" rel="noopener">Report an issue</a></li>
+      <li><a href="{{repo_url}}/releases" rel="noopener">Releases</a></li>
+    </ul>
+    <p>Software: Apache License 2.0. Research documents and synthetic demo data: CC BY 4.0. News headlines on the live dashboard remain the publishers' and link to them.</p>
+    <p>This site is static: no cookies, no analytics, no third-party scripts or fonts. Version {{version}}.</p>
+  </div>
+</footer>
+{{scripts_html}}
+</body>
+</html>

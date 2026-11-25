@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}편집 큐{% endblock %}
+{% block content %}
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+{% if report %}
+<div class="muted">마지막 수집: {{ report.finished_utc }} UTC · 소스 {{ report.feeds|length }} · 신규 {{ report.new_articles }}
+  {% if report.failed %}· <a href="/sources" class="err">실패 {{ report.failed|length }}</a>{% endif %}</div>
+{% endif %}
+<form class="filters" method="get" action="/">
+  {% for b in all_bands %}
+  <label><input type="checkbox" name="band" value="{{ b }}" {% if b in bands %}checked{% endif %}> {{ band_ko[b] }}</label>
+  {% endfor %}
+  <select name="lang"><option value="">언어 전체</option>
+    {% for code, ko in lang_ko.items() %}<option value="{{ code }}" {% if lang == code %}selected{% endif %}>{{ ko }}</option>{% endfor %}
+  </select>
+  <select name="source"><option value="">소스 전체</option>
+    {% for k in source_keys %}<option value="{{ k }}" {% if source == k %}selected{% endif %}>{{ k }}</option>{% endfor %}
+  </select>
+  <select name="hours">
+    {% for h, label in [(0,'기간 전체'),(6,'6시간'),(24,'24시간'),(72,'3일')] %}<option value="{{ h }}" {% if hours == h %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <label><input type="checkbox" name="dups" value="1" {% if dups %}checked{% endif %}> 중복 포함</label>
+  <button type="submit">적용</button>
+  <span class="muted">기사 {{ counts.articles }} · 큐 {{ rows|length }} · 키보드: j/k 이동, Enter 열기</span>
+</form>
+<table id="queue">
+  <thead><tr><th>등급</th><th>언어</th><th>제목</th><th>소스</th><th class="hide-sm">수집(KST)</th><th class="hide-sm"></th></tr></thead>
+  <tbody>
+  {% for r in rows %}{% include "_row.html" %}{% else %}
+  <tr><td colspan="6" class="muted">표시할 기사가 없습니다. '제외' 등급을 포함하거나 '지금 수집'을 누르세요.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<script>
+(function(){
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#queue tbody tr[data-uid]')), i = -1;
+  function sel(n){ if(!rows.length) return; if(i>=0) rows[i].classList.remove('sel'); i=Math.max(0,Math.min(rows.length-1,n)); rows[i].classList.add('sel'); rows[i].scrollIntoView({block:'nearest'}); }
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'j') sel(i+1); else if (e.key === 'k') sel(i-1);
+    else if (e.key === 'Enter' && i>=0) location.href = '/article/' + rows[i].dataset.uid;
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,4 @@
+# CONTROL (TS-ARCH-04): a content-processing provider call with tools attached.
+def call(client, text):
+    return client.messages.create(model="m", max_tokens=10, messages=[{"role": "user", "content": text}],
+                                  tools=[{"name": "fetch_url"}])

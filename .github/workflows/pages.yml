@@ -1,0 +1,73 @@
+name: Website
+
+# Builds the project website (overview, docs, research library, dashboard) and deploys it to GitHub Pages.
+# Live dashboard data is collected here from sources with a documented public-redistribution basis
+# (demo/live-config) by the ordinary Newsmon pipeline, then filtered by the publication gate. No AI, no secrets.
+# A failed run deploys nothing, so the last good site stays online.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 */3 * * *"   # every 3 hours at :17 (scheduled runs may start late or be skipped under load)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --all-groups
+      - name: Synthetic dataset
+        run: uv run --frozen python scripts/build_public_data.py synthetic --out _build/data/synthetic.json
+      - name: Previous live snapshot (bounded rolling window; no database is kept between runs)
+        run: |
+          curl -fsSL --max-time 30 "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/data/live.json" -o _build/previous-live.json \
+            || echo "no previous snapshot"
+      - name: Live dataset
+        id: live
+        continue-on-error: true
+        run: |
+          args=""
+          if [ -s _build/previous-live.json ]; then args="--previous _build/previous-live.json"; fi
+          uv run --frozen python scripts/build_public_data.py live --data _build/live-state --out _build/data/live.json \
+            --max-items 300 --max-age-days 14 $args
+      - name: Republish the previous live snapshot if collection failed (re-filtered against current permissions)
+        if: steps.live.outcome != 'success'
+        run: |
+          rm -f _build/data/live.json
+          if [ -s _build/previous-live.json ]; then
+            uv run --frozen python scripts/build_public_data.py republish --data _build/live-state-republish               --previous _build/previous-live.json --out _build/data/live.json --max-items 300 --max-age-days 14               || { echo "republish failed: publishing without live data"; rm -f _build/data/live.json; }
+          fi
+      - name: Build site
+        run: uv run --frozen python scripts/build_site.py --out _site --data _build/data
+      - name: Public artifact check
+        run: uv run --frozen python scripts/check_public_artifacts.py _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          retention-days: 3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

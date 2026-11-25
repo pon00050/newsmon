@@ -1,0 +1,17 @@
+SYNTHETIC: true
+ID: PTW-20261124-0002
+VERSION: 1
+VERSIONCREATED: 2026-11-24T10:05:00+09:00
+FIRSTCREATED: 2026-11-24T10:05:00+09:00
+LANGUAGE: ko
+URGENCY: 3
+SLUG: KOREA-BOK-RATE
+HEADLINE: 한국은행, 기준금리 연 3.00%로 동결
+DATELINE: 서울
+DESCRIPTION: 물가 둔화에도 가계부채 우려로 금리 유지
+BODY:
+한국은행 금융통화위원회는 24일 통화정책방향 회의를 열고 기준금리를 연 3.00%로 동결했다고 밝혔다.
+
+한은은 물가 상승률이 둔화하고 있지만 가계부채 증가세와 환율 변동성을 더 지켜볼 필요가 있다고 설명했다.
+
+시장에서는 내년 상반기 중 추가 인하 가능성이 거론되고 있다.

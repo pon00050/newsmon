@@ -1,0 +1,10 @@
+SYNTHETIC: true
+ID: PTW-BAD-0001
+VERSION: 1
+VERSIONCREATED: 2026-11-24T09:00:00+00:00
+LANGUAGE: en
+URGENCY: 4
+SLUG: NO-HEADLINE
+DATELINE: NOWHERE
+BODY:
+This file has every required header except HEADLINE and must be rejected or quarantined.

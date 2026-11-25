@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}소스 상태{% endblock %}
+{% block content %}
+<h3>소스</h3>
+<table>
+  <thead><tr><th>소스</th><th>활성</th><th>마지막 결과</th><th>연속 실패</th><th>마지막 성공(KST)</th><th>기사</th><th>권한</th><th>상세</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.key }}<div class="muted">{{ r.name }}</div></td>
+    <td>{% if r.active %}<span class="ok">예</span>{% else %}<span class="muted">아니오</span>{% endif %}</td>
+    <td>{% if r.last_run %}<span class="{% if r.last_run.status == 'error' %}err{% else %}ok{% endif %}">{{ r.last_run.status }}</span>
+        <div class="muted">{{ r.last_run.started_kst }}</div>{% else %}<span class="muted">-</span>{% endif %}</td>
+    <td>{% if r.error_streak %}<span class="err">{{ r.error_streak }}</span>{% else %}0{% endif %}</td>
+    <td class="muted">{{ r.last_success_kst or '-' }}</td>
+    <td>{{ r.articles }}</td>
+    <td class="muted">저장 {{ r.storage }} · 표시 {{ r.display }}{% if r.synthetic %} · 합성{% endif %}</td>
+    <td class="muted">{% if r.last_run and r.last_run.status == 'error' %}<span class="err">{{ r.last_run.error_class }}</span> {{ r.last_run.error_detail or '' }}{% else %}{{ r.inactive_reason or '' }}{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h3>최근 수집 실행</h3>
+<table>
+  <thead><tr><th>#</th><th>소스</th><th>시작(UTC)</th><th>상태</th><th>HTTP</th><th>시도</th><th>항목</th><th>신규</th><th>오류</th></tr></thead>
+  <tbody>
+  {% for x in runs %}
+  <tr><td>{{ x.run_id }}</td><td>{{ x.key }}</td><td class="muted">{{ x.started_utc }}</td>
+      <td class="{% if x.status == 'error' %}err{% endif %}">{{ x.status }}</td><td>{{ x.http_status or '' }}</td><td>{{ x.attempt }}</td>
+      <td>{{ x.entries if x.entries is not none else '' }}</td><td>{{ x.new_articles if x.new_articles is not none else '' }}</td>
+      <td class="muted">{{ x.error_class or '' }} {{ x.error_detail or '' }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h3>격리된 레코드 (quarantine)</h3>
+<table>
+  <thead><tr><th>#</th><th>실행</th><th>참조</th><th>단계: 사유</th><th>시각(UTC)</th></tr></thead>
+  <tbody>
+  {% for q in quarantine %}<tr><td>{{ q.q_id }}</td><td>{{ q.run_id or '' }}</td><td class="muted">{{ q.raw_ref }}</td><td>{{ q.reason }}</td><td class="muted">{{ q.created_utc }}</td></tr>
+  {% else %}<tr><td colspan="5" class="muted">없음</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

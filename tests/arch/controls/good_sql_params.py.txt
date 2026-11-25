@@ -1,0 +1,4 @@
+# NEGATIVE CONTROL (TS-ARCH-06): vetted helpers and plain parameters are allowed.
+def find(con, uid, cols):
+    con.execute(f"SELECT {ident(cols)} FROM article WHERE uid IN ({qmarks(3)})", (uid, uid, uid))
+    con.execute("SELECT 1 FROM article WHERE uid = ?", (uid,))

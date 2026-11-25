@@ -1,0 +1,21 @@
+# Profile for the live public dashboard: an example of how a desk might rank NASA news releases.
+key: public_live
+name: Example desk view of NASA news releases
+languages: [en]
+topics:
+  - {label: Export controls and sanctions, keywords: {en: ["export control", "export controls", sanctions, smuggling, "Export Administration", OFAC]}}
+  - {label: Cyber, keywords: {en: [cyber, ransomware, hacker, hacking, malware, cryptocurrency]}}
+  - {label: National security, keywords: {en: ["national security", espionage, terrorism, "foreign agent", spy]}}
+  - {label: Fraud and corruption, keywords: {en: [fraud, bribery, corruption, "money laundering"]}}
+  - {label: Space and science, keywords: {en: [launch, spacecraft, mission, astronaut, Moon, Mars, satellite, telescope, Artemis]}}
+  - {label: Climate and Earth, keywords: {en: [climate, Earth, hurricane, wildfire, ocean]}}
+entities: [north_korea, china, south_korea, russia]
+priority_rules:
+  - id: watch_country_security
+    when: {entity_hit: true, topic_hit: true}
+    band: report
+  - id: topic_hit
+    when: {topic_hit: true}
+    band: review
+thresholds:
+  independent_sources_for_report: 2

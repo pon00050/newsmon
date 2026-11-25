@@ -1,0 +1,25 @@
+{
+  "format": "newsml_g2",
+  "items": [
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0005",
+      "version": 1,
+      "type": "text",
+      "headline": "Le Parlement européen adopte de nouvelles règles sur les emballages",
+      "slugline": "UE-PARLEMENT-EMBALLAGES",
+      "located": "Strasbourg",
+      "language": "fr",
+      "urgency": 5,
+      "versioncreated": "2026-11-24T15:45:00Z",
+      "firstcreated": "2026-11-24T15:45:00Z",
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "Le Parlement européen a adopté mardi un texte qui fixe des objectifs de réduction des emballages plastiques d'ici à 2035, après de longues négociations avec les États membres.\n\nLes députés ont rejeté plusieurs amendements visant à exempter les petites entreprises.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

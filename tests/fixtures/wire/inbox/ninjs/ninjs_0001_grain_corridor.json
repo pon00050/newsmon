@@ -1,0 +1,29 @@
+{
+  "x_synthetic": true,
+  "uri": "urn:synthetic:ninjs:7f3e9a10",
+  "type": "text",
+  "version": "1",
+  "versioncreated": "2026-11-24T11:15:00+02:00",
+  "firstcreated": "2026-11-24T11:15:00+02:00",
+  "pubstatus": "usable",
+  "urgency": 4,
+  "headline": "Ukraine and Poland agree grain transit corridor",
+  "slugline": "UKRAINE-POLAND-GRAIN",
+  "located": "Warsaw, Poland",
+  "language": "en-GB",
+  "description_text": "Deal ends months of border protests by Polish farmers.",
+  "body_text": "Ukraine and Poland agreed on Tuesday to create a sealed transit corridor for Ukrainian grain\nbound for Baltic ports, the two agriculture ministries said in a joint statement.\n\nUnder the deal,   grain will be inspected at the border and moved by rail without entering the\nPolish market.\n\nFarmers' groups said they would suspend protests while the arrangement is tested.",
+  "subjects": [
+    {
+      "name": "agriculture",
+      "uri": "synthetic:subject:agriculture"
+    },
+    {
+      "name": "trade",
+      "uri": "synthetic:subject:trade"
+    }
+  ],
+  "renditions": [],
+  "associations": {},
+  "usageterms": "Synthetic fixture text written for the newsmon project. Internal testing only."
+}

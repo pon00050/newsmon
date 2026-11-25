@@ -1,0 +1,248 @@
+test_id,task,level,mode,path,covers,description
+TS-U-cli,T-01,unit,n/a,tests/unit/test_cli.py,,`newsmon --version` prints the package version; unknown sub-command exits 2
+TS-U-settings,T-02,unit,O1,tests/unit/config/test_settings.py,IR-05 NFR-20,Boot settings from env vars only (no cwd files); every ai.capabilities flag defaults false; unknown keys rejected
+TS-DEP04,T-02,unit,n/a,tests/unit/config/test_no_secrets_in_yaml.py,DEP-04,A settings.yaml containing api_key/password/token values is rejected with a message
+TS-ARCH-01,T-03,arch,n/a,tests/arch/test_import_boundaries.py,NFR-21,"domain/ and pipeline/ import none of sqlite3, httpx, anthropic, smtplib; control file is flagged"
+TS-ARCH-02,T-03,arch,n/a,tests/arch/test_sql_location.py,NFR-22,No SQL keyword strings outside repo/; control flagged
+TS-ARCH-03,T-03,arch,n/a,tests/arch/test_secret_access.py,NFR-27,No os.environ / getenv reads of secret names outside adapters/secrets; control flagged
+TS-ARCH-04,T-03,arch,n/a,tests/arch/test_no_tools_param.py,NFR-08,No `tools=` argument in any provider call under ai/; control flagged
+TS-ARCH-05,T-03,arch,n/a,tests/arch/test_no_training_calls.py,NFR-19,"No fine-tuning / training endpoint names (fine_tuning, /v1/fine_tunes, training_file) anywhere; control flagged"
+TS-ARCH-06,T-03,arch,n/a,tests/arch/test_sql_params.py,,"No f-string, % or .format() SQL passed to execute(); control flagged (SQL injection)"
+TS-ARCH-07,T-03,arch,n/a,tests/arch/test_no_browser_automation.py,,"No playwright/selenium/pyppeteer/local-model imports (torch, transformers, whisper, sentence_transformers, kiwipiepy) in src/; control flagged"
+TS-HAR-01,T-04,support,n/a,tests/support/test_fixture_server.py,,"Scripted responses served; request log records UA, conditional headers and timestamps"
+TS-HAR-02,T-04,support,n/a,tests/support/test_smtp_sink.py,,Sink accepts and records messages; a configured recipient gets 550
+TS-HAR-03,T-04,support,AI-stub,tests/support/test_ai_stub.py,,"Stub records every call with fields, returns scripted JSON, raises scripted 503, reports scripted cost"
+TS-HAR-04,T-04,support,n/a,tests/support/test_netguard.py,,Known-answer: connect to 192.0.2.1 and to an AI host name fails; loopback fixture port allowed (instrument control)
+TS-HAR-05,T-04,support,n/a,tests/support/test_req_coverage.py,,req_coverage.py exits non-zero on a junit file missing one id (control) and zero on a complete one
+TS-FIX-01,T-05,support,n/a,tests/support/test_feed_fixtures.py,,"Every fixture feed parses; each required edge case is present; gold files have the recorded sizes (240 items, 36 pairs, 10+3 queries per language)"
+TS-FIX-02,T-05,support,n/a,tests/support/test_fixture_packaging.py,,"Built wheel contains no tests/fixtures path (corpus-derived fixtures are private research data, not shipped)"
+TS-FIX-03,T-06,support,n/a,tests/support/test_wire_fixtures.py,,Counts per format meet ADR-010 §8; every valid file has a golden JSON; every file is marked synthetic
+TS-DB-01,T-07,integration,O1,tests/integration/repo/test_schema.py,NFR-22,migrate creates every table; integrity_check ok; FTS5 contentless_delete=1 accepted (OQ-9); DDL uses only ADR-004 portable types
+TS-FR01d,T-07,integration,O1,tests/integration/repo/test_checks.py::test_training_fixed,FR-01d,Insert with training != 'no' fails the CHECK
+TS-FR30a-db,T-07,integration,O1,tests/integration/repo/test_checks.py::test_tenant_needs_attestation,FR-30a,Activating a licence_owner=tenant row without attested_on or retention_days fails the CHECK
+TS-NFR23a,T-07,integration,O1,tests/integration/repo/test_workspace_seam.py,NFR-23,Every root table in the declared list has workspace_id NOT NULL; child tables reach a root by FK (introspection)
+TS-DB-02,T-07,integration,O1,tests/integration/repo/test_write_queue.py,,20 concurrent writers produce no 'database is locked' and all rows land
+TS-E2E-00,T-08,e2e,O1,tests/e2e/test_smoke_o1.py,AC-O1-01,init + run-once on a fixture feed: articles > 0; netguard sees 0 non-loopback connects; AI stub 0 calls; ANTHROPIC_API_KEY and OPENAI_API_KEY unset
+TS-NFR27b,T-09,unit,n/a,tests/unit/secrets/test_secret_store.py,NFR-27,get() returns by name and workspace; repr/str never show the value; every credential carries an owner tag
+TS-NFR13,T-09,unit,n/a,tests/unit/obs/test_json_logging.py,NFR-13,"Each record is one JSON line with correlation_id, event type and timestamp"
+TS-NFR07a,T-09,unit,n/a,tests/unit/obs/test_redaction.py,NFR-07,"A canary secret placed in a log message, an exception and extra fields is replaced by [REDACTED] (known-answer)"
+TS-FR26c,T-10,integration,O1,tests/integration/test_audit.py,FR-26c,Rows for each action type; UPDATE/DELETE refused; a grep for configured canary key values over audit_log finds 0
+TS-FR02c,T-11,integration,O1,tests/integration/fetcher/test_ua.py,FR-02c NFR-03,Every request carries the configured UA exactly (fixture log)
+TS-FR02d,T-11,integration,O1,tests/integration/fetcher/test_ssrf.py,FR-02d NFR-06,"127.0.0.1, 10.0.0.5, 169.254.169.254 and a public.test host that 302s to 127.0.0.1 end ssrf_blocked; the sentinel listener sees no connection"
+TS-SEC-09,T-11,integration,O1,tests/integration/fetcher/test_ssrf_extended.py,,"::1, fc00::1, ::ffff:127.0.0.1, 0.0.0.0, 2130706433, 0x7f.1, a name resolving to 127.0.0.1, file:// and gopher:// are all refused"
+TS-SEC-10,T-11,arch,n/a,tests/arch/test_ssrf_override_unreachable.py,,The settings schema has no SSRF allowance key and nothing outside tests/ constructs an allowance policy
+TS-FR02e,T-11,integration,O1,tests/integration/fetcher/test_host_lock.py,FR-02e NFR-03,Two feeds on one host never overlap (fixture timestamps)
+TS-NFR06,T-11,integration,O1,tests/integration/fetcher/test_limits.py,NFR-06,An 11 MB response is aborted; a slow response hits the (test-shortened) timeout; error_class recorded
+TS-FET-01,T-11,integration,O1,tests/integration/fetcher/test_conditional.py,,Stored validators are sent as If-None-Match / If-Modified-Since
+TS-ROB-01,T-12,unit,n/a,tests/unit/fetcher/test_robots.py,NFR-03,RFC 9309 matching table incl. the '?' case that robotparser gets wrong (known-answer control)
+TS-FR02b,T-12,integration,O1,tests/integration/fetcher/test_robots_fetch.py,FR-02b,A path under `Disallow: /r?` is never requested: fixture log shows 0 hits
+TS-REL-04,T-12,integration,O1,tests/integration/fetcher/test_robots_change.py,,"A robots change to disallow makes the next poll end error_class=robots, no fetch, counted toward a failing incident"
+TS-FR01a,T-13,integration,O1,tests/integration/registry/test_seed.py,FR-01a,27 + 2 rows load to 29 rows; every flag column non-null
+TS-FR01b,T-13,integration,O1,tests/integration/registry/test_defaults.py,FR-01b,A row with no flags gets exactly the spec defaults
+TS-FR01c,T-13,integration,O1,tests/integration/registry/test_context.py,FR-01c,In internal context the 8 P-only rows are inactive and the fixture server sees no request for them
+TS-SEC-12,T-13,integration,O1,tests/integration/registry/test_adapters_off.py,,Activating a changedetection or rsshub source is refused with 'adapter not implemented'
+TS-FR03a,T-14,integration,O1,tests/integration/connectors/test_retry.py::test_30_runs,FR-03a,10 feeds x 3 polls -> exactly 30 fetch_run rows
+TS-FR03b,T-14,integration,O1,tests/integration/connectors/test_retry.py::test_503_503_200,FR-03b,"503, 503, 200 -> attempts 1-3 and final ok"
+TS-FR03c,T-14,integration,O1,tests/integration/connectors/test_retry.py::test_404_once,FR-03c,404 -> exactly 1 attempt
+TS-FR03d,T-14,integration,O1,tests/integration/connectors/test_retry.py::test_malformed,FR-03d,"Malformed XML -> error_class=parse, 1 attempt"
+TS-FR27b,T-14,integration,O1,tests/integration/connectors/test_contract.py::test_provenance,FR-27b,Every article row has non-null licence_snapshot and raw_sha256
+TS-FR27c,T-14,integration,O1,tests/integration/connectors/test_contract.py::test_fault_injection,FR-27c,"Injected DNS failure, reset and TLS error -> status=error:<class>, no exception escapes"
+TS-FR02a,T-15,integration,O1,tests/integration/connectors/test_feed.py::test_304,FR-02a,"Second poll sends validators; 304 -> status=not_modified, 0 new rows"
+TS-REL-06,T-15,integration,O1,tests/integration/connectors/test_feed.py::test_window_overflow,,A poll whose entries share no GUID with the previous poll records overlap=0 and a gap warning
+TS-SEC-06x,T-15,integration,O1,tests/integration/connectors/test_feed.py::test_rss_external_entity,,An RSS file with an external entity causes no file read and no outbound request
+TS-API-01,T-16,integration,O1,tests/integration/connectors/test_http_api.py::test_mappers,FR-02,"Recorded Federal Register, SEC and GDELT responses map to the expected NormalisedItems"
+TS-API-02,T-16,integration,O1,tests/integration/connectors/test_http_api.py::test_gdelt_serial,,GDELT requests are >= 5 s apart (simulated clock) and 429 backs off
+TS-REL-07,T-16,integration,O1,tests/integration/connectors/test_http_api.py::test_gdelt_gap,,A skipped 15-minute lastupdate file is recorded as a gap
+TS-SCH-01,T-17,integration,O1,tests/integration/runtime/test_intervals.py,NFR-03,Configured poll_seconds=60 is rejected or clamped to 300; per-feed intervals honoured (simulated clock)
+TS-NFR04a,T-17,integration,O1,tests/integration/runtime/test_resume.py,NFR-04,"Stop mid-cycle, restart: polling and inbox scanning resume; no job runs twice concurrently"
+TS-REL-24,T-17,integration,O1,tests/integration/runtime/test_heartbeat.py,,A dead scheduler thread makes the heartbeat stale; /healthz reads unhealthy after 2 cycles
+TS-FR05a,T-18,unit,O1,tests/unit/pipeline/test_normalise.py::test_missing_pubdate,FR-05a,"Missing pubDate -> published_utc NULL, published_raw empty, first_seen_utc set, not dropped"
+TS-FR05b,T-18,unit,O1,tests/unit/pipeline/test_normalise.py::test_lang30,FR-05b,>= 29/30 correct on the labelled fixture
+TS-FR05c,T-18,unit,O1,tests/unit/pipeline/test_normalise.py::test_canonical,FR-05c,?at_medium=… and #frag canonicalise to the bare URL
+TS-FR05d,T-18,unit,O1,tests/unit/pipeline/test_normalise.py::test_empty_title,FR-05d,Empty title -> quarantine row with reason
+TS-SEC-06,T-18,unit,O1,tests/unit/pipeline/test_normalise.py::test_html_stripped,,"<script>, <img onerror> and javascript: links in titles/summaries are stripped to text"
+TS-SEC-23,T-18,unit,n/a,tests/unit/pipeline/test_regex_guard.py,,A catastrophic-backtracking boilerplate pattern is rejected at load (time-boxed trial)
+TS-FR07a,T-19,integration,O1,tests/integration/pipeline/test_dedup_exact.py::test_two_feeds,FR-07a,"Same URL in 2 feeds of one source -> 1 article, 2 feed_entry rows"
+TS-FR07b,T-19,integration,O1,tests/integration/pipeline/test_dedup_exact.py::test_rerun,FR-07b NFR-05,Re-running ingestion creates 0 new articles; all content-table counts identical
+TS-FR07c,T-19,integration,O1,tests/integration/pipeline/test_dedup_exact.py::test_same_content,FR-07c,Two URLs with identical normalised content linked same_item
+TS-FR08a,T-20,integration,O1,tests/integration/pipeline/test_dedup_near.py::test_recall,FR-08a NFR-11,Recall >= 0.95 on the R6 labelled pairs with exact Jaccard >= 0.5
+TS-FR08b,T-20,integration,O1,tests/integration/pipeline/test_dedup_near.py::test_yonhap_jonghap,FR-08b,Yonhap '(종합)' pair linked revision via story_key
+TS-FR08c,T-20,integration,O1,tests/integration/pipeline/test_dedup_near.py::test_live_blogs,FR-08c,Two Guardian live-blog fixtures with shared boilerplate are not linked
+TS-FR08d,T-20,integration,O1,tests/integration/pipeline/test_dedup_near.py::test_wire_version,FR-08d,v2 of the same ItemID -> revision 2 of one article
+TS-FR08e-1,T-20,integration,O1,tests/integration/pipeline/test_dedup_near.py::test_kill,FR-08e,Kill item sets status=killed
+TS-FR09a,T-21,unit,O1,tests/unit/pipeline/test_independence.py::test_iheart,FR-09a,10 iHeart subdomain copies + 2 other domains -> 3
+TS-FR09b,T-21,unit,O1,tests/unit/pipeline/test_independence.py::test_syndicated,FR-09b,Two outlets carrying the same syndicated text count as 1
+TS-TLD-01,T-21,unit,O1,tests/unit/pipeline/test_independence.py::test_offline,,tldextract makes 0 connections under netguard and writes no file outside the data dir (OQ-9)
+TS-GATE-01,T-22,unit,O1,tests/unit/licence/test_gate_matrix.py,,Full matrix of storage x ai_processing x permitted_ops x external_ai_allowed x endpoint availability -> expected route
+TS-FR06c-unit,T-22,unit,O1,tests/unit/licence/test_display_matrix.py,FR-06c,display=headline yields no feed-summary text for every surface
+TS-FR06d,T-22,unit,O1,tests/unit/licence/test_redistribution.py,FR-06d,redistribution=none item for an external recipient renders title + link only
+TS-FR06f,T-22,unit,AI-stub,tests/unit/licence/test_display_ai_fields.py,FR-06f,V1-01: DisplayPolicy governs ai.* fields; for display<snippet no quote_original or verbatim quote and no source substring >= 20 chars on any surface; Korean summary shown only if permitted_ops contains summarise or translate
+TS-FR27d,T-22,unit,O1,tests/unit/licence/test_synthetic_no_bypass.py,FR-27d,"V1-04: synthetic=true never changes LicenceGate or DisplayPolicy decisions (same flags, same route, synthetic true vs false)"
+TS-FR31b,T-22,unit,O1,tests/unit/licence/test_restrictions.py,FR-31b,Unrecognised restriction string -> headline-only
+TS-FR25a,T-22,unit,AI-stub,tests/unit/render/test_safe_text.py,FR-25a,"Stub output with <img src=…>, a markdown link and http://exfil.example renders inert: no <a>, <img> or URL"
+TS-FR06a,T-23,integration,O1,tests/integration/pipeline/test_body.py::test_metadata,FR-06a,storage=metadata: fixture server sees no article-page request; body_text NULL
+TS-FR06b,T-23,integration,O1,tests/integration/pipeline/test_body.py::test_transient,FR-06b,storage=transient: body requested once; body_text NULL after processing
+TS-SEC-09b,T-23,integration,O1,tests/integration/pipeline/test_body.py::test_article_link_ssrf,,A feed entry whose link points at 169.254.169.254 is refused by the body fetch
+TS-FR30a-svc,T-24,integration,O1,tests/integration/registry/test_onboarding.py::test_activate_needs_attestation,FR-30a DEP-05,Service refuses to activate an unattested tenant source
+TS-FR30b,T-24,integration,O1,tests/integration/registry/test_onboarding.py::test_valid_until,FR-30b,After valid_until (simulated clock) the next poll is skipped with an audit row
+TS-FR30c-unit,T-24,integration,O1,tests/integration/registry/test_onboarding.py::test_flag_change,FR-30c,external_ai_allowed false -> true on mock_wire_demo makes the gate route the next item to AI; change audited
+TS-FR30d-unit,T-24,integration,O1,tests/integration/registry/test_onboarding.py::test_deployment_check,FR-30d,third_party_processors_allowed=false on an active tenant source and deployment_model != CH -> 'deployment must be customer-hosted'
+TS-FR06e,T-25,integration,O1,tests/integration/ops/test_purge.py::test_retention,FR-06e,Clock past retention_days: bodies and AI outputs of that source deleted; audit purge row lists counts
+TS-FR26b,T-25,integration,O1,tests/integration/ops/test_purge.py::test_takedown,FR-26b,takedown --purge leaves 0 article rows for the source and writes a receipt
+TS-SEC-27,T-25,integration,O1,tests/integration/ops/test_purge.py::test_fts_purged,,After purge a search for the purged body's unique token returns 0
+TS-GAZ-01,T-26,unit,O1,tests/unit/pipeline/test_gazetteer.py,,Aliases match across scripts; 'Kim' alone does not match kim_yo_jong; datelines parsed; unknown ids rejected
+TS-FR10a,T-27,integration,O1,tests/integration/pipeline/test_cluster_o1.py::test_gold,FR-10a AC-O1-05,"Pair precision >= 0.80 on the 240-item gold copy (the tuning set, stated in the report), run with and without gazetteer linking (V1-07); recall printed, no floor"
+TS-NFR16,T-27,integration,O1,tests/integration/pipeline/test_cluster_o1.py::test_deterministic,NFR-16,Same input + same algo id -> identical memberships on two runs; every membership row has algo
+TS-FR10c,T-28,integration,O1,tests/integration/pipeline/test_event_edit.py,FR-10c,Merge then split restores original memberships; both audited
+TS-FR17c,T-29,unit,O1,tests/unit/rules/test_spike.py,FR-17c,Synthetic hourly series with one 3x peak flags that bucket only; sub-floor series never flags
+TS-FR16b,T-30,unit,O1,tests/unit/rules/test_profile.py::test_unknown_ids,FR-16b,Unknown source or entity id rejected with a message
+TS-FR16c,T-30,unit,O1,tests/unit/rules/test_profile.py::test_flash_from_ai,FR-16c,Rule setting flash from an AI field rejected
+TS-FR16e,T-30,integration,O1,tests/integration/rules/test_preview.py,FR-16e,Last-24 h preview counts equal a direct rule re-run over stored items
+TS-PRO-01,T-30,unit,O1,tests/unit/rules/test_profile.py::test_versions,,Each save creates a new version; previous versions retained
+TS-FR17a,T-31,integration,O1,tests/integration/rules/test_engine.py::test_relevance30,FR-17a,>= 28/30 bands as expected on the hand-labelled fixture
+TS-FR17b,T-31,integration,O1,tests/integration/rules/test_engine.py::test_explanations,FR-17b,Every item at band >= review has a non-empty rule_hit explanation
+TS-FR16a,T-31,integration,O1,tests/integration/rules/test_engine.py::test_hot_reload,FR-16a,Adding a keyword re-ranks a matching item on the next evaluation; no restart
+TS-FR20a,T-32,integration,O1,tests/integration/search/test_known_answer.py,FR-20a NFR-10,"R6's 10 known-answer queries per language (KO, ZH) recall 1.00 incl. 북한, 미국, 中国, 美国"
+TS-FR20b,T-32,integration,O1,tests/integration/search/test_nonsense.py,FR-20b NFR-10,3 nonsense queries per language return 0 (instrument control)
+TS-FR20c,T-32,integration,O1,tests/integration/search/test_alias.py,FR-20c,'Kim Yo Jong' returns the KO and ZH items for 김여정 / 金與正 in O1
+TS-ACO1-06,T-32,integration,O1,tests/integration/search/test_o1_limit.py,AC-O1-06,"A non-gazetteer English phrase does not find Korean coverage (expected O1 limit, asserted)"
+TS-FR20d,T-32,integration,O1,tests/integration/search/test_latency.py,FR-20d,"p95 < 300 ms on 100,000 synthetic rows (marked slow)"
+TS-SRCH-01,T-32,integration,O1,tests/integration/search/test_index_flags.py,,A metadata-only source's body token and a gated source's non-displayable text are absent from the index
+TS-FR28a,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_ingest_all,FR-28a,Copying the >= 18-file fixture inbox ingests every valid file within 2 scan intervals
+TS-FR28b,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_rescan,FR-28b,Re-scan ingests nothing new
+TS-FR28c,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_unstable,FR-28c,A growing file is not ingested until stable
+TS-FR28d,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_symlink,FR-28d,Symlink to a file outside the root refused with error_class=io (skip with explicit reason only where the OS forbids symlink creation; Linux CI must run it)
+TS-FR28e,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_untouched,FR-28e,Directory listing and hashes identical before and after the run
+TS-FR28f,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_gone,FR-28f,Deleting a file after ingest keeps the item and marks the ledger gone
+TS-DEP03,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_readonly_root,DEP-03,Ingest works with the root mounted / permissioned read-only
+TS-REL-08,T-33,integration,O1,tests/integration/connectors/test_directory.py::test_version_gap,,ItemID v1 then v3 logs a version gap
+TS-FR29a,T-34,unit,O1,tests/unit/parsers/test_golden.py,FR-29a,"Every fixture maps headline, versioncreated, language, urgency, body, pubstatus to golden JSON (field equality)"
+TS-FR29b,T-34,unit,O1,tests/unit/parsers/test_nitf.py::test_shotlist,FR-29b,NITF shotlist becomes an association on the video item
+TS-FR29c,T-34,unit,O1,tests/unit/parsers/test_malformed.py,FR-29c,Each malformed fixture is quarantined with a reason
+TS-FR29d,T-34,unit,O1,tests/unit/parsers/test_xml_safety.py::test_xxe,FR-29d,External-entity fixture refused; no outbound request (netguard) and no file read (audit hook)
+TS-SEC-07,T-34,unit,O1,tests/unit/parsers/test_xml_safety.py::test_entity_expansion,,Billion-laughs fixture refused within a time budget
+TS-FR29e,T-34,unit,O1,tests/unit/parsers/test_media.py,FR-29e,Video fixture creates one media_asset row with sha256 and size; no copy under the data dir
+TS-SEC-08,T-34,unit,O1,tests/unit/parsers/test_media.py::test_untrusted_media,,A media file named .xml is detected by magic bytes and never XML-parsed; rendition hrefs with ../ are stored as text and never followed
+TS-FR31a-parse,T-34,unit,O1,tests/unit/parsers/test_ninjs.py,FR-31a,ninjs video fixture keeps renditions and associations
+TS-FR04a,T-35,integration,O1,tests/integration/delivery/test_health.py::test_failing,FR-04a,3 failing polls open exactly one failing incident; one success closes it
+TS-FR04b,T-35,integration,O1,tests/integration/delivery/test_health.py::test_empty,FR-04b,Switch to a valid empty RSS opens an empty incident on the first empty poll after baseline
+TS-FR04d,T-35,integration,O1,tests/integration/delivery/test_health.py::test_external_notice,FR-04d,Notice to a non-allow-listed recipient lands awaiting_approval; sink receives nothing
+TS-REL-03,T-35,integration,O1,tests/integration/delivery/test_health.py::test_silent,,No new item for > 6 x median (min 6 h) opens a silent incident
+TS-FR21d,T-36,integration,O1,tests/integration/delivery/test_outbox.py::test_outside_allow_list,FR-21d,"Recipient outside the allow-list -> awaiting_approval, nothing sent"
+TS-IR04,T-36,integration,O1,tests/integration/delivery/test_outbox.py::test_email_format,IR-04,Plain-text and HTML parts; subject [newsmon][FLASH] / [newsmon][조간]; AI label present when AI text included
+TS-REL-16,T-36,integration,O1,tests/integration/delivery/test_outbox.py::test_crash_mid_send,,Crash between SMTP accept and status update: restart re-sends with the same Message-ID; delivery_log shows both attempts
+TS-FR21a-unit,T-37,integration,O1,tests/integration/delivery/test_alerts.py::test_flash_once,FR-21a,A matching urgency-1 item produces exactly one flash alert and one email in the sink
+TS-FR21b,T-37,integration,O1,tests/integration/delivery/test_alerts.py::test_dedup,FR-21b,A second member of the same event produces no second email
+TS-FR21c,T-37,integration,O1,tests/integration/delivery/test_alerts.py::test_flagged,FR-21c,A regex-flagged item produces no email (O1)
+TS-FR22a,T-38,integration,O1,tests/integration/delivery/test_digest.py::test_scheduled,FR-22a,"At the scheduled time (simulated clock) a draft exists, status=in_review, not sent"
+TS-FR22c,T-38,integration,O1,tests/integration/delivery/test_digest.py::test_approve_send,FR-22c,Approve -> sink receives; one delivery_log row per recipient; a rejected recipient shows failed
+TS-FR22d,T-38,integration,O1,tests/integration/delivery/test_digest.py::test_template,FR-22d,"O1 template digest with titles, links and source counts for the window"
+TS-FR06d-digest,T-38,integration,O1,tests/integration/delivery/test_digest.py::test_external_recipient,FR-06d,redistribution=none item reaches an external recipient as title + link only
+TS-NFR25,T-39,integration,O1,tests/integration/web/test_auth.py::test_roles,NFR-25,Both providers work; a viewer posting a verdict gets 403; api_token holds only hashes
+TS-FR23a,T-39,integration,O1,tests/integration/web/test_auth.py::test_tokens,FR-23a,No token -> 401; revoked token -> 401
+TS-SEC-21,T-39,integration,O1,tests/integration/web/test_auth.py::test_csrf_bind_throttle,,Write without CSRF token -> 403; default bind 127.0.0.1; 10 bad logins -> throttled
+TS-FR23b,T-40,integration,O1,tests/integration/api/test_display.py,FR-23b,display=headline item responses contain no summary text
+TS-FR06c-api,T-40,integration,O1,tests/integration/api/test_display.py::test_all_endpoints,FR-06c,Fixture summary string absent from every API response for headline items
+TS-FR23c,T-40,integration,O1,tests/integration/api/test_limits.py,FR-23c,Every list endpoint caps limit at 50
+TS-FR31a,T-40,integration,O1,tests/integration/api/test_articles.py::test_ninjs_roundtrip,FR-31a,ninjs video fixture round-trips through GET /api/v1/articles/{uid} with renditions intact
+TS-FR08e-2,T-40,integration,O1,tests/integration/api/test_events.py::test_killed_hidden,FR-08e,Killed item disappears from GET /api/v1/events
+TS-FR04c-api,T-40,integration,O1,tests/integration/api/test_health.py,FR-04c,GET /api/v1/health/feeds shows an incident within one poll cycle
+TS-IR02,T-40,integration,O1,tests/integration/api/test_shapes.py,IR-02,Response schemas match the 11 §6 endpoint list (snapshot)
+TS-FR25-api,T-40,integration,AI-stub,tests/integration/api/test_ai_nesting.py,FR-25a,"AI fields only under `ai` with generated_by_ai: true, model and prompt_version"
+TS-FR18b,T-41,integration,O1,tests/integration/api/test_writes.py::test_verdict,FR-18b,A verdict writes one editorial_assessment row with editor and time; ai_interpretation rows unchanged
+TS-WR-01,T-41,integration,O1,tests/integration/api/test_writes.py::test_audited,,Every write endpoint produces one audit row; viewer role gets 403
+TS-FR18c,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_keyboard,FR-18c,"Rendered queue carries the j/k/r/v/x bindings wired to verdict endpoints (static wiring check; behaviour checked manually, see 14 §10 limits)"
+TS-FR18d,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_o1_rows,FR-18d,In O1 every row shows the original headline and a band; no blank row
+TS-FR19a,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_provenance,FR-19a,Every item on the event page has a source name and a link or '원문 보기'
+TS-FR19b,T-42,integration,AI-stub,tests/integration/web/test_pages_core.py::test_ai_label,FR-19b,100% of AI text renders inside an element labelled 'AI 생성'
+TS-NFR14,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_kst,NFR-14,Stored UTC vs displayed KST differ by exactly +9 h; UI strings Korean
+TS-NFR15b,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_no_person_pages,NFR-15,No route renders a person profile
+TS-IR01a,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_surfaces,IR-01,"UI-1, UI-2, UI-3 exist with Korean labels"
+TS-SEC-04,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_csp,,CSP header forbids inline scripts from content and remote images; a feed title with <script> renders escaped
+TS-ACO1-03,T-42,integration,O1,tests/integration/web/test_pages_core.py::test_o1_header,AC-O1-03 FR-15a,"No provider (null AIStatus): header 'AI: 꺼짐'; rows show headline, source, time, band; no 'AI 처리 대기' tag"
+TS-FR20-banner,T-43,integration,O1,tests/integration/web/test_pages_ops.py::test_banner,FR-20,A search whose filter includes a source with an open incident shows the failing-feed banner; empty result never says 'no news'
+TS-IR01b,T-43,integration,O1,tests/integration/web/test_pages_ops.py::test_surfaces,IR-01,"UI-4, UI-5, UI-9 exist with Korean labels; quarantined files and ⚠ items listed in UI-9"
+TS-FR30a-ui,T-44,integration,O1,tests/integration/web/test_pages_admin.py::test_activation_blocked,FR-30a,Activating a tenant source without attestation fails in the UI with a message
+TS-FR16a-ui,T-44,integration,O1,tests/integration/web/test_pages_admin.py::test_keyword_form,FR-16a,A keyword added through the form re-ranks a fixture item on the next evaluation
+TS-FR04c-page,T-44,integration,O1,tests/integration/web/test_pages_admin.py::test_health_page,FR-04c,Health page shows an incident within one poll cycle
+TS-IR01c,T-44,integration,O1,tests/integration/web/test_pages_admin.py::test_surfaces,IR-01,"UI-6, UI-7, UI-8 exist with Korean labels"
+TS-FR14b,T-45,unit,O1,tests/unit/ai/test_prefilter.py::test_clean_fp,FR-14b,<= 2 false positives on R7's 44 clean hardened fixtures (11 distinct texts) and <= 1% on the 240 gold titles+summaries
+TS-FR14a-regex,T-45,unit,O1,tests/unit/ai/test_prefilter.py::test_attacks,FR-14a,"Regex hit rate on A1-A3 reported; A1 and A3 must hit (A2 may need the model flag, covered in T-49)"
+TS-NFR08,T-46,unit,AI-stub,tests/unit/ai/test_providers.py::test_no_tools,NFR-08,"Captured request bodies (mocked transport) never contain a tools key, for every task"
+TS-NFR19,T-46,unit,n/a,tests/unit/ai/test_providers.py::test_no_training,NFR-19,Adapters expose no training or fine-tuning call; training flag fixed to no
+TS-NFR30a,T-46,unit,AI-stub,tests/unit/ai/test_providers.py::test_usage,NFR-30,Every call returns input/output tokens and cost_usd
+TS-LIVE-01,T-46,live,live,tests/live/test_provider_smoke.py,,"[live, opt-in NEWSMON_LIVE=1, <= $0.01] one Haiku complete_json and one embed call succeed and validate"
+TS-FR15a-unit,T-47,integration,O1,tests/integration/ai/test_router.py::test_no_key,FR-15a,No key configured -> every item takes the O1 path; AIStatus = 꺼짐
+TS-FR15b-unit,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_outage_drain,FR-15b,Stub 503 -> items stay pending; on recovery all reach done or review with backoff
+TS-FR15c,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_cap,FR-15c NFR-09,Cap $0.01 at $0.004/call: the 4th call is not made; spend_day.capped=1
+TS-FR15d,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_gated_source,FR-15d,mock_wire_gated items produce 0 calls to any hosted provider (stub call log)
+TS-FR12b,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_fields_sent,FR-12b,Payload holds only fields allowed by storage and ai_processing; unknown -> title + feed summary
+TS-FR12c,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_cache,FR-12c,Re-enriching an unchanged item makes 0 provider calls
+TS-FR10d,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_no_embed_gated,FR-10d,external_ai_allowed=false and no customer endpoint -> never sent to the embedding provider
+TS-NFR15a,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_masking,NFR-15,"With masking on, gazetteer PERSON names are replaced before the call (stub log); fields_sent logged per call"
+TS-NFR09,T-47,integration,AI-stub,tests/integration/ai/test_router.py::test_alarm,NFR-09,Spend above 2x expected raises the alarm alert
+TS-FR11a,T-48,integration,AI-stub,tests/integration/ai/test_triage.py::test_no_flash,FR-11a,Stub returning flash cannot make an item flash when no rule fires
+TS-FR11b,T-48,integration,AI-stub,tests/integration/ai/test_triage.py::test_off,FR-11b,triage=false -> 0 calls; bands equal rule bands
+TS-FR11c,T-48,integration,AI-stub,tests/integration/ai/test_triage.py::test_stored,FR-11c,"Triage output stored with model, prompt version and cost"
+TS-FR12a-stub,T-49,integration,AI-stub,tests/integration/ai/test_enrich.py::test_validators,FR-12a,Validators accept a correct stub output and reject an ungrounded entity and an invented number
+TS-FR12a-live,T-49,live,live,tests/live/test_enrich_live.py,FR-12a,[live] 20-item EN/ZH/KO fixture: 100% schema-valid after <= 1 retry; >= 95% entities verbatim; every summary number in source
+TS-FR13a,T-49,integration,AI-stub,tests/integration/ai/test_enrich.py::test_hangul_fail,FR-13a,"English 'Korean summary' fails, retries once, lands in UI-9 with validation_status=review"
+TS-FR13b,T-49,integration,AI-stub,tests/integration/ai/test_enrich.py::test_no_bulk_retry,FR-13b,50 deterministic failures -> exactly 100 calls
+TS-FR14a,T-49,integration,AI-stub,tests/integration/ai/test_enrich.py::test_attacks,FR-14a,"Each A1-A3 fixture -> injection_suspected or regex hit, band review, no alert"
+TS-SEC-02,T-49,integration,AI-stub,tests/integration/ai/test_enrich.py::test_score_attack,,A flagged item whose stub score is raised +23 keeps its rule band (LLM band discarded)
+TS-FR10b,T-50,integration,AI-stub,tests/integration/pipeline/test_cluster_o3.py::test_gold_cached,FR-10b,With cached vectors: pair F1 >= 0.70 and B3 F1 >= 0.85 on the 240-item gold set
+TS-O3-02,T-50,integration,AI-stub,tests/integration/pipeline/test_cluster_o3.py::test_reembed,,Items clustered by TF-IDF during an outage are re-embedded and reassigned on recovery; vectors carry model id
+TS-FR22b,T-51,integration,AI-stub,tests/integration/ai/test_digest_draft.py::test_bad_citation,FR-22b,Stub draft citing an id outside the selection fails the check and cannot be approved
+TS-FR25b,T-51,integration,AI-stub,tests/integration/ai/test_digest_draft.py::test_label,FR-25b,Every AI digest carries the label in the subject or first line
+TS-FR22e,T-51,integration,AI-stub,tests/integration/ai/test_digest_draft.py::test_licence_gate_per_item,FR-22e,V1-02: a digest containing a mock_wire_gated item sends 0 bytes of its text to the hosted provider (stub call log); the item appears as headline-withheld/template line; same for MCP get_briefing
+TS-QR-01,T-51,integration,AI-stub,tests/integration/ai/test_digest_draft.py::test_query_rewrite,FR-20,Rewrite adds KO/EN/ZH terms shown as AI on the expansion line; off -> gazetteer only
+TS-AIS-02,T-52,integration,AI-stub,tests/integration/web/test_ai_status.py::test_outage_and_gated,,Outage -> 'AI: 중단'; pending items tagged 'AI 처리 대기'; gated items tagged 'AI 미적용 (라이선스)'
+TS-FR24a,T-53,integration,O1,tests/integration/mcp/test_tools.py::test_list,FR-24a IR-03,Tool list is exactly the 8 read tools with MCP_TOOL_DESIGN §3 schemas
+TS-FR24b,T-53,integration,O1,tests/integration/mcp/test_tools.py::test_gated,FR-24b,get_article on a mock_wire_gated item returns no body text
+TS-FR24c,T-53,integration,O1,tests/integration/mcp/test_tools.py::test_untrusted,FR-24c,Public item text sits under untrusted_source_text
+TS-FR24d,T-53,integration,O1,tests/integration/mcp/test_readonly.py,FR-24d,Server DB connection is read-only; an attempted write raises
+TS-FR06c-mcp,T-53,integration,O1,tests/integration/mcp/test_tools.py::test_display,FR-06c,display=headline items return no summary text; limit capped at 50; every call audited
+TS-NFR29a,T-54,integration,O1,tests/integration/ops/test_backup.py::test_roundtrip,NFR-29,backup -> delete DB -> restore gives identical row counts; copy passes integrity_check
+TS-NFR28b,T-54,integration,O1,tests/integration/ops/test_backup.py::test_premigration,NFR-28,migrate writes a pre-migration backup that passes integrity_check
+TS-REL-22,T-54,integration,O1,tests/integration/ops/test_backup.py::test_rotation_vs_retention,,"With a 7-day full-storage source, no backup older than 7 days remains; purge receipt lists deleted backups"
+TS-REL-15,T-54,integration,O1,tests/integration/ops/test_backup.py::test_low_disk,,Insufficient free space (simulated) skips the backup and raises an ops alert
+TS-NFR29b,T-55,integration,O1,tests/integration/ops/test_export.py::test_roundtrip,NFR-29,Full export -> import into a clean instance gives identical row counts
+TS-NFR29c,T-55,integration,O1,tests/integration/ops/test_export.py::test_forbidden_bodies,NFR-29,Bodies whose flags forbid export are absent (assert the canary body string is not in any export file)
+TS-NFR29d,T-55,integration,O1,tests/integration/ops/test_export.py::test_delete_all,NFR-29,delete-all --confirm leaves 0 content rows and writes a report
+TS-NFR26,T-55,integration,O1,tests/integration/ops/test_export.py::test_config_roundtrip,NFR-26,"config export -> import reproduces sources, profiles, rules, schedules, recipients; no secret value in the files"
+TS-FR16d,T-55,integration,O1,tests/integration/ops/test_export.py::test_profile_bytes,FR-16d,Profile YAML byte-equal after normalisation
+TS-NFR12,T-56,integration,O1,tests/integration/web/test_metrics.py::test_truth,NFR-12,Each /metrics value equals the value computed directly from the fixture run's tables (two-path check)
+TS-NFR30b,T-56,integration,AI-stub,tests/integration/web/test_metrics.py::test_usage_sums,NFR-30,Metric sums of AI tokens/cost and fetch bytes equal the table sums
+TS-NFR18,T-57,arch,n/a,tests/arch/test_supply_chain.py::test_lock,NFR-18,uv.lock present with hashes; pip-audit run in CI reports no high/critical
+TS-NFR31,T-57,arch,n/a,tests/arch/test_supply_chain.py::test_licences,NFR-31,SBOM and THIRD_PARTY_NOTICES generated; a fake AGPL metadata entry makes the gate fail (control)
+TS-SEC-25,T-57,arch,n/a,tests/arch/test_supply_chain.py::test_excluded_deps,,"datasette, datasette-mcp, n8n-like and no-licence packages absent from the core dependency set"
+TS-IR06,T-58,integration,O1,tests/integration/ops/test_cli.py,IR-06,"init, serve, migrate, backup, restore, export, import, config export/import, source takedown, doctor, sbom all present"
+TS-FR30d,T-58,integration,O1,tests/integration/ops/test_doctor.py::test_customer_hosted,FR-30d,doctor prints 'deployment must be customer-hosted' for the FR-30(d) case
+TS-NFR28a,T-58,e2e,O1,tests/e2e/test_install_smoke.py,NFR-28 NFR-17 DEP-01,"Fresh uv venv + install + init + serve answers /healthz; binds 127.0.0.1 with auth=local (Windows locally, Ubuntu in CI)"
+TS-DEP02,T-58,integration,n/a,tests/integration/ops/test_deploy_files.py,DEP-02 NFR-20,systemd unit and static_users config parse; Dockerfile present and labelled untested (no Docker here)
+TS-REL-14,T-58,integration,O1,tests/integration/ops/test_doctor.py::test_network_fs,,doctor refuses a data dir on a UNC/network path (SQLite WAL needs a local filesystem)
+TS-ACO1-01,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_full_cycle,AC-O1-01,Collection -> dedup -> grouping -> rules -> queue -> alert -> digest all run; 0 connections to any AI host (deny-list)
+TS-ACO1-02,T-59,e2e,O1,tools/req_coverage.py --require o1,AC-O1-02,"Every FR-01…10, 16…23, 25…31 criterion not marked [live] has a passing test in the O1 junit report"
+TS-ACO1-03e,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_queue_rows,AC-O1-03,"In the full O1 run every queue row has headline, source, time and band; header 'AI: 꺼짐'; no 'AI 처리 대기'"
+TS-ACO1-04,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_flash_and_digest,AC-O1-04 FR-21a,"A flash wire file produces an alert and one email within 60 s of appearing; template digest produced, approved and sent to the sink"
+TS-ACO1-05,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_cluster_precision,AC-O1-05,Grouping precision >= 0.80 on the gold set; recall printed in the report
+TS-FR27a,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_cross_format,FR-27a,"The same story as RSS and as a plain-text wire file -> two NormalisedItems with identical field sets, linked by dedup"
+TS-FR26a,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_audit_actions,FR-26a,Each listed audit action type appears at least once in the run
+TS-FR06c,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_headline_only_everywhere,FR-06c,"Fixture summary string for display=headline absent from API, MCP, digest and HTML outputs"
+TS-NFR07,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_no_secrets,NFR-07,"Canary secret values absent from logs, DB dump, API, MCP, emails and exports"
+TS-SEC-18,T-59,e2e,O1,tests/e2e/test_o1_acceptance.py::test_no_licensed_text_in_logs,,The mock_wire_gated canary body sentence is absent from all log output
+TS-WF1-7,T-59,e2e,O1,tests/e2e/test_workflows_o1.py,WF-1 WF-2 WF-3 WF-4 WF-5 WF-6 WF-7,"One scripted scenario per workflow WF-1…WF-7, asserting each step's visible result"
+TS-FR15b,T-60,e2e,AI-stub,tests/e2e/test_ai_mode_stub.py::test_outage,FR-15b WF-8,"Stub 503 for 10 min: items keep appearing in the queue, alerts and search work; afterwards all pending reach done or review"
+TS-FR15d-e2e,T-60,e2e,AI-stub,tests/e2e/test_ai_mode_stub.py::test_gated_e2e,FR-15d,Whole run: 0 hosted calls carry a mock_wire_gated item
+TS-FR30c,T-60,e2e,AI-stub,tests/e2e/test_ai_mode_stub.py::test_flag_flip,FR-30c,"After external_ai_allowed false -> true on mock_wire_demo, the next item is enriched; change audited"
+TS-LIVE-02,T-60,live,live,tests/live/test_e2e_live.py,NFR-01,"[live, opt-in] enrichment adds <= 60 s at p95 on 20 items; spend recorded"
+TS-NFR20,T-61,e2e,O1,tests/e2e/test_deployment_flex.py::test_env_only,NFR-20,"Boot with NEWSMON_CONFIG_DIR, NEWSMON_DATA_DIR and DB path from env only; nothing written outside the data dir (fs diff incl. home cache dirs)"
+TS-NFR24,T-61,e2e,O1,tests/e2e/test_deployment_flex.py::test_two_instances,NFR-24,"Two instances with different data dirs share no file, cache or DB (path sets disjoint; tldextract/feedparser caches inside each data dir)"
+TS-NFR23b,T-61,e2e,O1,tests/e2e/test_deployment_flex.py::test_query_log,NFR-23,Every repository query in the e2e run on a root table filters by workspace_id
+TS-NFR01a,T-62,e2e,O1,tests/e2e/test_perf.py::test_latency,NFR-01,Public feed item visible <= poll interval + 120 s at p95; inbox file <= 60 s at p95 (O1)
+TS-NFR02,T-62,e2e,AI-stub,tests/e2e/test_perf.py::test_replay_5000,NFR-02,"5,000 fixture items fully processed in <= 30 min with the AI stub"
+TS-FR18a,T-62,e2e,O1,tests/e2e/test_perf.py::test_queue_render,FR-18a,Queue renders in < 1 s at p95 over 20 loads with 500 events
+TS-NFR04,T-62,e2e,O1,tests/e2e/test_kill_restart.py,NFR-04,"Kill during ingest, restart: integrity_check ok, 0 duplicate articles, polling and inbox scanning resume"
+TS-EVAL-01,T-63,eval,O1,eval/run_eval.py --offline,,Offline run (O1 + cached vectors + stub) produces every table row; AI-only rows say 'not performed in O1' instead of a number
+TS-EVAL-02,T-63,live,live,eval/run_eval.py --live,,"[live, opt-in, cost-capped] AI-mode rows filled on the gold sets of 14 §5"
+TS-EVAL-07,T-64,eval,O1,tests/eval/test_shadow_scoring.py,,"On a synthetic shadow log with known answers the scorer reproduces recall, time-to-alert and false-alert load exactly; arm labels absent from the adjudication sheet"

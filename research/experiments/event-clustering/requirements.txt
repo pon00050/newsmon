@@ -1,0 +1,8 @@
+# R6 corpus + clustering (2026-11-25). Two venvs were used only because of Windows MAX_PATH breakage (see RESULTS.md)
+feedparser==6.0.14
+requests==2.34.2
+trafilatura==2.4.0
+python-dotenv==1.2.4
+numpy==2.5.5
+scipy==1.18.1
+scikit-learn==1.9.1

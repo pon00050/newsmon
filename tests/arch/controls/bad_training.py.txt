@@ -1,0 +1,4 @@
+# CONTROL (TS-ARCH-05): a fine-tuning call.
+def train(client):
+    job = client.fine_tuning.jobs.create(training_file="file-abc", model="gpt")
+    return client.post("/v1/fine_tunes", {})

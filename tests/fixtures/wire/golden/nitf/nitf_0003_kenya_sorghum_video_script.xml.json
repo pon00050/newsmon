@@ -1,0 +1,27 @@
+{
+  "format": "nitf",
+  "items": [
+    {
+      "uri": "nitf-synth-20261124-0003",
+      "version": 1,
+      "type": "text",
+      "headline": "Farmers in Kenya turn to drought-resistant sorghum",
+      "slugline": "KENYA-DROUGHT-SORGHUM",
+      "located": "Kitui",
+      "language": "en",
+      "urgency": 5,
+      "versioncreated": "2026-11-24T06:00:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": "Video script: smallholders replace maize after three failed rainy seasons.",
+      "body_text": "Smallholder farmers in Kenya's Kitui county are replacing maize with drought-resistant sorghum after three failed rainy seasons, agricultural officers said.\n\nA local cooperative said yields from the new seed had held up even with half the usual rainfall, and that a brewery had agreed to buy part of the harvest.",
+      "associations": {
+        "shotlist": "1. Wide of dry maize field under clear sky\n2. Mid of farmer walking between sorghum rows\n3. Close-up of sorghum heads\n4. SOUNDBITE (Kamba) farmer, cooperative member: \"Last year we lost everything. This year we will harvest.\"\n5. Various of women threshing grain at cooperative store\n6. Wide of trucks being loaded with sacks"
+      },
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

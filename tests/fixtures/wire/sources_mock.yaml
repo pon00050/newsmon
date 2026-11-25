@@ -1,0 +1,49 @@
+# SYNTHETIC FIXTURE: mock source registrations for the synthetic wire inbox (ADR-010 §8).
+# These licence flags are synthetic examples chosen to exercise the licence gate. They are NOT a statement about
+# any real agency contract or what any real licence permits. Keys use the source table's column names.
+sources:
+  - key: mock_wire_gated
+    name: "Mock wire (gated)"
+    access_method: directory
+    is_wire: true
+    lang_default: en
+    storage: full
+    display: full
+    ai_processing: "yes"
+    permitted_ops: []
+    external_ai_allowed: false
+    redistribution: none
+    third_party_processors_allowed: false
+    authorised_users: internal
+    licence_owner: tenant
+    retention_days: 7
+    licence_holder: "Synthetic Test Org"
+    agreement_ref: "SYNTH-GATED-001"
+    valid_until: "2027-12-31"
+    attested_by: fixture-loader
+    attested_on: "2026-11-25"
+    synthetic: true
+    allowed_contexts: [private, internal]
+
+  - key: mock_wire_demo
+    name: "Mock wire (demo)"
+    access_method: directory
+    is_wire: true
+    lang_default: en
+    storage: full
+    display: full
+    ai_processing: "yes"
+    permitted_ops: [classify, summarise, translate, embed]
+    external_ai_allowed: true
+    redistribution: internal
+    third_party_processors_allowed: false
+    authorised_users: internal
+    licence_owner: tenant
+    retention_days: 30
+    licence_holder: "Synthetic Test Org"
+    agreement_ref: "SYNTH-DEMO-001"
+    valid_until: "2027-12-31"
+    attested_by: fixture-loader
+    attested_on: "2026-11-25"
+    synthetic: true
+    allowed_contexts: [private, internal]

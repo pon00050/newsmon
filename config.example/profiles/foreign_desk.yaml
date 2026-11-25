@@ -1,0 +1,38 @@
+key: foreign_desk
+name: 외신 데스크 (야간)
+languages: [en, ko, zh]
+countries: [US, CN, JP, KP, TW, RU, UA]
+topics:
+  - {label: 한반도, keywords: {ko: [북한, 김정은, 김여정, 미사일], en: ["North Korea", "Kim Jong Un", Pyongyang], zh: [朝鲜, 金正恩]}}
+  - {label: 미중, keywords: {en: ["export controls", tariff, Taiwan Strait], ko: [수출통제, 관세], zh: [出口管制, 关税]}}
+entities: [kim_yo_jong, xi_jinping, us_commerce_dept]
+exclude_keywords: {en: [horoscope, "live scores"]}
+sources:
+  prefer: {mock_wire_demo: 3.0, yna_intl: 1.5, guardian_world: 1.2}
+  mute: [sec_edgar_atom_8k]
+priority_rules:
+  - id: wire_flash
+    when: {source_is_wire: true, urgency_lte: 2}
+    band: flash
+  - id: watch_entity_multi
+    when: {entity_hit: true, independent_sources_gte: 3, within_hours: 6}
+    band: flash
+  - id: topic_hit
+    when: {topic_hit: true}
+    band: review
+thresholds:
+  independent_sources_for_report: 2
+  spike_z: 2.5
+  spike_min_count: 5
+  ai_band_weight: 1.0
+alerts:
+  flash: {channels: [inapp, email], recipients: [desk@internal], auto_send: true}
+  feed_incident: {channels: [inapp, email], recipients: [ops@internal], external_notice: draft_only}
+schedules:
+  - {edition: morning, at: "07:00", tz: Asia/Seoul, window_hours: 12, max_items: 15, recipients: [desk@internal]}
+  - {edition: handoff, at: "09:00", tz: Asia/Seoul, window: shift, recipients: [desk@internal]}
+review_required: true
+ai:                                               # guidance for the optional AI assessment (Release A.1)
+  instructions: "한국 방송사 외신 데스크. 한반도, 미중 관계, 동아시아 안보, 한국 경제에 영향을 주는 국제 뉴스를 중시한다."
+  relevance_targets: [대한민국, 북한, 반도체 산업, 한국 수출 기업]
+  topic_labels: [한반도, 미중, 동아시아 안보, 경제, 분쟁, 외교, 재난]

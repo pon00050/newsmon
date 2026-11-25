@@ -1,0 +1,10 @@
+Newsmon
+Copyright 2026 The Newsmon Authors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+Research documents in research/ and the synthetic demonstration data in demo/ are licensed under the
+Creative Commons Attribution 4.0 International licence (see LICENSE-CC-BY-4.0.txt).
+Third-party packages and their licences are listed in THIRD_PARTY_NOTICES.md.
+Third-party material quoted in research/ (statute and court-decision text, licence and terms-of-service excerpts,
+job-advertisement duty phrases, cited news headlines) keeps its own status and is not licensed by this project.
+News content collected or linked by Newsmon belongs to its publishers.

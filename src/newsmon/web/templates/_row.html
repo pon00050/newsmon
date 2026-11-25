@@ -1,0 +1,24 @@
+<tr data-uid="{{ r.uid }}">
+  <td><span class="band band-{{ r.final_band }}">{{ band_ko.get(r.final_band, '-') }}</span>
+      {% if r.rule_score is not none %}<div class="muted">{{ '%.1f'|format(r.rule_score) }}</div>{% endif %}</td>
+  <td class="muted">{{ lang_ko.get(r.lang, r.lang or '-') }}</td>
+  <td>
+    <a href="/article/{{ r.uid }}" class="headline">{{ r.headline or '(표시 제한)' }}</a>
+    {% if r.dup_count %}<span class="tag">중복 {{ r.dup_count }}</span>{% endif %}
+    {% if r.urgency is not none and r.urgency <= 2 %}<span class="tag err">긴급 {{ r.urgency }}</span>{% endif %}
+    {% if r.restricted %}<span class="tag">제한 표시</span>{% endif %}
+    {% if r.synthetic %}<span class="tag">합성</span>{% endif %}
+    {% if r.injection_flag %}<span class="tag err">⚠ 주입 의심</span>{% endif %}
+    {% if r.ai_tag %}<span class="tag">{{ r.ai_tag }}</span>{% endif %}
+    {% if r.summary %}<div class="muted">{{ r.summary }}</div>{% endif %}
+    {% if r.ai %}<div class="ai-line" data-ai="1"><span class="label">AI 생성</span>
+      {% if r.ai.band %}<span class="tag">AI {{ band_ko.get(r.ai.band, r.ai.band) }}</span>{% endif %}
+      {% if r.ai.importance %}<span class="tag">중요도 {{ r.ai.importance }}</span>{% endif %}
+      {% for t in r.ai.topics %}<span class="tag">{{ t }}</span>{% endfor %}
+      {% if r.ai.headline_ko %}<div>{{ r.ai.headline_ko }}</div>{% endif %}
+    </div>{% endif %}
+  </td>
+  <td class="muted">{{ r.source_name }}</td>
+  <td class="muted hide-sm">{{ r.seen_kst }}</td>
+  <td class="hide-sm">{% if r.link %}<a href="{{ r.link }}" rel="noopener noreferrer nofollow" target="_blank">원문</a>{% endif %}</td>
+</tr>

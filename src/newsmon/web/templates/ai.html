@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}AI 보강{% endblock %}
+{% block content %}
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+<h3>선택적 AI 보강 (Release A.1)</h3>
+<p>AI는 결정론적 처리(수집·중복 제거·규칙 순위·검색)를 대체하지 않고 보완합니다. 소스의 라이선스 플래그가 명시적으로 허용한 항목만 전송됩니다.</p>
+<table style="width:auto">
+  <tr><th>상태</th><td><b>{{ ai.label }}</b>{% if not ai.configured %} <span class="muted">({{ ai.reason or '설정되지 않음' }})</span>{% endif %}
+      {% if ai.paused %} <span class="tag">일시 중지됨</span>{% endif %}</td></tr>
+  <tr><th>모델</th><td>{{ ai.model }}</td></tr>
+  <tr><th>오늘 사용액 (KST)</th><td>${{ '%.4f'|format(ai.spent_today) }} / 한도 ${{ '%.2f'|format(ai.cap) }}</td></tr>
+  <tr><th>누적 호출</th><td>{{ ai.totals.calls }}회 · 입력 {{ ai.totals.input_tokens }} / 출력 {{ ai.totals.output_tokens }} 토큰 · ${{ '%.4f'|format(ai.totals.cost_usd) }}</td></tr>
+  <tr><th>항목 상태</th><td>{% for k, v in ai.status_counts.items() %}<span class="tag">{{ k }} {{ v }}</span>{% endfor %}</td></tr>
+  <tr><th>이전 설정으로 평가된 항목</th><td>{{ ai.stale }}건{% if ai.stale %} <span class="muted">프로필·모델·프롬프트가 바뀐 뒤 다시 평가되지 않았습니다. 자동으로 재평가하지 않습니다. 필요하면 <code>newsmon enrich --stale --limit N</code></span>{% endif %}</td></tr>
+  {% if ai.last_error %}<tr><th>마지막 공급자 오류</th><td class="err">{{ ai.last_error }}</td></tr>{% endif %}
+</table>
+{% if ai.configured %}
+<form method="post" action="/ai/toggle"><button type="submit">{% if ai.paused %}AI 다시 켜기{% else %}AI 일시 중지{% endif %}</button></form>
+{% else %}
+<p class="muted">켜려면 settings.yaml에서 <code>ai.capabilities.enrich: true</code>로 설정하고 환경 변수 또는 &lt;config&gt;/.env에 API 키를 두세요.</p>
+{% endif %}
+<h3>검토 필요 (검증 실패 2회)</h3>
+<table>
+  <thead><tr><th>기사</th><th>상태</th><th>시각</th></tr></thead>
+  <tbody>
+  {% for x in ai.review %}<tr><td><a href="/article/{{ x.uid }}">{{ x.headline or '(표시 제한)' }}</a></td><td>review</td><td class="muted">{{ x.last_attempt_utc or '' }}</td></tr>
+  {% else %}<tr><td colspan="3" class="muted">없음</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

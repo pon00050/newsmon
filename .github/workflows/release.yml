@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to (re)build the release for, e.g. v0.1.0"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows-portable:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - name: Tests before packaging
+        run: |
+          uv sync --frozen --all-groups
+          uv run --frozen pytest -q -m "not live and not slow"
+      - name: Build portable app (PyInstaller onedir)
+        shell: pwsh
+        run: ./packaging/build_windows.ps1 -Out "$env:RUNNER_TEMP\nb" -Zip
+      - name: Smoke-test the frozen app
+        shell: pwsh
+        run: |
+          $env:NEWSMON_CONFIG_DIR = "$env:RUNNER_TEMP\smoke\config"
+          $env:NEWSMON_DATA_DIR = "$env:RUNNER_TEMP\smoke\data"
+          $p = Start-Process -FilePath "$env:RUNNER_TEMP\nb\dist\Newsmon\Newsmon.exe" -ArgumentList "--no-browser","--port","8799" -PassThru
+          $ok = $false
+          for ($i = 0; $i -lt 60; $i++) {
+            Start-Sleep -Seconds 1
+            try { if ((Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8799/healthz -TimeoutSec 2).StatusCode -eq 200) { $ok = $true; break } } catch {}
+          }
+          Stop-Process -Id $p.Id -Force
+          if (-not $ok) { throw "frozen app did not answer /healthz" }
+          Get-ChildItem "$env:RUNNER_TEMP\nb\dist\Newsmon" -Recurse -File | Select-String -Pattern "C:\Users\runneradmin" -SimpleMatch -List | Select-Object -First 5 | ForEach-Object { Write-Host "note: build path in $($_.Path)" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-portable
+          path: ${{ runner.temp }}/nb/Newsmon-windows-x64.zip
+          retention-days: 3
+
+  publish:
+    needs: windows-portable
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-portable
+          path: out
+      - name: Assemble assets and checksums
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          case "$TAG" in v[0-9]*) ;; *) echo "unexpected tag: $TAG"; exit 1;; esac
+          VER="${TAG#v}"
+          git archive --format=zip --prefix="newsmon-${VER}/" -o "out/newsmon-${VER}-source.zip" HEAD
+          mv out/Newsmon-windows-x64.zip "out/newsmon-${VER}-windows-portable.zip"
+          (cd out && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          awk -v v="$VER" '$0 ~ "^## "v" " {f=1; next} /^## / && f {exit} f' CHANGELOG.md > notes.md
+          cat >> notes.md <<'NOTES'
+
+          ## Downloads
+
+          - **Windows, no installation:** `newsmon-*-windows-portable.zip` → extract → double-click `Newsmon\Newsmon.exe`.
+            The build is unsigned, so Windows SmartScreen may warn: choose "More info" → "Run anyway". Verify the file against `SHA256SUMS.txt`.
+          - **Windows, from source:** `newsmon-*-source.zip` → extract → double-click `Start-Newsmon.cmd` (installs uv and Python on first start).
+          - **Any OS:** clone the repository and run `uv sync --frozen && uv run newsmon-desktop`.
+
+          Settings and data are stored in `%LOCALAPPDATA%\Newsmon` (Windows). No AI key is needed.
+          NOTES
+          sed -i 's/^          //' notes.md
+      - name: Create or update the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" out/*.zip out/SHA256SUMS.txt --clobber
+            gh release edit "$TAG" --notes-file notes.md
+          else
+            gh release create "$TAG" out/*.zip out/SHA256SUMS.txt --title "Newsmon $TAG" --notes-file notes.md
+          fi

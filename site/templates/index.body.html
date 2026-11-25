@@ -1,0 +1,42 @@
+<h1>Newsmon</h1>
+<p class="lead">A local news-monitoring tool for foreign-news desks. It collects from sources you are licensed to use, removes duplicates, ranks what is left with rules you control, and gives you a searchable queue on your own computer.</p>
+<div class="cta-row">
+  <a class="btn" href="{{root}}download.html">Download</a>
+  <a class="btn secondary" href="{{root}}dashboard.html">See the dashboard</a>
+  <a class="btn secondary" href="{{repo_url}}" rel="noopener">Source on GitHub</a>
+</div>
+
+<h2>The problem</h2>
+<p>A foreign-news desk reads many feeds and wire services in several languages. The same event arrives from five sources within minutes, the important item is buried among routine ones, and each licence limits what you may keep, show or send to an AI service. Newsmon turns that stream into one ranked queue and keeps the licence terms attached to each source, so the rules travel with the data.</p>
+
+<h2>What it does</h2>
+<div class="grid">
+  <section class="card"><h3>Collects</h3><p>Licensed RSS and Atom feeds, plus wire files dropped into an inbox folder. Only the sources you list are fetched.</p></section>
+  <section class="card"><h3>Normalises</h3><p>Different feed shapes become one record: source, language, published time, headline, link, and body where the licence allows it.</p></section>
+  <section class="card"><h3>Deduplicates</h3><p>Near-identical items from different sources collapse into one entry that shows how many duplicates it absorbed.</p></section>
+  <section class="card"><h3>Ranks by your rules</h3><p>A profile of configurable rules places each item in a band: <strong>flash</strong>, <strong>report</strong>, <strong>review</strong> or <strong>drop</strong>.</p></section>
+  <section class="card"><h3>Searchable local queue</h3><p>A web page served only on your own machine. Search in Korean, Chinese and English, filter by band, language, source and time window, and see why each item was ranked as it was.</p></section>
+  <section class="card"><h3>Optional AI enrichment</h3><p>Off unless enabled, and gated by the licence of each source. Items whose licence does not allow it are not sent.</p></section>
+  <section class="card"><h3>Windows launcher</h3><p>Double-click to set up, start the queue and open your browser. No command line needed.</p></section>
+</div>
+
+<h2>The public dashboard</h2>
+<p>The <a href="{{root}}dashboard.html">dashboard</a> shows what a run of Newsmon produces. The synthetic dataset is invented to demonstrate the interface. A live dataset, when published, contains only headlines and links from sources whose public redistribution is documented, and each source's basis is linked next to its items.</p>
+
+<h2>Limitations</h2>
+<ul>
+  <li>Newsmon is a monitoring and triage aid. It does not replace editorial judgement, and ranking is only as good as the profile rules you write.</li>
+  <li>It collects only from sources you configure. It does not discover feeds, scrape pages or bypass paywalls.</li>
+  <li>Licence handling is a safeguard, not legal advice. You are responsible for confirming that your agreements allow what you configure.</li>
+  <li>It runs on one machine for one desk. It is not a hosted service and has no multi-user accounts.</li>
+  <li>The one-click launcher is for Windows. On other systems, run it from source.</li>
+  <li>Pre-release software, version {{version}}. Expect rough edges and report them.</li>
+</ul>
+
+<h2>Next steps</h2>
+<ul>
+  <li><a href="{{root}}download.html">Download and install</a></li>
+  <li><a href="{{root}}docs/index.html">Documentation</a></li>
+  <li><a href="{{root}}research/index.html">Research behind the design</a></li>
+  <li><a href="{{repo_url}}/issues" rel="noopener">Issues and questions</a></li>
+</ul>

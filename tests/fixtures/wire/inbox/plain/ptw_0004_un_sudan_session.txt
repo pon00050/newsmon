@@ -1,0 +1,17 @@
+SYNTHETIC: true
+ID: PTW-20261124-0004
+VERSION: 1
+VERSIONCREATED: 2026-11-24T19:20:00+00:00
+LANGUAGE: en
+URGENCY: 3
+SLUG: SUDAN-UN-SESSION
+HEADLINE: UN Security Council schedules emergency session on Sudan ceasefire
+DATELINE: UNITED NATIONS
+BODY:
+The UN Security Council will hold an emergency session on Thursday to discuss the collapsing ceasefire in Sudan, diplomats said, after renewed fighting around El Fasher killed dozens of civilians.
+
+The session was requested by several council members after aid agencies said
+convoys had been unable to reach the city for more than a week.
+
+A spokesperson for the UN secretary-general called on all parties to return to
+the truce agreed last month.

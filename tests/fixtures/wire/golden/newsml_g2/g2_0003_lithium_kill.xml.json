@@ -1,0 +1,25 @@
+{
+  "format": "newsml_g2",
+  "items": [
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0003",
+      "version": 2,
+      "type": "text",
+      "headline": "KILL: Chilean lawmakers approve lithium royalty bill",
+      "slugline": "CHILE-LITHIUM",
+      "located": "Santiago",
+      "language": "en",
+      "urgency": 1,
+      "versioncreated": "2026-11-24T14:02:00Z",
+      "firstcreated": "2026-11-24T13:10:00Z",
+      "pubstatus": "canceled",
+      "description_text": null,
+      "body_text": "Editors: The story slugged CHILE-LITHIUM, sent at 1310 GMT, has been withdrawn. The vote was postponed and did not take place. Please do not use.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

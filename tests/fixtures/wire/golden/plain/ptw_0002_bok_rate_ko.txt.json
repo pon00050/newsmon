@@ -1,0 +1,25 @@
+{
+  "format": "plain",
+  "items": [
+    {
+      "uri": "PTW-20261124-0002",
+      "version": 1,
+      "type": "text",
+      "headline": "한국은행, 기준금리 연 3.00%로 동결",
+      "slugline": "KOREA-BOK-RATE",
+      "located": "서울",
+      "language": "ko",
+      "urgency": 3,
+      "versioncreated": "2026-11-24T01:05:00Z",
+      "firstcreated": "2026-11-24T01:05:00Z",
+      "pubstatus": "usable",
+      "description_text": "물가 둔화에도 가계부채 우려로 금리 유지",
+      "body_text": "한국은행 금융통화위원회는 24일 통화정책방향 회의를 열고 기준금리를 연 3.00%로 동결했다고 밝혔다.\n\n한은은 물가 상승률이 둔화하고 있지만 가계부채 증가세와 환율 변동성을 더 지켜볼 필요가 있다고 설명했다.\n\n시장에서는 내년 상반기 중 추가 인하 가능성이 거론되고 있다.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

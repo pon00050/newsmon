@@ -1,0 +1,5 @@
+# CONTROL (TS-ARCH-01): a domain/pipeline module that imports I/O libraries.
+import sqlite3
+from httpx import Client
+import anthropic.types
+import smtplib

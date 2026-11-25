@@ -1,0 +1,25 @@
+{
+  "format": "plain",
+  "items": [
+    {
+      "uri": "PTW-20261124-0005",
+      "version": 1,
+      "type": "text",
+      "headline": "Philippine coast guard reports standoff near disputed shoal",
+      "slugline": "PHILIPPINES-SEA-STANDOFF",
+      "located": "MANILA, Philippines",
+      "language": "en",
+      "urgency": 4,
+      "versioncreated": "2026-11-24T07:10:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "The Philippine coast guard said on Tuesday that two of its vessels were in a standoff with foreign ships near a disputed shoal in the South China Sea.\n\nA coast guard spokesperson said no shots had been fired and that the vessels were holding position.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": "No use by broadcasters in the region before 1800 GMT",
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

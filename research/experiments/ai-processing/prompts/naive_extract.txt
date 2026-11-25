@@ -1,0 +1,3 @@
+Summarise this news article in Korean and extract who, what, where, when, the event type and the key claims.
+
+{ARTICLE}

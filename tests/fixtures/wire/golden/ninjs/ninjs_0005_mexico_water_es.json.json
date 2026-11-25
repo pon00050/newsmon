@@ -1,0 +1,25 @@
+{
+  "format": "ninjs",
+  "items": [
+    {
+      "uri": "urn:synthetic:ninjs:7f3e9a14",
+      "version": 1,
+      "type": "text",
+      "headline": "Ciudad de México amplía el racionamiento de agua",
+      "slugline": "MEXICO-WATER",
+      "located": "Mexico City, Mexico",
+      "language": "es",
+      "urgency": 6,
+      "versioncreated": "2026-11-24T15:10:00Z",
+      "firstcreated": "2026-11-24T15:10:00Z",
+      "pubstatus": "withheld",
+      "description_text": null,
+      "body_text": "Las autoridades de Ciudad de México ampliaron el martes los cortes programados de agua a otras seis alcaldías, debido al bajo nivel de las presas que abastecen a la capital.\n\nLos cortes se aplicarán dos días por semana hasta nuevo aviso.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

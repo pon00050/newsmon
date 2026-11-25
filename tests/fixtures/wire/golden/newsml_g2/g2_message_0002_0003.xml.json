@@ -1,0 +1,44 @@
+{
+  "format": "newsml_g2",
+  "items": [
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0002",
+      "version": 1,
+      "type": "text",
+      "headline": "Japan's central bank holds rates, signals caution on yen",
+      "slugline": "JAPAN-BOJ-RATES",
+      "located": "Tokyo",
+      "language": "en",
+      "urgency": 4,
+      "versioncreated": "2026-11-24T03:30:00Z",
+      "firstcreated": "2026-11-24T03:30:00Z",
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "The Bank of Japan kept its short-term policy rate unchanged on Tuesday and said it would watch currency moves closely, in a decision that most economists surveyed last week had expected.\n\nThe governor told reporters that a weaker yen was raising import costs for households but that wage growth needed to be confirmed before any further tightening.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    },
+    {
+      "uri": "urn:newsml:synthetic.example:20261124:gx-0003",
+      "version": 1,
+      "type": "text",
+      "headline": "Chilean lawmakers approve lithium royalty bill",
+      "slugline": "CHILE-LITHIUM",
+      "located": "Santiago",
+      "language": "en",
+      "urgency": 5,
+      "versioncreated": "2026-11-24T13:10:00Z",
+      "firstcreated": "2026-11-24T13:10:00Z",
+      "pubstatus": "usable",
+      "description_text": "Lower house passes bill raising royalties on lithium producers.",
+      "body_text": "Chile's lower house of Congress approved a bill on Tuesday that would raise royalties paid by lithium producers on a sliding scale linked to prices, sending it to the Senate.\n\nSupporters said the measure would fund regional development, while mining groups warned it could deter investment in new brine projects.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

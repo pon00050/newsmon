@@ -1,0 +1,5 @@
+# CONTROL (TS-ARCH-02): SQL outside repo/.
+def load(con):
+    return con.execute("SELECT article_id FROM article WHERE uid = ?", ("x",)).fetchall()
+
+Q = "insert into article (uid) values (?)"

@@ -1,0 +1,343 @@
+{
+  "schema": "newsmon-public/1",
+  "dataset": "synthetic",
+  "generated_utc": "2026-11-25T09:00:00Z",
+  "newsmon_version": "0.1.0",
+  "profile": {
+    "key": "foreign_desk",
+    "name": "Foreign desk (example profile)"
+  },
+  "notice": "Synthetic demonstration data: every item is fictional. It exists only to show the interface.",
+  "sources": [
+    {
+      "key": "demo-wire-a",
+      "name": "Example Wire A (fictional)",
+      "public_level": "headline",
+      "basis": "Synthetic source: no real publisher is involved.",
+      "basis_url": null,
+      "attribution": "Fictional Example Wire A",
+      "last_success_utc": "2026-11-25T08:55:00Z",
+      "last_status": "ok",
+      "items": 4
+    },
+    {
+      "key": "demo-feed-b",
+      "name": "Sample Daily Feed B (fictional)",
+      "public_level": "headline",
+      "basis": "Synthetic source: no real publisher is involved.",
+      "basis_url": null,
+      "attribution": null,
+      "last_success_utc": "2026-11-25T08:40:00Z",
+      "last_status": "ok",
+      "items": 4
+    },
+    {
+      "key": "demo-gazette-c",
+      "name": "Placeholder Gazette C (fictional)",
+      "public_level": "headline",
+      "basis": "Synthetic source: no real publisher is involved.",
+      "basis_url": null,
+      "attribution": null,
+      "last_success_utc": "2026-11-25T06:10:00Z",
+      "last_status": "stale",
+      "items": 3
+    },
+    {
+      "key": "demo-metadata-d",
+      "name": "Metadata-only Source D (fictional)",
+      "public_level": "metadata",
+      "basis": "Synthetic source: shows how a metadata-only source appears (headline withheld).",
+      "basis_url": null,
+      "attribution": null,
+      "last_success_utc": null,
+      "last_status": "error: timeout",
+      "items": 1
+    }
+  ],
+  "stats": {
+    "items": 12,
+    "duplicates_collapsed": 14,
+    "by_band": {
+      "flash": 2,
+      "report": 4,
+      "review": 4,
+      "drop": 2
+    },
+    "by_lang": {
+      "en": 6,
+      "ko": 3,
+      "zh": 3
+    },
+    "by_source": {
+      "demo-feed-b": 4,
+      "demo-wire-a": 4,
+      "demo-gazette-c": 3,
+      "demo-metadata-d": 1
+    },
+    "by_topic": {
+      "diplomacy": 3,
+      "economy": 2,
+      "energy": 2,
+      "safety": 2,
+      "trade": 2,
+      "budget": 1,
+      "central-bank": 1,
+      "education": 1,
+      "finance": 1,
+      "industry": 1,
+      "logistics": 1,
+      "politics": 1,
+      "transport": 1,
+      "weather": 1
+    }
+  },
+  "items": [
+    {
+      "uid": "syn-0001",
+      "source_key": "demo-wire-a",
+      "source_name": "Example Wire A (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-25T08:41:00Z",
+      "first_seen_utc": "2026-11-25T08:44:10Z",
+      "headline": "FICTIONAL: Republic of Examplia central bank cuts policy rate by 25 basis points",
+      "link": "https://example.com/synthetic/0001",
+      "band": "flash",
+      "score": 92.5,
+      "topics": [
+        "economy",
+        "central-bank"
+      ],
+      "entities": [
+        "Bank of Examplia"
+      ],
+      "duplicates": 3,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0002",
+      "source_key": "demo-feed-b",
+      "source_name": "Sample Daily Feed B (fictional)",
+      "lang": "ko",
+      "published_utc": "2026-11-25T08:30:00Z",
+      "first_seen_utc": "2026-11-25T08:36:42Z",
+      "headline": "가상 기사: 예시국 외교부, 시험용 회담 일정 발표",
+      "link": "https://example.com/synthetic/0002",
+      "band": "report",
+      "score": 74.0,
+      "topics": [
+        "diplomacy"
+      ],
+      "entities": [
+        "예시국 외교부"
+      ],
+      "duplicates": 1,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0003",
+      "source_key": "demo-wire-a",
+      "source_name": "Example Wire A (fictional)",
+      "lang": "zh",
+      "published_utc": "2026-11-25T07:58:00Z",
+      "first_seen_utc": "2026-11-25T08:02:31Z",
+      "headline": "虚构新闻：示例国宣布测试性贸易协定谈判",
+      "link": "https://example.com/synthetic/0003",
+      "band": "report",
+      "score": 71.2,
+      "topics": [
+        "trade",
+        "diplomacy"
+      ],
+      "entities": [
+        "示例国"
+      ],
+      "duplicates": 2,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0004",
+      "source_key": "demo-gazette-c",
+      "source_name": "Placeholder Gazette C (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-25T06:05:00Z",
+      "first_seen_utc": "2026-11-25T06:10:12Z",
+      "headline": "FICTIONAL: Port of Sampleton reports record container volumes for the demo quarter",
+      "link": null,
+      "band": "review",
+      "score": 48.3,
+      "topics": [
+        "trade",
+        "logistics"
+      ],
+      "entities": [
+        "Port of Sampleton"
+      ],
+      "duplicates": 0,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0005",
+      "source_key": "demo-feed-b",
+      "source_name": "Sample Daily Feed B (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-25T07:12:00Z",
+      "first_seen_utc": "2026-11-25T07:20:05Z",
+      "headline": "FICTIONAL: Demo Motors recalls 12,000 imaginary vehicles over a made-up software fault",
+      "link": "https://example.com/synthetic/0005",
+      "band": "report",
+      "score": 66.8,
+      "topics": [
+        "industry",
+        "safety"
+      ],
+      "entities": [
+        "Demo Motors"
+      ],
+      "duplicates": 1,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0006",
+      "source_key": "demo-wire-a",
+      "source_name": "Example Wire A (fictional)",
+      "lang": "ko",
+      "published_utc": "2026-11-25T05:50:00Z",
+      "first_seen_utc": "2026-11-25T05:58:00Z",
+      "headline": "가상 기사: 예시시 시의회, 시범 예산안 통과",
+      "link": "https://example.com/synthetic/0006",
+      "band": "review",
+      "score": 41.0,
+      "topics": [
+        "politics",
+        "budget"
+      ],
+      "entities": [
+        "예시시 시의회"
+      ],
+      "duplicates": 0,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0007",
+      "source_key": "demo-feed-b",
+      "source_name": "Sample Daily Feed B (fictional)",
+      "lang": "zh",
+      "published_utc": "2026-11-25T04:20:00Z",
+      "first_seen_utc": "2026-11-25T04:31:15Z",
+      "headline": "虚构新闻：样本市气象台发布演示用台风预警",
+      "link": "https://example.com/synthetic/0007",
+      "band": "flash",
+      "score": 88.1,
+      "topics": [
+        "weather",
+        "safety"
+      ],
+      "entities": [
+        "样本市气象台"
+      ],
+      "duplicates": 4,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0008",
+      "source_key": "demo-gazette-c",
+      "source_name": "Placeholder Gazette C (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-24T22:00:00Z",
+      "first_seen_utc": "2026-11-24T22:07:30Z",
+      "headline": "FICTIONAL: Placeholder University opens an invented research centre",
+      "link": "https://example.com/synthetic/0008",
+      "band": "drop",
+      "score": 12.4,
+      "topics": [
+        "education"
+      ],
+      "entities": [
+        "Placeholder University"
+      ],
+      "duplicates": 0,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0009",
+      "source_key": "demo-metadata-d",
+      "source_name": "Metadata-only Source D (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-25T03:15:00Z",
+      "first_seen_utc": "2026-11-25T03:20:00Z",
+      "headline": null,
+      "link": null,
+      "band": "review",
+      "score": 39.5,
+      "topics": [
+        "energy"
+      ],
+      "entities": [],
+      "duplicates": 0,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0010",
+      "source_key": "demo-wire-a",
+      "source_name": "Example Wire A (fictional)",
+      "lang": "en",
+      "published_utc": "2026-11-25T02:40:00Z",
+      "first_seen_utc": "2026-11-25T02:44:44Z",
+      "headline": "FICTIONAL: Exampleland and Samplestan sign a pretend energy memorandum",
+      "link": "https://example.com/synthetic/0010",
+      "band": "report",
+      "score": 69.9,
+      "topics": [
+        "energy",
+        "diplomacy"
+      ],
+      "entities": [
+        "Exampleland",
+        "Samplestan"
+      ],
+      "duplicates": 2,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0011",
+      "source_key": "demo-feed-b",
+      "source_name": "Sample Daily Feed B (fictional)",
+      "lang": "ko",
+      "published_utc": "2026-11-24T23:30:00Z",
+      "first_seen_utc": "2026-11-24T23:41:00Z",
+      "headline": "가상 기사: 시험 항공사, 가짜 노선 폐지 발표",
+      "link": "https://example.com/synthetic/0011",
+      "band": "drop",
+      "score": 18.7,
+      "topics": [
+        "transport"
+      ],
+      "entities": [
+        "시험 항공사"
+      ],
+      "duplicates": 0,
+      "synthetic": true
+    },
+    {
+      "uid": "syn-0012",
+      "source_key": "demo-gazette-c",
+      "source_name": "Placeholder Gazette C (fictional)",
+      "lang": "zh",
+      "published_utc": "2026-11-24T21:10:00Z",
+      "first_seen_utc": "2026-11-24T21:15:20Z",
+      "headline": "虚构新闻：示例银行发布演示用季度财报",
+      "link": "https://example.com/synthetic/0012",
+      "band": "review",
+      "score": 44.2,
+      "topics": [
+        "economy",
+        "finance"
+      ],
+      "entities": [
+        "示例银行"
+      ],
+      "duplicates": 1,
+      "synthetic": true
+    }
+  ]
+}

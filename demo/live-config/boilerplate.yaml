@@ -1,0 +1,10 @@
+# Per-source strip patterns, live-blog patterns and story_key rules (regex; validated at load). Extended by T-18/T-20.
+sources:
+  guardian_world:
+    live_patterns: ['(?i)\blive\b\s*:', '(?i)as it happened']
+  yna_news:
+    story_key_rule: '\s*\((종합|[0-9]+보)\)\s*$'
+  yna_intl:
+    story_key_rule: '\s*\((종합|[0-9]+보)\)\s*$'
+  yna_nk:
+    story_key_rule: '\s*\((종합|[0-9]+보)\)\s*$'

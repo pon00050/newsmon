@@ -1,0 +1,6 @@
+{
+  "x_synthetic": true,
+  "uri": "urn:synthetic:ninjs:bad-0001",
+  "type": "text",
+  "headline": "Unterminated string and trailing comma,
+  "body_text": "x",

@@ -1,0 +1,28 @@
+# environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+# runtime state: never commit databases, logs or secrets
+data/
+*.sqlite
+*.sqlite-*
+*.db
+*.jsonl
+.env
+*.env
+.live-state/
+reports/
+checkpoints/
+# private corpus fixtures (captured third-party news; not redistributable)
+tests/fixtures/feeds/
+tests/fixtures/gold/
+# build outputs
+_site/
+_build/
+dist/
+build/
+packaging/dist/
+packaging/build/

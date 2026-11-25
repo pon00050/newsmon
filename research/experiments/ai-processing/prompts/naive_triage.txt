@@ -1,0 +1,5 @@
+Rate how relevant this news item is for the desk described below (score 0-100) and say why in Korean.
+
+{DESK_PROFILE}
+
+{ARTICLE}

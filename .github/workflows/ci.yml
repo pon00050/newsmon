@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install (locked)
+        run: uv sync --frozen --all-groups
+      - name: Regression gate (no network, no AI)
+        run: uv run --frozen pytest -q -m "not live and not slow"
+      - name: Launcher smoke test (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: call Start-Newsmon.cmd --check
+
+  release-checks:
+    name: Licences, public data and site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --all-groups
+      - name: Third-party licences are current and allowed
+        run: uv run --frozen python scripts/third_party_notices.py --check
+      - name: Synthetic dashboard data through the real pipeline and the publication gate
+        run: uv run --frozen python scripts/build_public_data.py synthetic --out _build/data/synthetic.json
+      - name: Build the website (validates every dashboard file against the public contract)
+        run: uv run --frozen python scripts/build_site.py --out _site --data _build/data
+      - name: Public artifact check
+        run: uv run --frozen python scripts/check_public_artifacts.py _site
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks (full history)
+        run: |
+          curl -fsSL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks git --redact --verbose --exit-code 1 .

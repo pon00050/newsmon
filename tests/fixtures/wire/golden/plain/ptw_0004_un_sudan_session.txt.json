@@ -1,0 +1,25 @@
+{
+  "format": "plain",
+  "items": [
+    {
+      "uri": "PTW-20261124-0004",
+      "version": 1,
+      "type": "text",
+      "headline": "UN Security Council schedules emergency session on Sudan ceasefire",
+      "slugline": "SUDAN-UN-SESSION",
+      "located": "UNITED NATIONS",
+      "language": "en",
+      "urgency": 3,
+      "versioncreated": "2026-11-24T19:20:00Z",
+      "firstcreated": null,
+      "pubstatus": "usable",
+      "description_text": null,
+      "body_text": "The UN Security Council will hold an emergency session on Thursday to discuss the collapsing ceasefire in Sudan, diplomats said, after renewed fighting around El Fasher killed dozens of civilians.\n\nThe session was requested by several council members after aid agencies said convoys had been unable to reach the city for more than a week.\n\nA spokesperson for the UN secretary-general called on all parties to return to the truce agreed last month.",
+      "associations": {},
+      "renditions": [],
+      "restrictions": null,
+      "media_refs": []
+    }
+  ],
+  "synthetic": true
+}

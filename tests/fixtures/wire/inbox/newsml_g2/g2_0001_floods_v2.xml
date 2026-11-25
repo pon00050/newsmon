@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: project-made text, not agency copy -->
+<newsItem xmlns="http://iptc.org/std/nar/2006-10-01/" guid="urn:newsml:synthetic.example:20261124:gx-0001" version="2" standard="NewsML-G2" standardversion="2.33" conformance="power" xml:lang="en">
+  <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_38.xml"/>
+  <rightsInfo>
+    <copyrightHolder literal="Synthetic Test Org"/>
+    <copyrightNotice>Synthetic fixture text written for the newsmon project.</copyrightNotice>
+  </rightsInfo>
+  <itemMeta>
+    <itemClass qcode="ninat:text"/>
+    <provider literal="synthetic.example"/>
+    <versionCreated>2026-11-24T13:05:00+01:00</versionCreated>
+    <firstCreated>2026-11-24T09:40:00+01:00</firstCreated>
+    <pubStatus qcode="stat:usable"/>
+  </itemMeta>
+  <contentMeta>
+    <urgency>2</urgency>
+    <located type="cptype:city">
+      <name>Bologna</name>
+    </located>
+    <language tag="en"/>
+    <slugline>ITALY-FLOODS</slugline>
+    <headline>Floods force thousands from homes in northern Italy as river crests</headline>
+    <description role="drol:summary">Evacuations widen in Emilia-Romagna; one person missing.</description>
+  </contentMeta>
+  <contentSet>
+    <inlineXML contenttype="application/xhtml+xml">
+      <html xmlns="http://www.w3.org/1999/xhtml">
+        <head><title>ITALY-FLOODS</title></head>
+        <body>
+          <p>
+            More than 4,000 people were moved from their homes in the northern Italian region of Emilia-Romagna on Tuesday as the Reno river crested after two days of heavy rain, civil protection officials said.
+          </p>
+          <p>
+            One elderly man was reported missing near the town of Budrio after his car was swept off a flooded road, the regional government said.
+          </p>
+          <p>
+            Schools in seven towns will stay closed on Wednesday and rail services between Bologna and Ferrara were suspended.
+          </p>
+        </body>
+      </html>
+    </inlineXML>
+  </contentSet>
+</newsItem>

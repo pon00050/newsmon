@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: project-made text, not agency copy -->
+<nitf version="-//IPTC//DTD NITF 3.6//EN" change.date="2012-10-01" change.time="19:30" baselang="en">
+  <head>
+    <title>Aid convoy reaches besieged town in eastern Congo</title>
+    <docdata management-status="usable">
+      <doc-id regsrc="SYNTH" id-string="nitf-synth-20261124-0001"/>
+      <urgency ed-urg="4"/>
+      <date.issue norm="20261124T075500+0200"/>
+      <du-key generation="1" part="1" version="1" key="CONGO-AID-CONVOY"/>
+      <doc.copyright year="2026" holder="Synthetic Test Org"/>
+    </docdata>
+  </head>
+  <body>
+    <body.head>
+      <hedline>
+        <hl1>Aid convoy reaches besieged town in eastern Congo</hl1>
+      </hedline>
+      <dateline>
+        <location><city>Goma</city></location>
+      </dateline>
+    </body.head>
+    <body.content>
+      <block>
+        <p>A convoy of 14 trucks carrying food and medical supplies reached the town of Sake in eastern Congo on Tuesday, the first aid to arrive in three weeks, a humanitarian coordinator said.</p>
+        <p>Fighting between government forces and rebels had cut the main road west of Goma, leaving an estimated 40,000 displaced people without regular supplies.</p>
+      </block>
+    </body.content>
+  </body>
+</nitf>

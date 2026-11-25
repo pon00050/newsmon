@@ -1,0 +1,35 @@
+{
+  "x_synthetic": true,
+  "uri": "a1b2c3d4e5f6",
+  "type": "video",
+  "version": "2",
+  "versioncreated": "2026-11-24T14:05:00Z",
+  "firstcreated": "2026-11-24T11:30:00Z",
+  "pubstatus": "usable",
+  "urgency": 4,
+  "headline": "Drone footage shows scale of wildfire damage in Greek island village",
+  "slugline": "GREECE-WILDFIRE-DRONE",
+  "located": "Evia, Greece",
+  "language": "en",
+  "description_text": "Aerial video of burned homes and olive groves after a wildfire on Evia.",
+  "body_text": "Drone footage filmed on Tuesday showed burned homes and blackened olive groves around a village on the Greek island of Evia, a day after firefighters brought a wildfire under control.\n\nThe fire service said 60 homes had been damaged and that no injuries had been reported.",
+  "subjects": [
+    {
+      "name": "wildfire",
+      "uri": "synthetic:subject:wildfire"
+    }
+  ],
+  "renditions": [
+    {
+      "name": "main",
+      "href": "a1b2c3d4e5f6--2--0c4d2e7a.mp4",
+      "contenttype": "video/mp4",
+      "duration": 72,
+      "width": 1920,
+      "height": 1080,
+      "sizeinbytes": 2048
+    }
+  ],
+  "associations": {},
+  "usageterms": "Synthetic fixture text written for the newsmon project. Internal testing only."
+}

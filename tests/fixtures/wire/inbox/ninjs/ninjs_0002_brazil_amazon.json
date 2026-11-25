@@ -1,0 +1,24 @@
+{
+  "x_synthetic": true,
+  "uri": "urn:synthetic:ninjs:7f3e9a11",
+  "type": "text",
+  "version": "3",
+  "versioncreated": "2026-11-24T18:40:00Z",
+  "firstcreated": "2026-11-24T15:02:00Z",
+  "pubstatus": "usable",
+  "urgency": 5,
+  "headline": "Brazil's Senate passes deforestation monitoring law",
+  "slugline": "BRAZIL-AMAZON-LAW",
+  "located": "Brasilia, Brazil",
+  "language": "en",
+  "body_text": "Brazil's Senate passed a law on Tuesday requiring satellite monitoring reports on deforestation to be published every month, sending the bill to the president.\n\nEnvironmental groups welcomed the vote, while farm lobby senators said the rules would add costs for producers.",
+  "subjects": [
+    {
+      "name": "environment",
+      "uri": "synthetic:subject:environment"
+    }
+  ],
+  "renditions": [],
+  "associations": {},
+  "usageterms": "Synthetic fixture text written for the newsmon project. Internal testing only."
+}

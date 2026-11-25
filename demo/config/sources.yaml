@@ -1,0 +1,19 @@
+# Public demonstration: one synthetic wire inbox. Every item is fictional (see demo/README.md).
+# This is the only kind of source the synthetic dashboard publishes. Public redistribution is a separate,
+# deny-by-default permission (docs/PUBLICATION_POLICY.md); here it is granted because the project wrote the text.
+sources:
+- key: demo_wire
+  name: Newsmon synthetic demo wire
+  access_method: directory
+  path: inbox/demo
+  is_wire: true
+  storage: full
+  display: full
+  ai_processing: 'no'
+  licence_owner: provider
+  synthetic: true
+  allowed_contexts: [private, internal]
+  attribution_text: Fictional items written for the Newsmon project
+  public_redistribution: headline
+  public_redistribution_basis: Synthetic, fictional items written for the Newsmon project and distributed with its source code.
+  public_redistribution_url: https://github.com/pon00050/newsmon/tree/main/demo

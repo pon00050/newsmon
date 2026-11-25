@@ -1,0 +1,25 @@
+# Profile for the public synthetic demonstration. Same rule engine and schema as config.example/profiles.
+key: demo_desk
+name: Demo foreign-news desk
+languages: [en, ko, zh]
+topics:
+  - {label: Korean Peninsula, keywords: {ko: [북한, 평양], en: ["North Korea", Pyongyang], zh: [朝鲜, 平壤]}}
+  - {label: Trade and tariffs, keywords: {en: [tariff, tariffs, "export controls"], ko: [관세, 수출통제], zh: [关税, 出口管制]}}
+  - {label: Semiconductors, keywords: {en: [semiconductor, lithography, chip], ko: [반도체], zh: [半导体]}}
+  - {label: Taiwan Strait, keywords: {en: ["Taiwan Strait"], ko: [대만해협], zh: [台湾海峡]}}
+  - {label: Energy, keywords: {en: [grid-storage, energy, solar], ko: [에너지, 태양광], zh: [能源, 光伏]}}
+  - {label: Shipping and ports, keywords: {en: [port, harbor, container], ko: [항만, 컨테이너], zh: [港口, 集装箱]}}
+  - {label: Weather and disasters, keywords: {en: [storm, "heavy rain", flood], ko: [호우, 태풍, 소나기], zh: [暴雨, 台风]}}
+entities: [north_korea, taiwan]
+exclude_keywords: {en: [horoscope, "live scores"]}
+sources:
+  prefer: {demo_wire: 1.0}
+priority_rules:
+  - id: wire_flash
+    when: {source_is_wire: true, urgency_lte: 2}
+    band: flash
+  - id: topic_hit
+    when: {topic_hit: true}
+    band: review
+thresholds:
+  independent_sources_for_report: 2

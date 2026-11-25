@@ -1,0 +1,16 @@
+SYNTHETIC: true
+ID: PTW-20261124-0005
+VERSION: 1
+VERSIONCREATED: 2026-11-24T15:10:00+08:00
+LANGUAGE: en
+URGENCY: 4
+SLUG: PHILIPPINES-SEA-STANDOFF
+HEADLINE: Philippine coast guard reports standoff near disputed shoal
+DATELINE: MANILA, Philippines
+RESTRICTIONS: No use by broadcasters in the region before 1800 GMT
+BODY:
+The Philippine coast guard said on Tuesday that two of its vessels were in a
+standoff with foreign ships near a disputed shoal in the South China Sea.
+
+A coast guard spokesperson said no shots had been fired and that the vessels
+were holding position.

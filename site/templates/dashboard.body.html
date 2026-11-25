@@ -1,0 +1,44 @@
+<h1>Dashboard</h1>
+<noscript><div class="notice"><p>This dashboard needs JavaScript to load and filter its data. The raw data is plain JSON: <a href="{{root}}data/synthetic.json">synthetic.json</a>.</p></div></noscript>
+<div id="banner" class="banner synthetic" role="status" hidden></div>
+<div id="error" class="error-box" role="alert" hidden></div>
+<fieldset class="dataset-toggle" id="dataset-toggle" hidden>
+  <legend>Dataset</legend>
+  <label><input type="radio" name="dataset" value="live"> Live</label>
+  <label><input type="radio" name="dataset" value="synthetic"> Synthetic</label>
+</fieldset>
+<div id="app" hidden>
+  <section aria-labelledby="h-run">
+    <h2 id="h-run">This dataset</h2>
+    <dl class="meta-list" id="meta"></dl>
+  </section>
+  <section aria-labelledby="h-stats">
+    <h2 id="h-stats">Collection statistics</h2>
+    <div class="stat-cards" id="stat-cards"></div>
+    <div class="breakdowns" id="breakdowns"></div>
+  </section>
+  <section aria-labelledby="h-sources">
+    <h2 id="h-sources">Source coverage</h2>
+    <div class="table-wrap"><table id="sources-table">
+      <caption class="small muted" style="text-align:left;padding:0.4rem 0.7rem;caption-side:bottom">Public level &ldquo;headline&rdquo; means headline and link may be shown; &ldquo;metadata&rdquo; means counts and metadata only.</caption>
+      <thead><tr><th scope="col">Source</th><th scope="col">Public level</th><th scope="col">Basis</th><th scope="col">Items</th><th scope="col">Last success</th><th scope="col">Status</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+  <section aria-labelledby="h-items">
+    <h2 id="h-items">Items</h2>
+    <form class="controls" id="controls" role="search" aria-label="Filter items">
+      <div class="search"><label for="q">Search headline, topic, entity or source</label><input id="q" type="search" autocomplete="off" spellcheck="false"></div>
+      <div><label for="f-band">Band</label><select id="f-band"></select></div>
+      <div><label for="f-lang">Language</label><select id="f-lang"></select></div>
+      <div><label for="f-source">Source</label><select id="f-source"></select></div>
+      <div><label for="f-topic">Topic</label><select id="f-topic"></select></div>
+      <div><label for="f-sort">Sort</label><select id="f-sort"><option value="priority">Priority</option><option value="newest">Newest first</option></select></div>
+      <button type="button" id="reset">Reset filters</button>
+    </form>
+    <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+    <ol class="items" id="items"></ol>
+    <button type="button" id="more-btn" hidden>Show more</button>
+  </section>
+</div>
+<p class="small muted">Data is loaded from <a href="{{root}}data/synthetic.json">data/synthetic.json</a> and, when published, <code>data/live.json</code>. Times are shown in your local time zone and in UTC.</p>

@@ -1,0 +1,19 @@
+SYNTHETIC: true
+ID: PTW-20261124-0003
+VERSION: 1
+VERSIONCREATED: 2026-11-24T08:35:00-05:00
+LANGUAGE: en
+URGENCY: 4
+SLUG: PERU-COPPER-STRIKE
+HEADLINE: Strike halts production at Peru's biggest copper mine
+DATELINE: LIMA, Peru
+BODY:
+Workers at Peru's biggest copper mine started an indefinite strike on Tuesday,
+halting production after wage talks with management collapsed, the miners'
+union said.
+
+About 2,300 workers joined the stoppage at the mine in the southern Andes,
+which produces roughly a fifth of Peru's copper, the union said.
+
+The company said it was open to resuming talks and that safety staff remained
+on site.

@@ -1,0 +1,78 @@
+﻿source_id,language,category,endpoint,robots_allows,status,result,latency_s,feed_format,n_entries,has_content_encoded,first_summary_chars,has_media,newest_age_h,h_etag,h_last-modified,cond_status,conditional_get,json_top_keys,n_items,discovery_basis
+ctl_known_hn,en,control,https://news.ycombinator.com/rss,True,200,ok,0.275,rss20,30,False,68,False,0.39,,,,none,,,control
+ctl_nonsense_aj,en,control,https://www.aljazeera.com/xml/rss/zz-no-such-feed-9q7.xml,True,404,http-404,0.715,,,,,,,"W/""320e9-lYNQIzvjy8sN/egI3wC+R4yCDr0""",,,,,,control
+ctl_nonsense_gdelt,en,control,https://api.gdeltproject.org/api/v2/doc/doc?query=zzqxjvkw9137&mode=artlist&format=json&timespan=1h&maxrecords=5,True,,error,,,,,,,,,,,,,,control
+bbc_world,en,publisher_rss,https://feeds.bbci.co.uk/news/world/rss.xml,True,200,ok,0.064,rss20,37,False,132,True,0.07,,,,none,,,third-party directory (feeder.co/feedspot); BBC own index page is a 2011 stub
+bbc_asia,en,publisher_rss,https://feeds.bbci.co.uk/news/world/asia/rss.xml,True,200,ok,0.271,rss20,17,False,108,True,1.64,,,,none,,,third-party directory
+guardian_world,en,publisher_rss,https://www.theguardian.com/world/rss,True,200,ok,0.026,rss20,45,False,882,True,0.12,"W/""hash-3194720478850379564""",,304,etag,,,publisher help page: add /rss to any index URL
+npr_news,en,publisher_rss,https://feeds.npr.org/1001/rss.xml,True,200,ok,0.042,rss20,10,True,193,False,7.74,,,,none,,,third-party directory
+aljazeera_all,en,publisher_rss,https://www.aljazeera.com/xml/rss/all.xml,True,200,ok,0.143,rss20,25,False,114,False,0.45,"W/""a8585d59d07fcbc7132c9bf9a195b4c8""","Wed, 25 Nov 2026 04:27:10 GMT",304,etag+last-modified,,,homepage link-alternate
+dw_en_all,en,publisher_rss,https://rss.dw.com/rdf/rss-en-all,True,200,ok,0.037,rss10,144,False,201,False,0.17,,,,none,,,third-party directory
+france24_en,en,publisher_rss,https://www.france24.com/en/rss,True,200,ok,0.052,rss20,24,False,375,True,0.87,,,,none,,,homepage link-alternate
+cna_sg_all,en,publisher_rss,https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml,True,200,ok,0.068,rss20,20,False,169,True,0.07,"""1795582256""","Wed, 25 Nov 2026 04:50:56 GMT",304,etag+last-modified,,,publisher RSS page /rss
+cna_sg_asia,en,publisher_rss,https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6511,True,200,ok,0.047,rss20,20,False,170,True,0.72,"""1795582151""","Wed, 25 Nov 2026 04:49:11 GMT",304,etag+last-modified,,,publisher RSS page /rss
+un_press,en,gov_intl,https://press.un.org/en/rss.xml,True,200,ok,0.016,rss20,10,False,180,False,3.78,"W/""1795569014""","Wed, 25 Nov 2026 01:10:14 GMT",304,etag+last-modified,,,press.un.org page anchor
+koreaherald_all,en,publisher_rss,https://www.koreaherald.com/rss/newsAll,True,200,ok,0.065,rss20,50,False,500,True,0.06,,,,none,,,homepage link-alternate
+yonhap_en,en,publisher_rss,https://en.yna.co.kr/RSS/news.xml,True,200,ok,0.034,rss20,98,False,83,True,0.4,1795582453530,"Wed, 25 Nov 2026 04:53:27 GMT",304,etag+last-modified,,,"third-party directory (feedspot, IPTC)"
+scmp_world,en,publisher_rss,https://www.scmp.com/rss/5/feed,True,200,ok,0.152,rss20,50,False,498,True,1.68,,"Wed, 25 Nov 2026 03:52:29 GMT",304,last-modified,,,scmp.com/rss index page
+scmp_china,en,publisher_rss,https://www.scmp.com/rss/4/feed,True,200,ok,0.153,rss20,50,False,495,True,1.9,,"Wed, 25 Nov 2026 04:44:38 GMT",304,last-modified,,,scmp.com/rss index page
+chinadaily_biz,en,publisher_rss,https://www.chinadaily.com.cn/rss/bizchina_rss.xml,True,404,http-404,0.223,,,,,,,"W/""67e608ea-1a8d""",,,,,,web search result
+cgtn_politics,en,publisher_rss,https://www.cgtn.com/subscribe/rss/section/politics.xml,True,200,ok,0.115,rss20,50,True,106,True,14.19,"""406b1d6c528623066e15522aeaabc406""","Tue, 24 Nov 2026 15:00:03 GMT",304,etag+last-modified,,,cgtn.com/subscribe/rss.html
+cgtn_china,en,publisher_rss,https://www.cgtn.com/subscribe/rss/section/china.xml,True,200,ok,0.205,rss20,50,True,59,True,4.26,"""19dd27a64d22c735cb4b77b7b32fb371""","Wed, 25 Nov 2026 03:00:05 GMT",304,etag+last-modified,,,cgtn.com/subscribe/rss.html
+yna_news,ko,publisher_rss,https://www.yna.co.kr/rss/news.xml,True,200,ok,0.046,rss20,120,False,57,True,0.06,1795582476597,"Wed, 25 Nov 2026 04:53:06 GMT",304,etag+last-modified,,,yna.co.kr/rss/index
+yna_intl,ko,publisher_rss,https://www.yna.co.kr/rss/international.xml,True,200,ok,0.021,rss20,120,False,83,True,0.13,1795582487952,"Wed, 25 Nov 2026 04:53:07 GMT",304,etag+last-modified,,,yna.co.kr/rss/index
+yna_nk,ko,publisher_rss,https://www.yna.co.kr/rss/northkorea.xml,True,200,ok,0.032,rss20,84,False,93,True,1.38,1795582479511,"Wed, 25 Nov 2026 04:53:06 GMT",304,etag+last-modified,,,yna.co.kr/rss/index
+sbs_sec01,ko,publisher_rss,https://news.sbs.co.kr/news/SectionRssFeed.do?sectionId=01&plink=RSSREADER,True,200,ok,0.061,rss20,29,True,1155,True,0.09,,,,none,,,news.sbs.co.kr/news/rss.do
+sbs_sec07,ko,publisher_rss,https://news.sbs.co.kr/news/SectionRssFeed.do?sectionId=07&plink=RSSREADER,True,200,ok,0.038,rss20,29,True,81,True,0.24,,,,none,,,news.sbs.co.kr/news/rss.do
+khan_total,ko,publisher_rss,https://www.khan.co.kr/rss/rssdata/total_news.xml,True,200,ok,0.036,rss20,50,False,203,False,0.14,"""d09c-661129d9ece80-gzip""","Wed, 25 Nov 2026 04:54:02 GMT",304,etag+last-modified,,,khan.co.kr/help/help_rss.html
+khan_world,ko,publisher_rss,https://www.khan.co.kr/rss/rssdata/kh_world.xml,True,200,ok,0.031,rss20,50,False,203,False,0.61,"""d048-661129d9ece80-gzip""","Wed, 25 Nov 2026 04:54:02 GMT",304,etag+last-modified,,,khan.co.kr/help/help_rss.html
+donga_total,ko,publisher_rss,https://rss.donga.com/total.xml,True,200,ok,0.036,rss20,50,False,502,True,0.02,,,,none,,,homepage link-alternate
+donga_intl,ko,publisher_rss,https://rss.donga.com/international.xml,True,200,ok,0.042,rss20,50,False,613,True,0.06,,,,none,,,homepage link-alternate
+hankyung_all,ko,publisher_rss,https://www.hankyung.com/feed/all-news,True,200,ok,0.017,rss20,50,False,0,False,0.69,,"Wed, 25 Nov 2026 04:19:06 GMT",304,last-modified,,,homepage link-alternate
+hankyung_intl,ko,publisher_rss,https://www.hankyung.com/feed/international,True,200,ok,0.028,rss20,50,False,0,False,2.69,,"Wed, 25 Nov 2026 04:43:54 GMT",304,last-modified,,,homepage link-alternate
+hani_via_3p,ko,publisher_rss,https://akngs.github.io/knews-rss/hani.xml,True,404,http-404,0.229,,,,,,,"W/""6afdd72a-24a3""",,,,,,third-party GitHub project; NOT publisher-run
+korea_kr_notice,ko,gov_kr,https://m.korea.kr/etc/noticeList.do,True,200,ok,0.578,,,,,,,,,,,,,web search; own notice dated 2026-07-01
+rfi_zh,zh,publisher_rss,https://www.rfi.fr/cn/rss,True,200,ok,0.503,rss20,30,False,92,True,6.21,,,,none,,,homepage link-alternate
+voa_zh,zh,publisher_rss,https://www.voachinese.com/api/,True,200,ok,0.093,rss20,20,False,207,True,5.91,,,,none,,,homepage link-alternate
+bbc_zh_simp,zh,publisher_rss,https://feeds.bbci.co.uk/zhongwen/simp/rss.xml,True,200,ok,0.716,rss20,42,False,60,True,1.56,,,,none,,,third-party directory
+dw_zh_all,zh,publisher_rss,https://rss.dw.com/rdf/rss-chi-all,True,200,ok,0.952,rss10,58,False,96,False,0.58,,,,none,,,third-party directory / RSSHub docs
+cna_tw_intl,zh,publisher_rss,https://feeds.feedburner.com/rsscna/intworld,True,200,ok,0.256,rss20,20,False,112,False,1.08,,"Wed, 25 Nov 2026 04:49:01 GMT",200,header-sent-but-no-304,,,cna.com.tw/about/rss.aspx
+cna_tw_mainland,zh,publisher_rss,https://feeds.feedburner.com/rsscna/mainland,True,200,ok,0.242,rss20,20,False,63,False,0.84,,"Wed, 25 Nov 2026 04:18:07 GMT",200,header-sent-but-no-304,,,cna.com.tw/about/rss.aspx
+cna_tw_politics,zh,publisher_rss,https://feeds.feedburner.com/rsscna/politics,True,200,ok,0.258,rss20,20,False,131,False,0.37,,"Wed, 25 Nov 2026 04:49:27 GMT",200,header-sent-but-no-304,,,cna.com.tw/about/rss.aspx
+fedreg_api,en,gov_us,https://www.federalregister.gov/api/v1/documents.json?per_page=5&order=newest,True,200,ok,0.198,,,,,,,,,,,"[""description"", ""count"", ""total_pages"", ""next_page_url"", ""results""]",5,federalregister.gov developer page
+sec_pressreleases,en,gov_us,https://www.sec.gov/news/pressreleases.rss,True,200,ok,0.029,rss20,25,False,249,False,106.86,"""1795572987""","Wed, 25 Nov 2026 02:16:27 GMT",304,etag+last-modified,,,sec.gov/about/rss-feeds
+sec_edgar_atom_8k,en,disclosure,https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=8-K&company=&dateb=&owner=include&start=0&count=40&output=atom,True,200,ok,0.34,atom10,40,False,254,False,6.41,,,,none,,,sec.gov/about/rss-feeds anchor (10-K variant)
+sec_data_submissions,en,disclosure,https://data.sec.gov/submissions/CIK0000320193.json,True,200,ok,0.023,,,,,,,,,,,"[""cik"", ""entityType"", ""sic"", ""sicDescription"", ""ownerOrg"", ""insiderTransactionForOwnerExists"", ""insiderTransactionForIssuerExists"", ""name"", ""tickers"", ""exchanges"", ""ein"", ""lei""]",,SEC EDGAR API docs
+state_gov_rss_index,en,gov_us,https://www.state.gov/rss-feeds/,True,403,http-403,1.301,,,,,,,"""9dd37e7649b54fb9bb8e9cafad781f59""","Tue, 17 Mar 2026 01:57:29 GMT",,,,,state.gov
+whitehouse_news,en,gov_us,https://www.whitehouse.gov/news/,True,200,ok,0.088,,,,,,,,,,,,,whitehouse.gov
+eu_presscorner,en,gov_intl,https://ec.europa.eu/commission/presscorner/home/en,True,200,ok,0.299,,,,,,,,"Thu, 31 Jan 1980 23:00:00 GMT",,,,,ec.europa.eu
+china_mfa_en,en,gov_cn,https://www.fmprc.gov.cn/eng/,True,200,ok,0.052,,,,,,,,,,,,,fmprc.gov.cn
+hkex_news,en,disclosure,https://www.hkexnews.hk/index.htm,True,200,ok,3.126,,,,,,,,"Mon, 18 Aug 2025 12:01:31 GMT",,,,,hkexnews.hk
+reuters_home,en,publisher_html,https://www.reuters.com/,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,reuters.com
+ap_home,en,publisher_html,https://apnews.com/,True,403,http-403,0.011,,,,,,,,,,,,,apnews.com
+mbc_home,ko,publisher_html,https://imnews.imbc.com/,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,imnews.imbc.com
+yt_ap,en,video_rss,https://www.youtube.com/feeds/videos.xml?channel_id=UC52X5wxOL_s5yw0dQk7NtgA,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,channel page link-alternate
+yt_reuters,en,video_rss,https://www.youtube.com/feeds/videos.xml?channel_id=UChqUTb7kYRX8-EiaN3XFrSQ,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,channel page link-alternate
+yt_kbs,ko,video_rss,https://www.youtube.com/feeds/videos.xml?channel_id=UCVUjd2vUGrWvLOP9ni9nHCQ,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,channel page link-alternate
+yt_ytn,ko,video_rss,https://www.youtube.com/feeds/videos.xml?channel_id=UChlgI3UHCOnwUGzWzbJ3H5w,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,channel page link-alternate
+yt_cgtn,en,video_rss,https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uuto8_DL2jg,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,youtube.com/CGTN page link-alternate
+gdelt_doc_en,en,aggregator_api,https://api.gdeltproject.org/api/v2/doc/doc?query=Korea%20sourcelang:english&mode=artlist&format=json&timespan=1h&maxrecords=10,True,200,ok,28.988,,,,,,,,,,,"[""articles""]",10,gdeltproject.org docs
+gdelt_doc_ko,ko,aggregator_api,https://api.gdeltproject.org/api/v2/doc/doc?query=%EB%AF%B8%EC%82%AC%EC%9D%BC%20sourcelang:korean&mode=artlist&format=json&timespan=6h&maxrecords=10,True,200,ok,14.301,,,,,,,,,,,,,gdeltproject.org docs
+gdelt_doc_zh,zh,aggregator_api,https://api.gdeltproject.org/api/v2/doc/doc?query=%E4%B9%A0%E8%BF%91%E5%B9%B3%20sourcelang:chinese&mode=artlist&format=json&timespan=6h&maxrecords=10,True,429,http-429,10.745,,,,,,,,,,,,,gdeltproject.org docs
+gdelt_geo,en,aggregator_api,https://api.gdeltproject.org/api/v2/geo/geo?query=Korea&format=GeoJSON&mode=PointData&timespan=1h,True,404,http-404,8.082,,,,,,,,,,,,,gdeltproject.org docs
+gdelt_tv,en,aggregator_api,https://api.gdeltproject.org/api/v2/tv/tv?query=Korea&mode=timelinevol&format=json&timespan=1d,True,200,ok,12.62,,,,,,,,,,,,,gdeltproject.org docs
+gdelt_lastupdate,en,dataset,http://data.gdeltproject.org/gdeltv2/lastupdate.txt,True,200,ok,0.178,,,,,,,"""b966c6c3951c7b0e4cf7bc3265e2c725""","Wed, 25 Nov 2026 04:49:27 GMT",304,etag+last-modified,,,gdeltproject.org/data.html
+gdelt_masterlist_head,en,dataset,http://data.gdeltproject.org/gdeltv2/masterfilelist.txt,True,200,ok,0.169,,,,,,,"""fe6a0f49dbe53181c4ff01f05a1daa87""","Wed, 25 Nov 2026 04:49:31 GMT",,,,,gdeltproject.org/data.html
+cc_news_index,en,dataset,https://data.commoncrawl.org/crawl-data/CC-NEWS/index.html,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,commoncrawl.org
+bsky_authorfeed,en,social_api,https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=apnews.com&limit=5,True,200,ok,0.171,,,,,,,,,,,"[""feed"", ""cursor""]",5,docs.bsky.app
+bsky_search,en,social_api,https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=korea&limit=5,True,403,http-403,0.121,,,,,,,,,,,,,docs.bsky.app
+mastodon_tag,en,social_api,https://mastodon.social/api/v1/timelines/tag/korea?limit=5,True,200,ok,0.405,,,,,,,"W/""0e0fd1919790c4eb6c215c37925f5a9c""",,,,"""list[5]""",5,docs.joinmastodon.org
+telegram_web,en,social_html,https://t.me/s/telegram,True,200,ok,0.454,,,,,,,,,,,,,telegram.org
+reddit_worldnews,en,social_rss,https://www.reddit.com/r/worldnews/.rss,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,reddit.com
+guardian_api_nokey,en,news_api,https://content.guardianapis.com/search?q=korea,True,401,http-401,0.277,,,,,,,,,,,"[""message""]",,open-platform.theguardian.com
+nyt_api_nokey,en,news_api,https://api.nytimes.com/svc/topstories/v2/world.json,True,401,http-401,0.231,,,,,,,,,,,"[""fault""]",,developer.nytimes.com
+newsapi_nokey,en,news_api,https://newsapi.org/v2/top-headlines?country=us,True,401,http-401,0.232,,,,,,,,,,,"[""status"", ""code"", ""message""]",,newsapi.org
+naver_news_nokey,ko,news_api,https://openapi.naver.com/v1/search/news.json?query=%EB%AF%B8%EC%82%AC%EC%9D%BC,False,,not-fetched-robots-disallow,,,,,,,,,,,,,,developers.naver.com
+dart_nokey,ko,disclosure,https://opendart.fss.or.kr/api/list.json,True,200,ok,0.118,,,,,,,"""0-1256-6205fcde""","Fri, 11 Feb 2022 06:06:22 GMT",,,,,opendart.fss.or.kr
+youtube_data_nokey,en,video_api,https://www.googleapis.com/youtube/v3/search?part=snippet&q=news,True,403,http-403,0.086,,,,,,,,,,,"[""error""]",,developers.google.com/youtube
+bigkinds_home,ko,news_db,https://www.bigkinds.or.kr/,True,200,ok,1.677,,,,,,,,,,,,,bigkinds.or.kr
