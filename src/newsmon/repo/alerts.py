@@ -6,6 +6,7 @@ cycle raises nothing new (NFR-05). Alerts go to primary articles only, so a late
 from __future__ import annotations
 
 from newsmon.repo.base import BaseRepo
+from newsmon.repo.sources import poll_finals
 
 ALERT_KINDS = ("flash", "watch", "feed_incident")
 STATUSES = ("new", "acknowledged", "dismissed")
@@ -17,7 +18,7 @@ class AlertRepo(BaseRepo):
         """Alert every live, primary, unflagged article first seen since `since` whose final band is `band` and which has
         no `kind` alert yet. Newest first, at most `limit` per call."""
         cur = self.db.execute(
-            "INSERT INTO alert (workspace_id, kind, severity, article_id, reason, status, created_utc) "
+            "INSERT OR IGNORE INTO alert (workspace_id, kind, severity, article_id, reason, status, created_utc) "
             "SELECT a.workspace_id, ?, ?, a.article_id, ?, 'new', ? FROM article a WHERE a.workspace_id = ? "
             "AND a.final_band = ? AND a.status <> 'killed' AND a.dup_of IS NULL AND COALESCE(a.regex_prefilter_hit, 0) = 0 "
             "AND a.first_seen_utc >= ? AND NOT EXISTS (SELECT 1 FROM alert x WHERE x.workspace_id = a.workspace_id "
@@ -39,11 +40,12 @@ class AlertRepo(BaseRepo):
                 last = runs[0]
                 detail = f"연속 {failures}회 실패 · {last['error_class'] or '-'}: {(last['error_detail'] or '')[:200]}"
                 with self.db.tx():
-                    iid = self.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc, detail) "
-                                          "VALUES (?, ?, 'failing', ?, ?)",
-                                          (self.workspace_id, f["feed_id"], now_s, detail)).lastrowid
-                    self._incident_alert(iid, "high", f"피드 장애: {f['name']} — {detail}", now_s)
-                opened += 1
+                    cur = self.db.execute("INSERT OR IGNORE INTO incident (workspace_id, feed_id, kind, opened_utc, "
+                                          "detail) VALUES (?, ?, 'failing', ?, ?)",
+                                          (self.workspace_id, f["feed_id"], now_s, detail))
+                    if cur.rowcount:  # another process may have opened it first (one open incident per feed)
+                        self._incident_alert(cur.lastrowid, "high", f"피드 장애: {f['name']} — {detail}", now_s)
+                        opened += 1
             elif open_id is not None and runs and runs[0]["status"] != "error":
                 with self.db.tx():
                     self.db.execute("UPDATE incident SET closed_utc = ? WHERE incident_id = ? AND workspace_id = ?",
@@ -53,19 +55,10 @@ class AlertRepo(BaseRepo):
         return opened, closed
 
     def _last_polls(self, feed_id: int, n: int) -> list[dict]:
-        """The final attempt of each of the last `n` polls, newest first. A retried poll writes one fetch_run row per
-        attempt (attempt 1, 2, ...), so counting rows would count one failed poll as several failures."""
+        """The final attempt of each of the last `n` polls, newest first (see `poll_finals`)."""
         rows = self.db.query("SELECT status, error_class, error_detail, attempt FROM fetch_run WHERE workspace_id = ? AND "
                              "feed_id = ? ORDER BY run_id DESC LIMIT ?", (self.workspace_id, feed_id, n * 10))
-        polls: list[dict] = []
-        newer_attempt = None  # walking newest to oldest: a row ends a poll unless the next-newer row is its retry
-        for r in rows:
-            if newer_attempt is None or newer_attempt <= 1 or r["attempt"] >= newer_attempt:
-                polls.append(dict(r))
-                if len(polls) == n:
-                    break
-            newer_attempt = r["attempt"]
-        return polls
+        return [dict(r) for r in poll_finals(rows)[:n]]
 
     def _incident_alert(self, incident_id: int, severity: str, reason: str, now_s: str) -> None:
         self.db.execute("INSERT INTO alert (workspace_id, kind, severity, incident_id, reason, status, created_utc) "

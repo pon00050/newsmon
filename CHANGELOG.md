@@ -12,6 +12,9 @@
   and feeds whose last 3 polls failed (and their recovery). A 🔔 badge on every page, an alerts page with acknowledge
   and dismiss, and browser notifications while a tab is open. One alert per item; duplicates and injection-flagged
   items raise none; no e-mail yet.
+- The database enforces one alert per item and kind, and one open incident per feed (migration 0003). An `alerts:`
+  entry set to `false`, or listing channels without `inapp`, is off.
+- Fix: the source-status page counted each retry as a separate failure, so one failed poll showed as 3.
 - Fix: a test hard-coded 2026-11-27 as "tomorrow" and failed from that date.
 
 ## 0.1.0 — 2026-11-25

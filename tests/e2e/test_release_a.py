@@ -151,7 +151,11 @@ def test_failed_sources_do_not_halt_collection(tmp_path, fixture_server):
         assert by["gone"].error_class == "http_4xx" and by["gone"].attempts == 1
         assert by["internal"].error_class == "ssrf_blocked"
         status = {r["key"]: r for r in app.sources.status_rows()}
-        assert status["down"]["error_streak"] == 3 and status["bbc_world"]["error_streak"] == 0
+        # one poll with 3 retried attempts is one failure (the streak counts polls, not attempts)
+        assert status["down"]["error_streak"] == 1 and status["bbc_world"]["error_streak"] == 0
+        app.collect(force=True, only={"down"})
+        app.collect(force=True, only={"down"})
+        assert {r["key"]: r for r in app.sources.status_rows()}["down"]["error_streak"] == 3
     finally:
         app.close()
 

@@ -203,7 +203,7 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
     def alerts_page(request: Request, all: int = 0, msg: str = ""):
         return TEMPLATES.TemplateResponse(request, "alerts.html", ctx(
             request, alerts=svc.alerts(include_done=bool(all)), show_all=bool(all), msg=msg,
-            enabled=sorted(app.primary_profile[1].alerts) if app.primary_profile else ["feed_incident"]))
+            enabled=sorted(app.alert_kinds())))
 
     @web.get("/alerts/poll")
     def alerts_poll(after: int = 0):

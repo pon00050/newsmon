@@ -158,7 +158,7 @@ class Service:
                      why=[h for h in self.app.articles.rule_hits(r["article_id"])
                           if h["rule_id"] not in ("injection_prefilter", "recency")][:3])
         else:
-            v.update(title=r["reason"], restricted=False)
+            v.update(title=r["reason"], restricted=False, why=[])
         return v
 
     def alerts(self, include_done: bool = False) -> list[dict]:

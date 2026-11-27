@@ -33,6 +33,14 @@ from newsmon.rules.engine import ItemFacts, evaluate
 from newsmon.rules.profile import Profile, ProfileError, validate_profile
 
 
+def _inapp(cfg) -> bool:
+    """A profile `alerts:` entry turns in-app alerts on unless it is false/empty or lists channels without `inapp`."""
+    if not cfg:
+        return False
+    channels = cfg.get("channels") if isinstance(cfg, dict) else None
+    return channels is None or "inapp" in channels
+
+
 class App:
     def __init__(self, cfg: AppConfig, *, clock: Clock | None = None, fetcher: HttpFetcher | None = None,
                  ssrf_policy: SsrfPolicy | None = None, sleep: Callable[[float], None] = time.sleep,
@@ -219,13 +227,16 @@ class App:
     INCIDENT_FAILURES = 3  # FR-04 default N
     ALERT_WINDOW_HOURS = 24  # enabling alerts on an existing database does not alert on old items
 
+    def alert_kinds(self) -> set[str]:
+        prim = self.primary_profile
+        return {k for k, v in prim[1].alerts.items() if _inapp(v)} if prim else {"feed_incident"}
+
     def raise_alerts(self) -> dict[str, int]:
         """In-app alerts after a cycle (M1 v1). The primary profile's `alerts:` keys switch kinds on: `flash` (band 속보),
         `report` (band 보고, raised as `watch`; opt-in) and `feed_incident` (FR-04 failing feeds). Nothing is sent
         anywhere: email and other channels need the outbox (T-36)."""
         from datetime import timedelta
-        prim = self.primary_profile
-        enabled = set(prim[1].alerts) if prim else {"feed_incident"}
+        enabled = self.alert_kinds()
         now = self.clock.now()
         now_s, since = iso(now), iso(now - timedelta(hours=self.ALERT_WINDOW_HOURS))
         out = {"flash": 0, "watch": 0, "incidents_opened": 0, "incidents_closed": 0}

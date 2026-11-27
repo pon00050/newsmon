@@ -193,3 +193,69 @@ def test_alert_pages_badge_poll_and_actions(wired):
         assert client.get("/alerts?all=1").text.count('data-alert-id="') == n
     finally:
         client.close()
+
+
+@pytest.mark.req("FR-06c")
+def test_alerts_never_show_a_headline_the_source_does_not_allow(tmp_path):
+    """A source with display=none: the alert page, the poll JSON (which feeds the browser notification) show
+    "(표시 제한)", never the headline. A restricted item keeps its headline-only display and is marked."""
+    rows = mock_wire_sources()
+    next(r for r in rows if r["key"] == "mock_wire_demo")["display"] = "none"
+    app = make_app(tmp_path, None, rows, clock=FrozenClock(START), with_inbox=True, profile=profile(DEFAULT_ALERTS))
+    client = TestClient(create_app(app), base_url="http://127.0.0.1:8765")
+    try:
+        fill_inbox(app, "mock_wire_demo")
+        settle(app)
+        hidden = [r[0] for r in app.db.query(
+            "SELECT r.headline FROM alert al JOIN article a ON a.article_id = al.article_id "
+            "JOIN article_revision r ON r.revision_id = a.current_revision_id")]
+        assert hidden, "control: urgent items from the display=none source did raise alerts"
+        page, poll = client.get("/alerts").text, client.get("/alerts/poll?after=0").text
+        for h in hidden:
+            assert h not in page and h.replace("'", "&#39;") not in page and h not in poll
+        assert "(표시 제한)" in page and "(표시 제한)" in poll
+    finally:
+        client.close()
+        app.close()
+
+
+def test_restricted_item_alert_is_marked(wired):
+    app, clock = wired
+    clock.advance(300)
+    p = wire(app, "t_restricted.txt", "TEST-RESTR-1", "FLASH: Fictional dam breach in invented valley of Corran",
+             "Water flooded the made-up valley overnight.", restrictions="ZZ-TEST-RESTRICTION")
+    p.write_text(p.read_text(encoding="utf-8").replace("URGENCY: 3", "URGENCY: 1"), encoding="utf-8")
+    settle(app)
+    client = TestClient(create_app(app), base_url="http://127.0.0.1:8765")
+    try:
+        row = re.search(r'<tr class="alert-flash" data-alert-id="\d+">(?:(?!</tr>).)*Corran.*?</tr>',
+                        client.get("/alerts").text, re.S)
+        assert row and "제한 표시" in row.group(0)
+    finally:
+        client.close()
+
+
+@pytest.mark.parametrize("cfg", [False, None, {}, {"channels": ["email"]}])
+def test_an_alert_kind_set_off_or_without_inapp_raises_nothing(tmp_path, cfg):
+    app = make_app(tmp_path, None, mock_wire_sources(), clock=FrozenClock(START), with_inbox=True,
+                   profile=profile({"flash": cfg, "feed_incident": {"channels": ["inapp"]}}))
+    try:
+        fill_inbox(app, "mock_wire_demo")
+        settle(app)
+        assert app.db.scalar("SELECT count(*) FROM article WHERE final_band = 'flash'"), "control"
+        assert count(app, "flash") == 0 and "flash" not in app.alert_kinds()
+    finally:
+        app.close()
+
+
+def test_the_database_refuses_duplicate_alerts_and_open_incidents(wired):
+    app, _ = wired
+    import sqlite3
+    a = app.db.one("SELECT kind, article_id FROM alert WHERE article_id IS NOT NULL LIMIT 1")
+    with pytest.raises(sqlite3.IntegrityError):
+        app.db.execute("INSERT INTO alert (workspace_id, kind, severity, article_id, reason, status, created_utc) "
+                       "VALUES (1, ?, 'high', ?, 'dup', 'new', '2026-11-26T17:00:00+00:00')", (a["kind"], a["article_id"]))
+    feed = app.db.scalar("SELECT feed_id FROM feed LIMIT 1")
+    app.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc) VALUES (1, ?, 'failing', 'x')", (feed,))
+    with pytest.raises(sqlite3.IntegrityError):
+        app.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc) VALUES (1, ?, 'failing', 'y')", (feed,))
