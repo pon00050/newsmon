@@ -1,5 +1,9 @@
 # Newsmon
 
+English | [한국어](README.ko.md)
+
+> **한국어 요약:** Newsmon은 국제부·외신팀에서 쓰는 설치형 뉴스 모니터링 프로그램입니다. 내 PC에서 RSS 피드와 통신사 기사 파일을 모아 중복 기사를 정리하고, 정해 둔 규칙에 따라 등급을 매겨 검색할 수 있는 기사 목록으로 보여 줍니다. 자세한 안내는 [README.ko.md](README.ko.md)를 참고하세요.
+
 **Local news monitoring for foreign-news desks.** Newsmon collects the RSS/Atom feeds and wire files you are
 licensed to use, removes duplicates, ranks every item against your desk's own rules, and shows a searchable,
 prioritised queue in your browser. It runs on one computer, needs no AI provider and no account, and keeps
@@ -69,8 +73,8 @@ comes with an explanation.
 
 Settings and the database are kept in `%LOCALAPPDATA%\Newsmon\` (`config\` and `data\`), so updating or moving
 the program folder keeps them. On first start the example configuration is copied there; edit those files to choose
-sources and rules. A release may also include a portable `newsmon-windows-portable.zip` that needs no installation
-at all (see [`docs/windows.md`](docs/windows.md)).
+sources and rules. Each release also includes a portable `newsmon-<version>-windows-portable.zip` that needs no
+installation at all (see [`docs/windows.md`](docs/windows.md)).
 
 ## Install for development (Windows, macOS, Linux)
 

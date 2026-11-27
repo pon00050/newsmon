@@ -49,6 +49,9 @@ jobs:
             uv run --frozen python scripts/build_public_data.py republish --data _build/live-state-republish               --previous _build/previous-live.json --out _build/data/live.json --max-items 300 --max-age-days 14               || { echo "republish failed: publishing without live data"; rm -f _build/data/live.json; }
           fi
       - name: Build site
+        env:  # optional search-engine ownership tokens, set as repository variables (empty: no tag)
+          NEWSMON_NAVER_VERIFICATION: ${{ vars.NAVER_SITE_VERIFICATION }}
+          NEWSMON_GOOGLE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
         run: uv run --frozen python scripts/build_site.py --out _site --data _build/data
       - name: Public artifact check
         run: uv run --frozen python scripts/check_public_artifacts.py _site

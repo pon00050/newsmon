@@ -293,3 +293,6 @@ tr:last-child td { border-bottom: 0; }
 .shots figure { margin: 0; }
 .shots img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
 .shots figcaption { color: var(--muted); font-size: .92rem; margin-top: .5rem; }
+
+/* Korean: break lines between words, never inside one */
+:lang(ko) { word-break: keep-all; overflow-wrap: anywhere; }

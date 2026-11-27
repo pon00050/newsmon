@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **Korean presentation.** A Korean README (`README.ko.md`) and a Korean landing page on the website (`ko/`), written
+  for Korean readers rather than translated. The website now gives each page a canonical URL, link-preview tags
+  (Open Graph) with a dedicated image, an English/Korean language pair and a `sitemap.xml`, and can carry Naver or
+  Google ownership tags set as repository variables. The landing page lists the 0.2.0 features.
+
 ## 0.2.0 — 2026-11-27
 
 Editorial workflow, alerts, footage and search for a foreign-news desk.
