@@ -12,6 +12,8 @@ alerts, a local ffmpeg check of wire video clips with an ingest sheet, and saved
 [changelog](../CHANGELOG.md). Event grouping, e-mail alerts and digests, a JSON API, MCP, authentication, backup and
 speech or AI video analysis are specified here but **not built**.
 
+Broadcaster and staffing-agency names from the job advertisements are withheld: 방송사 A and 방송사 B, and 인력 파견사 1-4, are used consistently across the business documents.
+
 ## Status legend
 
 Every published document begins with one of these labels.

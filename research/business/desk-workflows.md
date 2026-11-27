@@ -10,9 +10,11 @@ vendor page or an article says so), **[V]** VERIFIED (a primary source read in f
 [`business/industry-and-business-process-report.md`](industry-and-business-process-report.md) §6. Read this first: most of the "how" below is thin. The postings
 give duty lines, not procedures, and no insider account of a Korean 외신 monitor's shift was found.
 
+Broadcaster and staffing-agency names from the job advertisements are withheld: 방송사 A and 방송사 B, and 인력 파견사 1-4, are used consistently across the business documents.
+
 Sources used throughout (short names):
-- **TVC** = TV조선 국제부 job advertisement (public posting; image attachment read 2026-11-25).
-- **YTN** = YTN 국제부 job advertisement (public posting via 아산맨파워, full text).
+- **BA** = 방송사 A 국제부 job advertisement (public posting; image attachment read 2026-11-25).
+- **BB** = 방송사 B 국제부 job advertisement (public posting via 인력 파견사 1, full text).
 - **DHM** = 다하미 job advertisement.
 - **SYN** = an earlier analysis of the public job advertisements; **M1** = job-listing search summaries (search-summary level). Neither is published.
 - **HK** = 한국일보 국제부 야근 report, 2005, https://www.journalist.or.kr/m/m_article.html?no=10666 (a newspaper, not a TV monitor seat).
@@ -24,25 +26,25 @@ Sources used throughout (short names):
 
 ---
 
-## W1 · 외신 desk monitoring (TV조선, YTN; also 연합뉴스TV, MBC, 채널A)
+## W1 · 외신 desk monitoring (방송사 A, 방송사 B; also 연합뉴스TV, MBC, 채널A)
 
 | Attribute | Content | Tag / source |
 |---|---|---|
-| Seat | A 파견 contractor inside the broadcaster's 국제부. TV조선: Tue/Thu 01:00-09:00 plus about two weekend days a month (09:00-18:00). YTN: Thu-Sun 14:00-23:00. | [D] TVC, YTN |
-| Inputs | AP and other English-language foreign reports; APTN and Reuters footage on screen; footage and posts the desk asks for; English text and wire footage information. | [D] TVC, YTN (R-01, R-02, R-04) |
-| Outputs | (1) An organised important-material entry registered in a PC system. (2) A notice (고지) to the desk when a feed item matters. (3) A summary of footage information and English text for the field reporter. (4) Translated or interpreted English where needed. | [D] TVC (R-03), YTN (R-02, R-05), UNI (R-06) |
+| Seat | A 파견 contractor inside the broadcaster's 국제부. One seat works overnight on weekdays plus some weekend days; the other works evenings four days a week. | [D] BA, BB |
+| Inputs | AP and other English-language foreign reports; APTN and Reuters footage on screen; footage and posts the desk asks for; English text and wire footage information. | [D] BA, BB (R-01, R-02, R-04) |
+| Outputs | (1) An organised important-material entry registered in a PC system. (2) A notice (고지) to the desk when a feed item matters. (3) A summary of footage information and English text for the field reporter. (4) Translated or interpreted English where needed. | [D] BA (R-03), BB (R-02, R-05), 인력 파견사 3 (R-06) |
 | Steps | Watch wires and feeds; decide an item is important; organise it (title, gist, link or clip); register it; tell the desk; on request, summarise or retrieve. Search for particular footage or posts. | Steps as a sequence: [I] from the duty lines; each duty line [D] |
 | Decision points | "Is this important enough to report?" (the only real judgment); "does a reporter need this now?" | [I] |
 | Frequency | Continuous during the shift. Item volume unknown for TV monitors. The only volume figure is ~700-800 wire items per night at a 2005 newspaper desk. | [D] HK (not a TV seat) |
 | Time sensitivity | Minutes for breaking items. US announcements often land after 23:00 KST, and broadcasters cut regular programming for them. | [D] JN |
-| Quality bar | Not stated for monitors. English is the real gate: "영어 가능자" (TV조선), 영문 번역 and 시사 상식 preferred (YTN). | [D] TVC, YTN |
-| Human-judgment points | Importance selection; reading tone of statements ("행간을 읽어야", a YTN reporter on tweets); deciding what a reporter can use. | [D] JN for the quote; seat attribution [I] |
+| Quality bar | Not stated for monitors. English is the real gate: "영어 가능자" (방송사 A), 영문 번역 and 시사 상식 preferred (방송사 B). | [D] BA, BB |
+| Human-judgment points | Importance selection; reading tone of statements ("행간을 읽어야", a broadcast reporter on tweets); deciding what a reporter can use. | [D] JN for the quote; seat attribution [I] |
 | Failure scenarios | A missed flash (the cost is a late or absent item on air); a wrong relay (four newspapers printed a staged-killing story from foreign reports); a mistranslation of a statement; the lone night person is unavailable. | Wrong relay [D] JN; others [I] |
-| Software dependencies | A "PC" report system (name not given); the wire clients (AP and Reuters, product names not given in the postings); the broadcaster's MAM for footage. TV conversation channels (CNN on a wall TV) are second sources. | [D] TVC for "PC등록"; HK for the CNN TV; the rest [I] |
+| Software dependencies | A "PC" report system (name not given); the wire clients (AP and Reuters, product names not given in the postings); the broadcaster's MAM for footage. TV conversation channels (CNN on a wall TV) are second sources. | [D] BA for "PC등록"; HK for the CNN TV; the rest [I] |
 | Automation opportunity | **Assist:** alerting on new wire items, deduplicating across wires, English→Korean draft summaries, a ranked "possibly important" queue, search across the day's items. **Not automatable in a text system:** watching APTN/Reuters footage (needs video, feed access). **Never full:** the decision to declare something important and to relay a statement. | [I] |
 
 Open: how the monitor tells the desk in practice (a spoken call, a messenger, only the PC entry) is not stated anywhere found.
-Searches run: "연합뉴스TV YTN 국제부 외신 모니터링 ... 어떻게 일하나", "YTN 국제부 외신 수신 APTN 로이터 ... 사보". Result: UNVERIFIED-absent.
+Searches run: "<방송사> 국제부 외신 모니터링 ... 어떻게 일하나", "<방송사> 국제부 외신 수신 APTN 로이터 ... 사보". Result: UNVERIFIED-absent.
 
 ---
 
@@ -70,16 +72,16 @@ Open: no TV-desk figure for items per night; AP/Reuters client-desk workflow doc
 
 | Attribute | Content | Tag / source |
 |---|---|---|
-| Inputs | Foreign footage received from agencies (APTN, Reuters, AFP at KBS); footage reporters request (other agencies, 국무부 브리핑 녹취). | [D] YTN; [V] KBS for AP/AFP clips |
-| Outputs | Classified, ingested clips with metadata, available for editors and reporters; periodically cleaned archive. | [D] TVC, YTN |
-| Steps | Classify; ingest into the newsroom MAM; enter metadata (title, date/time, agency, content, names); store; tidy unneeded clips. At KBS the 원본영상 is registered right after reception, then reporters search it; after about two years it moves to a separate company archive and much metadata is lost. | [D] TVC, YTN; KBS details [V] |
+| Inputs | Foreign footage received from agencies (APTN, Reuters, AFP at KBS); footage reporters request (other agencies, 국무부 브리핑 녹취). | [D] BB; [V] KBS for AP/AFP clips |
+| Outputs | Classified, ingested clips with metadata, available for editors and reporters; periodically cleaned archive. | [D] BA, BB |
+| Steps | Classify; ingest into the newsroom MAM; enter metadata (title, date/time, agency, content, names); store; tidy unneeded clips. At KBS the 원본영상 is registered right after reception, then reporters search it; after about two years it moves to a separate company archive and much metadata is lost. | [D] BA, BB; KBS details [V] |
 | Decision points | Which category; whether to keep a clip; what to write in the title. KBS: reporters sometimes demand their own titles and ignore ingest conventions. | [V] KBS |
 | Frequency | Per item or batch, all shift. | [I] |
 | Time sensitivity | Medium: footage must be findable when the reporter needs it. | [I] |
 | Quality bar | Consistent searchable metadata. KBS finding: manual entry depends on the person's style; dates entered in 6 formats and times in 3; AP/AFP clips often entered month-day-year; many clips lack reporter or location. KBS's rule sheet is 3 A4 pages. | [V] KBS |
 | Human-judgment points | Content description and what to keep; no formal reporter review of ingest metadata exists at KBS. | [V] KBS |
 | Failure scenarios | Footage cannot be found; wrong date; metadata lost on archive transfer. | [V] KBS |
-| Software dependencies | KBS chain: 보도정보시스템 (reporters write, 데스킹, search) → 뉴스MAM (ingest, metadata, 외신수신본 managed with other resources) → NLE editors → 전자큐시트 → 송출제어. TV조선 and YTN systems are not named. MBN uses a "차세대 보도정보시스템 (NRCS)" built by CJ Olive Networks (search snippet only). | KBS [V]; MBN [U] (snippet: https://cjnews.cj.net/) |
+| Software dependencies | KBS chain: 보도정보시스템 (reporters write, 데스킹, search) → 뉴스MAM (ingest, metadata, 외신수신본 managed with other resources) → NLE editors → 전자큐시트 → 송출제어. 방송사 A and 방송사 B systems are not named. MBN uses a "차세대 보도정보시스템 (NRCS)" built by CJ Olive Networks (search snippet only). | KBS [V]; MBN [U] (snippet: https://cjnews.cj.net/) |
 | Automation opportunity | **Assist:** metadata normalisation (date/time/agency), duplicate detection of repeated feeds, cloud ASR/captions for searchable text, a controlled-vocabulary check at entry. **Blocked in round 1:** actual ingest needs MAM integration, wire access and video handling (R8, D7). | [I] |
 
 ---
@@ -88,9 +90,9 @@ Open: no TV-desk figure for items per night; AP/Reuters client-desk workflow doc
 
 | Attribute | Content | Tag / source |
 |---|---|---|
-| Inputs | A received agency feed or clip that has a problem. | [D] YTN |
-| Outputs | A notice to the agency and to 기술국 (engineering); confirmation the fix was done. | [D] YTN ("외신사, 기술국에 통보, 사후 처리 확인") |
-| Steps | Notice the problem; tell the agency and engineering; check afterwards. | [D] YTN |
+| Inputs | A received agency feed or clip that has a problem. | [D] BB |
+| Outputs | A notice to the agency and to 기술국 (engineering); confirmation the fix was done. | [D] BB ("외신사, 기술국에 통보, 사후 처리 확인") |
+| Steps | Notice the problem; tell the agency and engineering; check afterwards. | [D] BB |
 | Decision points | Is it a source fault (agency) or a local one (engineering)? Who to call. | [I] |
 | Frequency, time sensitivity | Event-driven; likely high during a live feed. | [I] |
 | Quality bar, judgment | Not stated. Judgment is low (route the fault). | [I] |

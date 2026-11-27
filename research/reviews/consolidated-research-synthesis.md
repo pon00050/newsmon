@@ -24,7 +24,7 @@ Evidence tags follow [`evidence-conventions.md`](../evidence-conventions.md). Ev
 
 | # | Finding | Tag | Where |
 |---|---|---|---|
-| 1 | The 외신 seat has two halves. One is text: wire monitoring, summaries for reporters, 중요 자료 보고 as a system entry ("PC등록"), search. The other is video: footage classification, ingest, archive, feed-fault reporting. About half of the posted duty lines are video, ingest or feed-fault work (YTN: 3 of 4) | DOCUMENTED | 01 F-A-01 |
+| 1 | The 외신 seat has two halves. One is text: wire monitoring, summaries for reporters, 중요 자료 보고 as a system entry ("PC등록"), search. The other is video: footage classification, ingest, archive, feed-fault reporting. About half of the posted duty lines are video, ingest or feed-fault work (방송사 B: 3 of 4) | DOCUMENTED | 01 F-A-01 |
 | 2 | Newspaper desks see ~700–800 wire items a day; under 10 reach the page. The value is a deduplicated, ranked queue with sources, not more text | DOCUMENTED | 01 |
 | 3 | Clipping (Model A) is a mature, licence-bound market. AISURFER and 스크랩마스터 already sell AI search, clustering and briefings, under licence tiers tied to 한국언론진흥재단 news copyright. No product was found that serves the foreign-wire desk seat itself | DOCUMENTED / UNVERIFIED-absent | 02 §1, §8 |
 | 4 | AP Media Agent is a Java ingest tool, not an AI agent. The customer registers it with their own API key, and it writes NewsML-G2 / JSON / NITF files and media renditions into a folder a CMS watches. The AP Media API uses an `x-api-key` header over HTTPS | VERIFIED (AP docs) | 02 §8, [`business/broadcaster-licensing-evidence.md`](../business/broadcaster-licensing-evidence.md) |

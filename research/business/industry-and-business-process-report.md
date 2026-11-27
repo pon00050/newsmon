@@ -18,7 +18,7 @@ The 외신 desk seat and the client-clipping seat are **the same pipeline with d
 drop duplicates, pick the few items that matter, summarise or translate them, and deliver them. They differ in what triggers
 delivery (an event for the desk, a clock for the clipping client), in what the user sees (a queue plus an immediate notice for
 the desk; a bundled morning/evening file for the client), and in what "good" means (the desk wants **precision** on "important";
-the client wants **recall** on "mentions us"). A large part of the real 외신 seat (about half of the duty lines at TV조선, most at YTN) is **video and broadcast-system work** (watching
+the client wants **recall** on "mentions us"). A large part of the real 외신 seat (about half of the duty lines at 방송사 A, most at 방송사 B) is **video and broadcast-system work** (watching
 APTN/Reuters footage, ingest, archive, feed faults) that a text-based round-1 MVP cannot do. The clipping market is **already
 served** by Korean vendors with AI summary, search, report and alerts, so it is a poor place to differentiate, and its source
 material is copyright-managed. A **desk-assistant profile on English text** is the more defensible first target, with the
@@ -28,18 +28,18 @@ the legal findings (§5), not a decision.
 ## 2. Findings
 
 ### F-A-01 · The 외신 seat is half video, and the video half is not reachable in round 1
-- Finding: TV조선's duty list is four lines: monitor AP and other English-language reports; classify and ingest foreign footage;
-  organise and report important material (PC registration); search important footage and posts. YTN's is four lines: monitor
+- Finding: 방송사 A's duty list is four lines: monitor AP and other English-language reports; classify and ingest foreign footage;
+  organise and report important material (PC registration); search important footage and posts. 방송사 B's is four lines: monitor
   APTN/Reuters footage and notify; summarise footage information and English text for reporters; save footage to the
-  archive; notify the agency and engineering when a received feed has a problem. By duty count, 3 of 4 YTN lines clearly involve footage, archive or feed health; at
-  TV조선 one line (classify and ingest footage) does, and a second (search important footage and posts) partly does.
-- Evidence: DOCUMENTED, the TV조선 and YTN job advertisements (verified 2026-11-25).
+  archive; notify the agency and engineering when a received feed has a problem. By duty count, 3 of 4 방송사 B lines clearly involve footage, archive or feed health; at
+  방송사 A one line (classify and ingest footage) does, and a second (search important footage and posts) partly does.
+- Evidence: DOCUMENTED, the 방송사 A and 방송사 B job advertisements (verified 2026-11-25).
 - Limits: duty lines carry no time split; "half" is a count of duties, not of hours.
 - Implication: a text-only system covers monitoring AP text, 중요 자료 정리/보고, search, summary/translation, but not
   footage monitoring, ingest, archive or fault detection. Feeds D3 and D7.
 
 ### F-A-02 · The desk's report is a system entry, and the notice is a separate act
-- Finding: "중요 자료 정리 및 보고(PC등록 작업)" (TV조선) and "외신 화면 모니터 및 고지" (YTN). The two verbs imply a **persistent record** plus a
+- Finding: "중요 자료 정리 및 보고(PC등록 작업)" (방송사 A) and "외신 화면 모니터 및 고지" (방송사 B). The two verbs imply a **persistent record** plus a
   **live notification**. Nothing found says how the notice is delivered (spoken, messenger or system).
 - Evidence: DOCUMENTED (same postings). Delivery channel: UNVERIFIED-absent (searches in DESK_PRACTICES §1).
 - Implication for D8: the surface needs a searchable queue (shift handoff, reporters) and a notification path. Do not
@@ -86,7 +86,7 @@ the legal findings (§5), not a decision.
 - Implication for D6/D7: matches the approach to start with text and defer broadcast.
 
 ### F-A-08 · The 외신 market remains two live seats; job-market facts are not re-checked here
-- Per an analysis of public job advertisements: TV조선 and YTN, always through staffing agencies; hours are night/evening/weekend. Not repeated here.
+- Per an analysis of public job advertisements: 방송사 A and 방송사 B, always through staffing agencies; hours are night/evening/weekend. Not repeated here.
   This matters only as context: the "user" of a desk assistant is a contractor monitor or the reporter beside them, **not a
   buyer with a budget**. Evidence: DOCUMENTED, a public job advertisement. Who would pay is a B-workstream (R2) question.
 
@@ -129,15 +129,15 @@ two cases (desk flash, client crisis). Messenger and API/MCP have no desk-practi
   Newsroom or Reuters Connect client documentation read at source (ap.org was not fetchable; the feature list came from a mirror page).
   These are UNVERIFIED-absent. Searches run are listed in [`business/desk-workflows.md`](desk-workflows.md) and [`business/desk-practices.md`](desk-practices.md). No known-answer or nonsense
   control query was run on the search tool, so a "not found" supports "not easily found", not "does not exist".
-- The class B duty text for BQ AI (AIR팀) and for 유니에스 comes from an analysis of public job advertisements, which read images with vision on 2026-11-25; I
-  did not re-read those images because their hosts' `robots.txt` disallows fetching. I read the TV조선 and YTN
-  images from a host that allows it. The TV조선 weekday-variant image and the second YTN image were not opened; they are copies of the same seat.
-- 크릭앤리버's saved advertisement has no duty text; an analysis of public job advertisements is the source for "same minus search".
+- The class B duty text for BQ AI (AIR팀) and for 인력 파견사 3 comes from an analysis of public job advertisements, which read images with vision on 2026-11-25; I
+  did not re-read those images because their hosts' `robots.txt` disallows fetching. I read the 방송사 A and 방송사 B
+  images from a host that allows it. The 방송사 A weekday-variant image and the second 방송사 B image were not opened; they are copies of the same seat.
+- 인력 파견사 4's saved advertisement has no duty text; an analysis of public job advertisements is the source for "same minus search".
 - Sources used with caution: a single PR staffer's blog; a Wikipedia page; one 2005 newspaper report; one 2018 report; vendor
   and press pages (DOCUMENTED at best).
 - Not done: market sizing, outreach to any desk or vendor, price comparison (R2), any build or experiment.
 
 ## 7. Registry and file index
 
-- [`business/desk-responsibilities.csv`](desk-responsibilities.csv): 49 rows (R-01..R-49): 42 DOCUMENTED, 2 VERIFIED, 5 UNVERIFIED; 15 `full`, 30 `assist`, 4 `none`. Coverage: all duty lines of the TV조선, YTN, 다하미, BQ AI and 더이음 postings are present.
+- [`business/desk-responsibilities.csv`](desk-responsibilities.csv): 49 rows (R-01..R-49): 42 DOCUMENTED, 2 VERIFIED, 5 UNVERIFIED; 15 `full`, 30 `assist`, 4 `none`. Coverage: all duty lines of the 방송사 A, 방송사 B, 다하미, BQ AI and 더이음 postings are present.
 - [`business/desk-workflows.md`](desk-workflows.md); [`business/desk-practices.md`](desk-practices.md).

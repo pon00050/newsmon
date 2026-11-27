@@ -59,7 +59,7 @@ may not index. So these absences say nothing about whether the contracts exist. 
 
 **Which broadcasters are subject to public disclosure.** INFERRED from general knowledge, not checked against statute or ALIO in this round:
 public institutions (the 국제방송교류재단 as a foundation funded through the culture ministry, KBS, EBS) are the likeliest to publish
-contract data; private channels (TV조선, 채널A, JTBC, SBS, YTN, 연합뉴스TV) most likely are not, and MBC's position is unclear. For private
+contract data; private channels (채널A, JTBC, SBS, YTN, 연합뉴스TV) most likely are not, and MBC's position is unclear. For private
 channels absence of a record means nothing. R9 or a direct check of ALIO's institution list should settle which institutions are covered.
 
 **Next step (not run, needs the project owner's call):** open the 나라장터 and ALIO search pages in the browser from their own front pages, search
@@ -70,12 +70,12 @@ of browser work. It would change D3 only if it showed broadcasters buy wire vide
 
 | Employer (seat) | Text as written | Source | Tag |
 |---|---|---|---|
-| YTN 국제부 via 아산맨파워 | "APTN, 토이터 등 외신 화면 모니터 및 고지"; "외신 화면 정보 및 영문 텍스트 요약 (취재기자 제작 지원)"; "수신 외신 영상 및 기자 요청 영상 (기타 외신, 국무부 브리핑 녹취 등) 을 아카이브에 저장"; "수신 영상 문제 발생 시 외신사, 기술국에 통보" | a public job advertisement | VERIFIED (text read in file) |
-| YTN 국제부 via 키스템프 | Title only in the text file | two public job advertisements | Title VERIFIED; duties not in the text file |
-| TV조선 via 유니에스 | Title only in the text file; the duty list was read from images | a public job advertisement | The "AP 등 영어권 외신 모니터링" wording is from an analysis of public job advertisements (image advertisement), not from these text files: DOCUMENTED secondhand |
+| 방송사 B 국제부 via 인력 파견사 1 | "APTN, 토이터 등 외신 화면 모니터 및 고지"; "외신 화면 정보 및 영문 텍스트 요약 (취재기자 제작 지원)"; "수신 외신 영상 및 기자 요청 영상 (기타 외신, 국무부 브리핑 녹취 등) 을 아카이브에 저장"; "수신 영상 문제 발생 시 외신사, 기술국에 통보" | a public job advertisement | VERIFIED (text read in file) |
+| 방송사 B 국제부 via 인력 파견사 2 | Title only in the text file | two public job advertisements | Title VERIFIED; duties not in the text file |
+| 방송사 A via 인력 파견사 3 | Title only in the text file; the duty list was read from images | a public job advertisement | The "AP 등 영어권 외신 모니터링" wording is from an analysis of public job advertisements (image advertisement), not from these text files: DOCUMENTED secondhand |
 
-Two cautions for the supplement's claim "explicitly identify AP/APTN and Reuters": (1) the YTN text says "토이터", almost certainly a typo for
-로이터 (Reuters): INFERRED; (2) the text files I could search name APTN once, and AP only in the TV조선 wording quoted in an analysis of public job advertisements. A grep of all
-52 job-advertisement text files for AP, APTN, 로이터, Reuters, 연합뉴스, CNN found only the YTN line above (the other hits were "ASAP", "AP" exams, and a site footer).
+Two cautions for the supplement's claim "explicitly identify AP/APTN and Reuters": (1) the 방송사 B text says "토이터", almost certainly a typo for
+로이터 (Reuters): INFERRED; (2) the text files I could search name APTN once, and AP only in the 방송사 A wording quoted in an analysis of public job advertisements. A grep of all
+52 job-advertisement text files for AP, APTN, 로이터, Reuters, 연합뉴스, CNN found only the 방송사 B line above (the other hits were "ASAP", "AP" exams, and a site footer).
 The advertisement wording shows the seats watch wire video, which implies a feed licence. It does not give the contract, its scope, or whether the
 staffing agency or the broadcaster holds the tool access.

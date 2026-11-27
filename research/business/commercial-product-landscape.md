@@ -167,7 +167,7 @@ as E-A for AP documentation, E-B for contracts, E-C for job descriptions). Legal
 - **No contract record was found.** The Arirang ₩888,030,000 / 2026–2028 APTN figure was supplied to the project as a claim and was not located (six searches, no
   controls; E-B). The 나라장터 and ALIO search pages, which are the right places, were not worked through. So the claim that broadcasters buy
   wire video under disclosed contracts is **supported by job descriptions (E-C) but not yet by a contract record in this project.**
-- **Job descriptions show the seats work on wire video**: YTN's text names APTN and "토이터" (likely 로이터) monitoring, summarising, archiving and
+- **Job descriptions show the seats work on wire video**: 방송사 B's text names APTN and "토이터" (likely 로이터) monitoring, summarising, archiving and
   reporting feed faults to the wire and engineering (E-C). That implies broadcaster-held feeds. It does not show who operates the Agent.
 
 ### 8.2 The two models, evaluated separately
@@ -186,7 +186,7 @@ as E-A for AP documentation, E-B for contracts, E-C for job descriptions). Legal
 
 **What they already run (Model B buyers).** From the evidence: AP Media Agent or an equivalent ingest (AP's own pages say it feeds a CMS watching
 a folder); an NRCS (AP lists an "ENPS/Storytelling API" beside the Media API, so an ENPS-style newsroom system is a documented AP integration
-target, E-A18); and a MAM with an archive (the YTN seat saves incoming video to an archive; Dalet and Avid are the usual vendors, UNVERIFIED for
+target, E-A18); and a MAM with an archive (the 방송사 B seat saves incoming video to an archive; Dalet and Avid are the usual vendors, UNVERIFIED for
 the Korean channels). Which Korean channels run which product was not established.
 
 **Integration points for a Model B tool, in order of independence from the customer's vendors:**
