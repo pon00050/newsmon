@@ -16,7 +16,8 @@
   a synthetic and a live demonstration dashboard, and a Windows launcher.
 - Since v0.1.0 (unreleased): editorial verdicts with notes and a shift report page; in-app alerts for priority items and
   failing feeds, with browser notifications while a tab is open; a technical check, classification and ingest tracking
-  for wire video clips.
+  for wire video clips; search filters for band, time and footage, a failing-feed banner, and saved searches with
+  alerts.
 
 ## What it does not do
 

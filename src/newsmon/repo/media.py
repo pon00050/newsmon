@@ -55,14 +55,16 @@ class MediaRepo(BaseRepo):
                 self.db.execute("UPDATE media_asset SET duration_s = ?, width = ?, height = ? WHERE asset_id = ?",
                                 (probe.get("duration_s"), v.get("width"), v.get("height"), asset_id))
 
-    def list(self, limit: int = 200) -> list[dict]:
+    def list(self, limit: int = 200, article_ids: list[int] | None = None) -> list[dict]:
+        only = "AND m.article_id IN (SELECT value FROM json_each(?)) " if article_ids is not None else ""
+        params = (self.workspace_id, json.dumps(article_ids), limit) if article_ids is not None else (self.workspace_id, limit)
         rows = self.db.query(
             "SELECT m.asset_id, m.kind, m.href, m.sha256, m.size_bytes, m.recorded_utc, a.article_id, a.uid, a.status, "
             "a.restrictions, a.licence_snapshot, a.urgency, a.located, a.slugline, a.first_seen_utc, a.final_band, "
             "a.synthetic, a.canonical_url, s.key AS source_key, s.name AS source_name, r.headline, "
             "c.sha256 AS checked_sha, c.checked_utc, c.status AS check_status, c.probe_json, c.faults_json, c.notes_json, "
             "c.thumb_path, c.error, c.ingest_state, c.ingest_by, c.ingest_utc "
-            + _ASSET + "ORDER BY m.asset_id DESC LIMIT ?", (self.workspace_id, limit))
+            + _ASSET + only + "ORDER BY m.asset_id DESC LIMIT ?", params)
         out = []
         for r in rows:
             d = dict(r)
@@ -71,8 +73,8 @@ class MediaRepo(BaseRepo):
             out.append(d)
         return out
 
-    def for_article(self, article_id: int) -> list[dict]:
-        return [r for r in self.list(limit=1000) if r["article_id"] == article_id]
+    def for_articles(self, article_ids: list[int]) -> list[dict]:
+        return self.list(limit=1000, article_ids=list(article_ids)) if article_ids else []
 
     def thumb(self, asset_id: int) -> dict | None:
         r = self.db.one("SELECT c.thumb_path, a.licence_snapshot, a.restrictions, a.status " + _ASSET + "AND m.asset_id = ?",

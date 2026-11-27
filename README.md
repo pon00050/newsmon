@@ -39,6 +39,7 @@ comes with an explanation.
 | Search | SQLite FTS5 with CJK bigrams, so Korean and Chinese work; aliases from a watch-list gazetteer |
 | Interface | local web queue, search, item detail and source health on `http://127.0.0.1:8765/` (loopback only) |
 | Editorial workflow | verdicts per item (보고 / 확인 / 무시, with a note, keyboard `r` `v` `x`) and a printable shift report of what was marked, flagged when an item was later withdrawn or revised *(unreleased)* |
+| Search+ | band, time and footage-only filters, a failing-feed banner, and saved searches that count new matches and can alert on them *(unreleased)* |
 | Footage | wire video clips checked with local ffmpeg (technical facts, black/silence with timecodes, licence-gated thumbnails), classified by profile topics, tracked to an "ingest done" mark, exported as a CSV ingest sheet *(unreleased)* |
 | Alerts | in-app alerts for `flash` items, optionally `report`-band items, and failing feeds: a badge, an alerts page and browser notifications while a tab is open *(unreleased)* |
 | Licensing controls | per-source flags decide what is stored, displayed, sent to AI and published; restrictions, embargoes and withdrawals are enforced |

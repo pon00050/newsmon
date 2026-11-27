@@ -9,15 +9,34 @@
   <select name="source"><option value="">소스 전체</option>
     {% for k in source_keys %}<option value="{{ k }}" {% if source == k %}selected{% endif %}>{{ k }}</option>{% endfor %}
   </select>
+  <select name="band"><option value="">등급 전체</option>
+    {% for b in all_bands %}<option value="{{ b }}" {% if band == b %}selected{% endif %}>{{ band_ko[b] }}</option>{% endfor %}
+  </select>
+  <select name="hours"><option value="0">기간 전체</option>
+    {% for h, label in [(6,'6시간'),(24,'24시간'),(72,'3일'),(168,'7일')] %}<option value="{{ h }}" {% if hours == h %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <label><input type="checkbox" name="video" value="1" {% if video %}checked{% endif %}> 영상만</label>
   <button type="submit">검색</button>
+  <a href="/searches">저장 검색</a>
 </form>
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+{% if failing %}<div class="warn">수집 실패 중인 피드가 있어 결과가 빠졌을 수 있습니다:
+  {% for f in failing %}<b>{{ f.name }}</b>{% if not loop.last %}, {% endif %}{% endfor %} (<a href="/sources">소스 상태</a>)</div>{% endif %}
 {% if aliases %}<div class="muted">별칭 확장: {{ aliases|join(', ') }}</div>{% endif %}
-{% if q %}<div class="muted">결과 {{ rows|length }}건 (BM25 순)</div>{% endif %}
+{% if q %}<div class="muted">결과 {{ rows|length }}건 (BM25 순)</div>
+<form method="post" action="/searches" class="filters" style="margin:6px 0">
+  <input type="hidden" name="q" value="{{ q }}"><input type="hidden" name="lang" value="{{ lang }}">
+  <input type="hidden" name="source" value="{{ source }}"><input type="hidden" name="band" value="{{ band }}">
+  <input type="hidden" name="hours" value="{{ hours or '' }}"><input type="hidden" name="video" value="{{ '1' if video else '' }}">
+  <input type="text" name="name" maxlength="80" placeholder="저장 이름 (예: 김여정 담화)" size="24">
+  <label><input type="checkbox" name="alert" value="1"> 새 결과 알림</label>
+  <button type="submit">이 검색 저장</button>
+</form>{% endif %}
 <table id="queue">
   <thead><tr><th>등급</th><th>언어</th><th>제목</th><th>소스</th><th class="hide-sm">수집(KST)</th><th class="hide-sm"></th><th>처리</th></tr></thead>
   <tbody>
   {% for r in rows %}{% include "_row.html" %}{% else %}
-  {% if q %}<tr><td colspan="7" class="muted">결과가 없습니다.</td></tr>{% endif %}
+  {% if q %}<tr><td colspan="7" class="muted">0건 (검색어 확인){% if failing %} · 실패 중인 피드가 있어 뉴스가 없다는 뜻은 아닙니다{% endif %}</td></tr>{% endif %}
   {% endfor %}
   </tbody>
 </table>

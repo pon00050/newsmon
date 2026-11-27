@@ -7,7 +7,7 @@ from newsmon.repo.db import Database
 # Root tables that carry workspace_id NOT NULL. Child tables reach a root through a foreign key (amendment 2).
 ROOT_TABLES = ("source", "feed", "fetch_run", "quarantine", "article", "feed_entry", "event", "ai_interpretation",
                "entity", "editorial_assessment", "profile", "alert", "incident", "digest", "outbox", "app_user",
-               "audit_log", "spend_day", "app_state")
+               "audit_log", "spend_day", "app_state", "saved_search")
 CHILD_TABLES = {"inbox_ledger": "feed", "article_revision": "article", "near_dup_link": "article_revision",
                 "media_asset": "article", "media_check": "media_asset", "event_member": "event", "article_embedding": "article",
                 "claim": "article_revision", "entity_mention": "article_revision", "rule_hit": "article",

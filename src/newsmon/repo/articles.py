@@ -293,7 +293,8 @@ class ArticleRepo(BaseRepo):
         return [dict(r) for r in self.db.query(sql, params)]
 
     def search(self, query: str, *, aliases: dict[str, list[str]] | None = None, lang: str | None = None,
-               source_key: str | None = None, band: str | None = None, limit: int = 100) -> list[dict]:
+               source_key: str | None = None, band: str | None = None, since: str | None = None,
+               video_only: bool = False, newest_first: bool = False, limit: int = 100) -> list[dict]:
         match = build_match(query, aliases)
         if not match:
             return []
@@ -308,11 +309,16 @@ class ArticleRepo(BaseRepo):
         if band:
             where.append("a.final_band = ?")
             params.append(band)
+        if since:
+            where.append("a.first_seen_utc >= ?")
+            params.append(since)
+        if video_only:  # items that carry a wire clip (duty 4: search for footage)
+            where.append("EXISTS (SELECT 1 FROM media_asset m WHERE m.article_id = a.article_id AND m.kind IN ('video', 'audio'))")
         params.append(min(int(limit), 500))
         sql = (self._SELECT + ", bm25(search_fts, 3.0, 1.0, 0.5, 1.0) AS rank FROM search_fts "
                "JOIN article a ON a.article_id = search_fts.rowid JOIN source s ON s.source_id = a.source_id "
                "JOIN article_revision r ON r.revision_id = a.current_revision_id WHERE " + " AND ".join(where) +
-               " ORDER BY rank LIMIT ?")
+               (" ORDER BY a.first_seen_utc DESC LIMIT ?" if newest_first else " ORDER BY rank LIMIT ?"))
         return [dict(r) for r in self.db.query(sql, params)]
 
     def get(self, uid: str) -> dict | None:

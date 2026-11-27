@@ -14,6 +14,11 @@
   items raise none; no e-mail yet.
 - The database enforces one alert per item and kind, and one open incident per feed (migration 0003). An `alerts:`
   entry set to `false`, or listing channels without `inapp`, is off.
+- **Search for footage and saved watch searches.** The search page gains band, time (6 h to 7 days) and footage-only
+  filters, shows each result's clip state, names feeds that are currently failing (so an empty result is never read as
+  "no news") and says "0건 (검색어 확인)". Searches can be saved under a name; the saved-searches page shows totals and
+  "new since last opened", and a saved search can raise an alert for each item first seen after it was saved (a new
+  duplicate alerts its primary). Migration 0005.
 - **Wire footage check and ingest tracking** (`/media`, 영상). Each video clip delivered to the watched folder is
   inspected with the local ffmpeg/ffprobe: technical facts, black picture and silence with timecodes (frozen picture as
   a note), and a thumbnail strip only where the source's licence stores content and the item has no restriction. Clips
