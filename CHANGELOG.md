@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-11-27
+
+Editorial workflow, alerts, footage and search for a foreign-news desk.
 
 - **Editorial verdicts.** Each queue row and item page can be marked 보고 (report to desk), 확인 (needs verification) or
   무시 (ignore), with an optional note; `r` / `v` / `x` on the queue act on the selected row. Verdicts are append-only

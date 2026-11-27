@@ -4,7 +4,7 @@
 > reordered, changed or dropped, and most will never be built. The reasoning behind each lives in the
 > [research library](../research/README.md).
 
-## What exists today (v0.1.0)
+## What exists today (v0.2.0)
 
 - Collection of RSS/Atom feeds and of wire files placed in a watched folder (NewsML-G2, NITF, ninjs, plain text).
 - Normalisation, exact and near-duplicate detection, wire versions, corrections and kills.
@@ -14,7 +14,7 @@
 - Optional, off-by-default AI assessment of selected items ([`ai-enrichment.md`](ai-enrichment.md)).
 - A static public export behind a deny-by-default redistribution permission ([`publication-policy.md`](publication-policy.md)),
   a synthetic and a live demonstration dashboard, and a Windows launcher.
-- Since v0.1.0 (unreleased): editorial verdicts with notes and a shift report page; in-app alerts for priority items and
+- New in v0.2.0: editorial verdicts with notes and a shift report page; in-app alerts for priority items and
   failing feeds, with browser notifications while a tab is open; a technical check, classification and ingest tracking
   for wire video clips; search filters for band, time and footage, a failing-feed banner, and saved searches with
   alerts.
@@ -24,7 +24,7 @@
 - It lists items, not events. Related stories from different outlets are not grouped.
 - It sends no e-mail and produces no scheduled digests; alerts and the shift report stay inside the app. It has no JSON
   API, authentication or backup.
-- It does no speech-to-text, on-screen text or AI analysis of video. Wire clips are checked technically (unreleased), but
+- It does no speech-to-text, on-screen text or AI analysis of video. Wire clips are checked technically, but
   never filed into a newsroom or asset-management system.
 - It has no connector for a news agency's own API. Licensed content arrives as files your agency software delivers.
 - It has no social-media sources and no connection to newsroom, archive or asset-management systems.
@@ -45,7 +45,7 @@
 
 ### 1. Notifications
 
-- Built (unreleased): in-page alerts with browser notifications for priority items and for feeds that keep failing,
+- Built (v0.2.0): in-page alerts with browser notifications for priority items and for feeds that keep failing,
   one alert per item.
 - Still possible: e-mail and chat delivery, notices when a feed goes empty or silent, and suppression of repeats per
   story rather than per item (needs event grouping).
@@ -54,7 +54,7 @@
 
 ### 2. Reporting and editorial output
 
-- Built (unreleased): per-item editorial verdicts with notes, and an on-demand shift report of the marked items.
+- Built (v0.2.0): per-item editorial verdicts with notes, and an on-demand shift report of the marked items.
 - Scheduled and ad hoc briefings and shift handoff notes from deterministic templates, with citations to the items used.
 - Reviewed, optionally AI-drafted text, labelled as such; a translation workflow for sources whose licence permits it.
 - Curated collections, simple statistics, feed-health reports and document export.
@@ -64,7 +64,7 @@
 
 - Inspecting and converting media files; detecting black, frozen and silent stretches; speech-to-text; scene detection;
   on-screen text; subtitles; search over transcripts and metadata.
-- Built (unreleased): technical inspection of wire clips with local ffmpeg, black and silence detection (frozen picture
+- Built (v0.2.0): technical inspection of wire clips with local ffmpeg, black and silence detection (frozen picture
   as a note), licence-gated thumbnails, classification by profile topics, ingest tracking and a CSV ingest sheet.
 - Some of the rest has been tried outside the application on public-domain samples (one English clip, synthetic faults):
   see the [multimedia experiment](../research/experiments/multimedia/results.md) and

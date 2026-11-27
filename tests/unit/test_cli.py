@@ -18,7 +18,11 @@ def test_version_prints_package_version(capsys):
 
 
 def test_version_matches_installed_metadata():
-    assert __version__ == "0.1.0"
+    """The installed package reports the version declared in pyproject.toml (a fixed string here broke on each release)."""
+    import tomllib
+    from pathlib import Path
+    declared = tomllib.loads((Path(__file__).resolve().parents[2] / "pyproject.toml").read_text(encoding="utf-8"))
+    assert __version__ == declared["project"]["version"]
 
 
 def test_unknown_subcommand_exits_2(capsys):
