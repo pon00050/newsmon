@@ -14,11 +14,14 @@
 - Optional, off-by-default AI assessment of selected items ([`ai-enrichment.md`](ai-enrichment.md)).
 - A static public export behind a deny-by-default redistribution permission ([`publication-policy.md`](publication-policy.md)),
   a synthetic and a live demonstration dashboard, and a Windows launcher.
+- Since v0.1.0 (unreleased): editorial verdicts with notes and a shift report page; in-app alerts for priority items and
+  failing feeds, with browser notifications while a tab is open.
 
 ## What it does not do
 
 - It lists items, not events. Related stories from different outlets are not grouped.
-- It sends no alerts or e-mail, produces no digests or reports, and has no JSON API, authentication or backup.
+- It sends no e-mail and produces no scheduled digests; alerts and the shift report stay inside the app. It has no JSON
+  API, authentication or backup.
 - It does not process audio or video. Wire sidecar files are read; the media itself is only referenced.
 - It has no connector for a news agency's own API. Licensed content arrives as files your agency software delivers.
 - It has no social-media sources and no connection to newsroom, archive or asset-management systems.
@@ -39,13 +42,16 @@
 
 ### 1. Notifications
 
-- Priority and profile alerts in the page, on the desktop and by e-mail; optional chat services.
-- Notices when a feed or watched folder stops delivering, and suppression of repeats for the same story.
+- Built (unreleased): in-page alerts with browser notifications for priority items and for feeds that keep failing,
+  one alert per item.
+- Still possible: e-mail and chat delivery, notices when a feed goes empty or silent, and suppression of repeats per
+  story rather than per item (needs event grouping).
 - Needs: an audit log, an outbox with approval rules, and recipient allow-lists. See
   [ADR-008](../research/architecture/adr/ADR-008-delivery-surface.md).
 
 ### 2. Reporting and editorial output
 
+- Built (unreleased): per-item editorial verdicts with notes, and an on-demand shift report of the marked items.
 - Scheduled and ad hoc briefings and shift handoff notes from deterministic templates, with citations to the items used.
 - Reviewed, optionally AI-drafted text, labelled as such; a translation workflow for sources whose licence permits it.
 - Curated collections, simple statistics, feed-health reports and document export.

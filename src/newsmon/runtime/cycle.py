@@ -55,6 +55,8 @@ class CycleReport:
     rank_error: str | None = None
     ai: object | None = None  # EnrichReport when the AI stage ran
     ai_error: str | None = None
+    alerts: dict | None = None
+    alert_error: str | None = None
 
     @property
     def new_articles(self) -> int:
@@ -95,6 +97,11 @@ def run_cycle(app: "App", *, force: bool = False, only: set[str] | None = None) 
         except Exception as exc:  # an AI defect must never stop collection, ranking or search
             report.ai_error = f"{exc.__class__.__name__}: {exc}"
             event("ai_failed", logging.ERROR, stage="ai", error_class="io", detail=report.ai_error)
+    try:  # an alert defect must never stop collection (M1)
+        report.alerts = app.raise_alerts()
+    except Exception as exc:
+        report.alert_error = f"{exc.__class__.__name__}: {exc}"
+        event("alerts_failed", logging.ERROR, stage="presentation", error_class="io", detail=report.alert_error)
     report.finished_utc = iso(app.clock.now())
     event("cycle_done", feeds=len(report.feeds), new=report.new_articles, failed=len(report.failed), ranked=report.ranked)
     return report

@@ -14,10 +14,10 @@
 {% if aliases %}<div class="muted">별칭 확장: {{ aliases|join(', ') }}</div>{% endif %}
 {% if q %}<div class="muted">결과 {{ rows|length }}건 (BM25 순)</div>{% endif %}
 <table id="queue">
-  <thead><tr><th>등급</th><th>언어</th><th>제목</th><th>소스</th><th class="hide-sm">수집(KST)</th><th class="hide-sm"></th></tr></thead>
+  <thead><tr><th>등급</th><th>언어</th><th>제목</th><th>소스</th><th class="hide-sm">수집(KST)</th><th class="hide-sm"></th><th>처리</th></tr></thead>
   <tbody>
   {% for r in rows %}{% include "_row.html" %}{% else %}
-  {% if q %}<tr><td colspan="6" class="muted">결과가 없습니다.</td></tr>{% endif %}
+  {% if q %}<tr><td colspan="7" class="muted">결과가 없습니다.</td></tr>{% endif %}
   {% endfor %}
   </tbody>
 </table>

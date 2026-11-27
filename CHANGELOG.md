@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- **Editorial verdicts.** Each queue row and item page can be marked 보고 (report to desk), 확인 (needs verification) or
+  무시 (ignore), with an optional note; `r` / `v` / `x` on the queue act on the selected row. Verdicts are append-only
+  and the newest one per item is current. The name recorded is `desk_editor` in `settings.yaml` (there is no login).
+- **Shift report** (`/shift-report`, 교대 보고). Items marked 보고 or 확인 in the last N hours, flagged when an item was
+  withdrawn or revised after the verdict. It carries headline, source, link, times, ranking reasons and the note only,
+  never a summary, body or AI text. Printable and downloadable as one HTML file.
+- **In-app alerts.** After each collection: `flash` items, optionally `report`-band items (profile `alerts: report:`),
+  and feeds whose last 3 polls failed (and their recovery). A 🔔 badge on every page, an alerts page with acknowledge
+  and dismiss, and browser notifications while a tab is open. One alert per item; duplicates and injection-flagged
+  items raise none; no e-mail yet.
+- Fix: a test hard-coded 2026-11-27 as "tomorrow" and failed from that date.
+
 ## 0.1.0 — 2026-11-25
 
 First public release.

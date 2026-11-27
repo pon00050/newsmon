@@ -88,6 +88,7 @@ class Settings(_Strict):
     deployment_model: Literal["CH", "MP", "SaaS"] = "CH"
     timezone: str = "Asia/Seoul"  # display only; storage is UTC
     auth_mode: Literal["local", "static_users"] = "local"
+    desk_editor: str = Field("local", min_length=1, max_length=40)  # recorded on verdicts while there is no login
     bind_host: str = "127.0.0.1"
     bind_port: int = 8765
     allowed_recipient_domains: tuple[str, ...] = ("internal",)

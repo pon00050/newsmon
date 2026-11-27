@@ -9,7 +9,8 @@ import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from urllib.parse import urlsplit
+from datetime import timezone
+from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -17,7 +18,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from newsmon.obs.logging import event
-from newsmon.web.service import BANDS, DEFAULT_BANDS, Service
+from newsmon.web.service import BANDS, DEFAULT_BANDS, VERDICT_KO, Service
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 BAND_KO = {"flash": "속보", "report": "보고", "review": "검토", "drop": "제외"}
@@ -77,6 +78,16 @@ def _same_origin(request: Request) -> bool:
     return o.hostname in LOCAL_HOSTS and o.netloc == request.headers.get("host", "")
 
 
+def _local_path(next_: str | None, default: str) -> str:
+    """A redirect target from a form: a path on this app only (one leading slash, no scheme, no backslash)."""
+    if next_ and next_.startswith("/") and not next_.startswith("//") and "\\" not in next_ and "://" not in next_:
+        return next_
+    return default
+
+
+FORM_MAX_BYTES = 16_384
+
+
 def create_app(app, *, auto_collect: bool = False) -> FastAPI:
     svc = Service(app)
     collector = Collector(app)
@@ -92,8 +103,12 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
     web.state.collector = collector
 
     def ctx(request: Request, **kw) -> dict:
+        qs = urlencode([(k, v) for k, v in request.query_params.multi_items() if k != "msg"])
+        here = request.url.path + ("?" + qs if qs else "")  # where a form on this page returns to
         return {"request": request, "ai_label": app.ai_status.header_label(), "band_ko": BAND_KO, "lang_ko": LANG_KO,
                 "collecting": collector.running, "collect_error": collector.last_error, "report": app.last_report,
+                "verdict_ko": VERDICT_KO, "editor": app.settings.desk_editor, "here": here,
+                "alert_count": app.alerts.new_count(), "alert_last_id": app.alerts.last_id(),
                 "profile": app.primary_profile[1] if app.primary_profile else None,
                 "profile_errors": app.profile_errors, **kw}
 
@@ -155,6 +170,62 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
         msg = "AI 분석 완료" if rep and rep.done else ("라이선스상 AI 미적용" if rep and rep.not_allowed else
                                                   ("AI 분석 실패: " + (rep.stopped or "검증 실패, 검토 대기열 확인") if rep else "AI 분석 실패"))
         return RedirectResponse(f"/article/{uid}?msg={msg}", status_code=303)
+
+    @web.post("/article/{uid}/verdict")
+    async def verdict(request: Request, uid: str):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        body = await request.body()
+        if len(body) > FORM_MAX_BYTES:
+            raise HTTPException(413, "form too large")
+        form = {k: v[0] for k, v in parse_qs(body.decode("utf-8", "replace")).items()}
+        back = _local_path(form.get("next"), f"/article/{uid}")
+        result = svc.add_verdict(uid, form.get("verdict", ""), form.get("note"))
+        if result == "invalid":
+            raise HTTPException(400, "unknown verdict")
+        if result == "unknown":
+            raise HTTPException(404, "기사를 찾을 수 없습니다")
+        if result == "killed":
+            raise HTTPException(409, "철회된 기사에는 판정을 남길 수 없습니다")
+        msg = f"{VERDICT_KO[form['verdict']]} 등록됨"
+        return RedirectResponse(back + ("&" if "?" in back else "?") + "msg=" + quote(msg), status_code=303)
+
+    @web.get("/shift-report", response_class=HTMLResponse)
+    def shift_report(request: Request, hours: int = 8, download: int = 0):
+        shift = svc.shift_report(hours)
+        resp = TEMPLATES.TemplateResponse(request, "shift_report.html", ctx(request, shift=shift, standalone=bool(download)))
+        if download:
+            stamp = app.clock.now().astimezone(timezone.utc).strftime("%Y%m%dT%H%MZ")
+            resp.headers["Content-Disposition"] = f'attachment; filename="shift_report_{stamp}.html"'
+        return resp
+
+    @web.get("/alerts", response_class=HTMLResponse)
+    def alerts_page(request: Request, all: int = 0, msg: str = ""):
+        return TEMPLATES.TemplateResponse(request, "alerts.html", ctx(
+            request, alerts=svc.alerts(include_done=bool(all)), show_all=bool(all), msg=msg,
+            enabled=sorted(app.primary_profile[1].alerts) if app.primary_profile else ["feed_incident"]))
+
+    @web.get("/alerts/poll")
+    def alerts_poll(after: int = 0):
+        return JSONResponse(svc.alert_poll(after))
+
+    @web.post("/alerts/ack-all")
+    def alerts_ack_all(request: Request):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        n = app.alerts.acknowledge_all()
+        return RedirectResponse("/alerts?msg=" + quote(f"{n}건 확인 처리"), status_code=303)
+
+    @web.post("/alerts/{alert_id}/{action}")
+    def alert_action(request: Request, alert_id: int, action: str):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        status = {"ack": "acknowledged", "dismiss": "dismissed"}.get(action)
+        if status is None:
+            raise HTTPException(404, "unknown action")
+        if not app.alerts.set_status(alert_id, status):
+            raise HTTPException(404, "알림을 찾을 수 없습니다")
+        return RedirectResponse("/alerts?msg=" + quote("확인 처리" if action == "ack" else "무시 처리"), status_code=303)
 
     @web.get("/healthz")
     def healthz():

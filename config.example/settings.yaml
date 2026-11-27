@@ -5,6 +5,7 @@ use_context: private          # private | internal (sources whose allowed_contex
 deployment_model: CH          # CH (customer-hosted) | MP (managed private) | SaaS
 timezone: Asia/Seoul          # display only; storage is UTC
 auth_mode: local              # local | static_users
+desk_editor: local           # name recorded on editorial verdicts (no login yet); appears in the shift report
 bind_host: 127.0.0.1
 bind_port: 8765
 allowed_recipient_domains: [internal]   # sends elsewhere need one-click approval

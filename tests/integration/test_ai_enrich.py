@@ -165,8 +165,13 @@ def test_spend_cap(tmp_path):
         assert app.db.scalar("SELECT capped FROM spend_day") == 1
         assert app.ai_status.header_label() == "AI: 중단"
         assert app.collect(force=True).ai.called == 0  # stays degraded until midnight KST
-        app.clock = app.enricher.clock = __import__("tests.support.clock", fromlist=["FrozenClock"]).FrozenClock(
-            "2026-11-26T15:01:00+00:00")  # next KST day
+        # one minute past the next KST midnight, relative to the clock the cap was set on (a fixed date here went
+        # stale once the real date reached it)
+        from datetime import timedelta
+        from zoneinfo import ZoneInfo
+        kst_now = app.clock.now().astimezone(ZoneInfo("Asia/Seoul"))
+        next_day = (kst_now + timedelta(days=1)).replace(hour=0, minute=1, second=0, microsecond=0)
+        app.clock = app.enricher.clock = __import__("tests.support.clock", fromlist=["FrozenClock"]).FrozenClock(next_day)
         assert app.enrich().called > 0
     finally:
         app.close()
