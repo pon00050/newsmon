@@ -13,14 +13,14 @@ what they deliver.
 
 | Mechanism | Evidence | Tag |
 |---|---|---|
-| Registering an organised important item in a system ("중요 자료 정리 및 보고(PC등록 작업)") | TV조선 job advertisement, duty 3 | DOCUMENTED |
-| Telling the desk about important foreign footage ("외신 화면 모니터 및 고지") | YTN posting duty 1 | DOCUMENTED |
-| Writing a summary for the reporter producing the package ("취재기자 제작 지원") | YTN posting duty 2 | DOCUMENTED |
-| Telling the wire agency and the engineering department when a feed breaks ("외신사, 기술국에 통보") | YTN posting duty 4 | DOCUMENTED |
+| Registering an organised important item in a system ("중요 자료 정리 및 보고(PC등록 작업)") | 방송사 A job advertisement, duty 3 | DOCUMENTED |
+| Telling the desk about important foreign footage ("외신 화면 모니터 및 고지") | 방송사 B posting duty 1 | DOCUMENTED |
+| Writing a summary for the reporter producing the package ("취재기자 제작 지원") | 방송사 B posting duty 2 | DOCUMENTED |
+| Telling the wire agency and the engineering department when a feed breaks ("외신사, 기술국에 통보") | 방송사 B posting duty 4 | DOCUMENTED |
 | Audible alert for new wire copy; the night person checks each on a monitor | 2005 newspaper desk, HK https://www.journalist.or.kr/m/m_article.html?no=10666 | DOCUMENTED (newspaper, old) |
 | Briefing the next shift on overnight developments with organised materials left on the desk | HK | DOCUMENTED (newspaper, old) |
 | Phone calls to correspondents to clarify copy | HK | DOCUMENTED (newspaper, old) |
-| KakaoTalk / Slack / email digests between monitor and desk | searches: "연합뉴스TV YTN 국제부 외신 모니터링 ... 어떻게 일하나"; none found | UNVERIFIED-absent |
+| KakaoTalk / Slack / email digests between monitor and desk | searches: "<방송사> 국제부 외신 모니터링 ... 어떻게 일하나"; none found | UNVERIFIED-absent |
 
 What the posting wording tells us: the report is a **record in a system** (so it persists, can be searched by the next shift
 and by reporters) and the notice (고지) is a separate act. A delivery surface for a desk assistant therefore needs both a
@@ -35,7 +35,7 @@ are INFERRED from what a reporter would need and from KBS's ingest paper, not fr
 | Likely field | Basis | Tag |
 |---|---|---|
 | Source (agency, URL or feed) and time received | KBS paper: agency and time are fields that ingest staff enter, and they are often entered inconsistently (6 date formats, 3 time formats) https://koreascience.kr/article/JAKO202228751849986.pdf | VERIFIED for KBS ingest; the report form itself INFERRED |
-| Title or gist in Korean | Duty 2 of YTN (summaries to support reporters) | INFERRED |
+| Title or gist in Korean | Duty 2 of 방송사 B (summaries to support reporters) | INFERRED |
 | Why it matters / what a reporter may use | Duty "중요 자료" implies selection | INFERRED |
 | Link or clip reference | Duty "중요영상 및 게시글 검색" implies items are clips and posts | INFERRED |
 | Provenance and verification status | The 2018 staged-killing story that four papers carried from foreign reports (JN, https://www.journalist.or.kr/m/m_article.html?no=44301) shows the cost of an unsourced relay | DOCUMENTED for the case; field INFERRED |
@@ -83,5 +83,5 @@ are INFERRED from what a reporter would need and from KBS's ingest paper, not fr
 ## 7. Not established
 
 - Any template or sample of 중요 자료 보고 or of a clipping report.
-- The messenger/phone behaviour of monitors; the names of the PC/NRCS and wire clients at TV조선, YTN, 연합뉴스TV, MBC, 채널A.
+- The messenger/phone behaviour of monitors; the names of the PC/NRCS and wire clients at Korean broadcasters' 국제부 desks.
 - Whether delivery by KakaoTalk, Telegram or Slack is accepted by desks. Searching for this is a round-2 offer (cost: a few searches; chance it changes D8: low, because queue + email digest covers both profiles regardless).
