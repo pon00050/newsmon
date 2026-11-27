@@ -289,8 +289,9 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
 
     @web.get("/media", response_class=HTMLResponse)
     def media_page(request: Request, msg: str = ""):
+        clips, capped = svc.clips_page()
         return TEMPLATES.TemplateResponse(request, "media.html", ctx(
-            request, clips=svc.clips(), msg=msg, tool=app.media_tool is not None))
+            request, clips=clips, capped=capped, msg=msg, tool=app.media_tool is not None, clip_page=svc.CLIP_PAGE))
 
     @web.get("/media.csv")
     def media_csv():
@@ -318,6 +319,10 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
     def media_action(request: Request, asset_id: int, action: str):
         if not _same_origin(request):
             raise HTTPException(403, "cross-origin request refused")
+        if action == "recheck":
+            if not app.media.recheck(asset_id):
+                raise HTTPException(404, "확인되지 않은 영상입니다")
+            return RedirectResponse("/media?msg=" + quote("다음 수집 주기에 다시 확인합니다"), status_code=303)
         if action not in ("filed", "pending"):
             raise HTTPException(404, "unknown action")
         if not app.media.set_ingest(asset_id, action == "filed", app.settings.desk_editor, iso(app.clock.now())):

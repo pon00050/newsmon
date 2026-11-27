@@ -34,6 +34,37 @@ class FeedParseError(ValueError):
     pass
 
 
+# CDATA sections and comments are kept verbatim; elsewhere an "&" not starting a character or entity reference is bare
+_AMP_SCAN = re.compile(rb"<!\[CDATA\[.*?\]\]>|<!--.*?-->|&(?!(?:#[0-9]+|#x[0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]*);)", re.S)
+_WIDE_BOMS = (b"\xff\xfe", b"\xfe\xff", b"\x00\x00\xfe\xff")
+
+
+def _escape_bare_amps(payload: bytes) -> bytes | None:
+    """The payload with bare ampersands escaped, or None when there is none to escape or the document is not a
+    byte-per-ASCII-character encoding (UTF-16/32: inserting single bytes would corrupt it)."""
+    head = payload[:400]
+    declared = _DECLARED.search(head)
+    if (payload.startswith(_WIDE_BOMS) or b"\x00" in payload[:4]
+            or (declared and declared.group(1).decode().lower().startswith(("utf-16", "utf-32")))):
+        return None
+    hits = 0
+
+    def fix(m: re.Match) -> bytes:
+        nonlocal hits
+        if m.group(0).startswith(b"<!"):
+            return m.group(0)
+        hits += 1
+        return b"&amp;"
+
+    out = _AMP_SCAN.sub(fix, payload)
+    return out if hits else None
+
+
+def _malformed(exc) -> bool:
+    return exc is not None and isinstance(exc, xml.sax.SAXException) and not isinstance(
+        exc, (feedparser.CharacterEncodingOverride,))
+
+
 def parse_feed_bytes(payload: bytes):
     if _ENTITY_DECL.search(payload) or any(m in payload for m in _ENTITY_UTF16):
         raise FeedParseError("XML entity declaration refused")
@@ -42,8 +73,17 @@ def parse_feed_bytes(payload: bytes):
         raise FeedParseError("unsupported character encoding")
     d = feedparser.parse(payload)
     exc = d.get("bozo_exception") if d.get("bozo") else None
-    if exc is not None and isinstance(exc, xml.sax.SAXException) and not isinstance(
-            exc, (feedparser.CharacterEncodingOverride,)):
+    fixed = _escape_bare_amps(payload) if _malformed(exc) else None
+    if fixed is not None:
+        # one narrow repair, seen live (2026-11-27, a Yonhap feed): a bare "&" in a URL attribute makes the whole feed
+        # invalid XML. Escaping only bare ampersands (outside CDATA and comments) cannot add markup or an entity
+        # declaration; the same parser and the guards above still apply. Anything else that is malformed stays an error.
+        repaired = feedparser.parse(fixed)
+        rexc = repaired.get("bozo_exception") if repaired.get("bozo") else None
+        if not _malformed(rexc):
+            repaired["newsmon_repair"] = "bare ampersand escaped"
+            d, exc = repaired, rexc
+    if _malformed(exc):
         raise FeedParseError(f"malformed XML: {exc.__class__.__name__}")
     if not d.get("version") and not d.entries:
         raise FeedParseError("not an RSS/Atom document")
@@ -98,6 +138,10 @@ class FeedConnector:
 
     def parse(self, raw: RawUnit) -> list[NormalisedItem]:
         d = parse_feed_bytes(raw.payload)
+        self.last_repair = d.get("newsmon_repair")
+        if d.get("newsmon_repair"):  # recorded, so a repaired feed never looks silently clean
+            from newsmon.obs.logging import event
+            event("feed_repaired", 30, source=self.source_key, stage="parse", detail=d["newsmon_repair"])
         feed_lang = (d.feed.get("language") or self.lang_default or None)
         items = []
         for e in d.entries:

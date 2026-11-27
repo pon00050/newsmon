@@ -259,3 +259,63 @@ def test_the_database_refuses_duplicate_alerts_and_open_incidents(wired):
     app.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc) VALUES (1, ?, 'failing', 'x')", (feed,))
     with pytest.raises(sqlite3.IntegrityError):
         app.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc) VALUES (1, ?, 'failing', 'y')", (feed,))
+
+
+def test_an_incident_on_a_feed_switched_off_is_closed(wired):
+    app, _ = wired
+    feed = app.db.scalar("SELECT f.feed_id FROM feed f JOIN source s ON s.source_id = f.source_id WHERE s.key = 'mock_wire_gated'")
+    app.db.execute("INSERT INTO incident (workspace_id, feed_id, kind, opened_utc, detail) VALUES (1, ?, 'failing', ?, 'x')",
+                   (feed, START))
+    app.db.execute("UPDATE source SET active = 0 WHERE key = 'mock_wire_gated'")
+    app.raise_alerts()
+    assert app.db.scalar("SELECT closed_utc FROM incident WHERE feed_id = ?", (feed,)) is not None
+    assert app.db.scalar("SELECT reason FROM alert WHERE kind = 'feed_incident' ORDER BY alert_id DESC LIMIT 1") == \
+        "피드 비활성화로 장애 종료: Mock wire (gated)"
+    app.raise_alerts()
+    assert app.db.scalar("SELECT count(*) FROM alert WHERE reason LIKE '피드 비활성화%'") == 1
+
+
+def test_a_feed_that_crashes_before_its_poll_is_recorded_still_counts(tmp_path, fixture_server, monkeypatch):
+    from newsmon.runtime import cycle
+    fixture_server.route("/robots.txt", Resp(body=b"User-agent: *\nAllow: /\n", content_type="text/plain"))
+    url = fixture_server.route("/feeds/tiny.xml", Resp(body=TINY_RSS))
+    app = make_app(tmp_path, fixture_server, [feed_source("tiny", url)], clock=FrozenClock(START),
+                   profile=profile(DEFAULT_ALERTS))
+    try:
+        monkeypatch.setattr(cycle, "_collect_feed", lambda app, feed: (_ for _ in ()).throw(RuntimeError("crash")))
+        for _ in range(3):
+            app.collect(force=True)
+        assert app.db.scalar("SELECT count(*) FROM fetch_run WHERE status = 'error' AND error_detail = 'RuntimeError: crash'") == 3
+        assert app.db.scalar("SELECT count(*) FROM incident WHERE closed_utc IS NULL") == 1
+    finally:
+        app.close()
+
+
+def test_a_crash_after_the_poll_is_recorded_counts_once_per_poll(tmp_path, fixture_server, monkeypatch):
+    from newsmon.runtime import cycle
+    fixture_server.route("/robots.txt", Resp(body=b"User-agent: *\nAllow: /\n", content_type="text/plain"))
+    url = fixture_server.route("/feeds/tiny.xml", Resp(body=TINY_RSS))
+    app = make_app(tmp_path, fixture_server, [feed_source("tiny", url)], clock=FrozenClock(START),
+                   profile=profile(DEFAULT_ALERTS))
+    try:
+        monkeypatch.setattr(cycle, "_ingest_items", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("late crash")))
+        for _ in range(3):
+            app.collect(force=True)
+        runs = [tuple(r) for r in app.db.query("SELECT status, error_detail FROM fetch_run ORDER BY run_id")]
+        assert runs == [("error", "RuntimeError: late crash")] * 3  # one row per poll, marked failed
+        assert app.db.scalar("SELECT count(*) FROM incident WHERE closed_utc IS NULL") == 1
+    finally:
+        app.close()
+
+
+def test_a_repaired_feed_is_noted_on_its_run(tmp_path, fixture_server):
+    fixture_server.route("/robots.txt", Resp(body=b"User-agent: *\nAllow: /\n", content_type="text/plain"))
+    broken = TINY_RSS.replace(b"<link>http://127.0.0.1/a/1</link>", b"<link>http://127.0.0.1/a/1?x=1&y=2</link>")
+    url = fixture_server.route("/feeds/amp.xml", Resp(body=broken))
+    app = make_app(tmp_path, fixture_server, [feed_source("amp", url)], clock=FrozenClock(START))
+    try:
+        rep = app.collect(force=True)
+        assert rep.feeds[0].status == "ok" and rep.feeds[0].new == 1
+        assert app.db.scalar("SELECT error_detail FROM fetch_run") == "repaired: bare ampersand escaped"
+    finally:
+        app.close()

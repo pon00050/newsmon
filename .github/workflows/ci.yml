@@ -27,8 +27,11 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Install (locked)
         run: uv sync --frozen --all-groups
+      - name: ffmpeg for the footage tests (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ffmpeg
       - name: Regression gate (no network, no AI)
-        run: uv run --frozen pytest -q -m "not live and not slow"
+        run: uv run --frozen pytest -q -rs -m "not live and not slow"
       - name: Launcher smoke test (Windows)
         if: runner.os == 'Windows'
         shell: cmd

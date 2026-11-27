@@ -65,6 +65,15 @@ class AlertRepo(BaseRepo):
         opened = closed = 0
         feeds = self.db.query("SELECT f.feed_id, s.name FROM feed f JOIN source s ON s.source_id = f.source_id "
                               "WHERE f.workspace_id = ? AND f.active = 1 AND s.active = 1", (self.workspace_id,))
+        for r in self.db.query(  # a feed switched off while failing: its incident ends here, with one closing alert
+                "SELECT i.incident_id, s.name FROM incident i JOIN feed f ON f.feed_id = i.feed_id JOIN source s ON "
+                "s.source_id = f.source_id WHERE i.workspace_id = ? AND i.closed_utc IS NULL AND (f.active = 0 OR s.active = 0)",
+                (self.workspace_id,)):
+            with self.db.tx():
+                if self.db.execute("UPDATE incident SET closed_utc = ? WHERE incident_id = ? AND workspace_id = ? "
+                                   "AND closed_utc IS NULL", (now_s, r["incident_id"], self.workspace_id)).rowcount:
+                    self._incident_alert(r["incident_id"], "normal", f"피드 비활성화로 장애 종료: {r['name']}", now_s)
+                    closed += 1
         for f in feeds:
             runs = self._last_polls(f["feed_id"], failures)
             open_id = self.db.scalar("SELECT incident_id FROM incident WHERE workspace_id = ? AND feed_id = ? AND "
@@ -81,10 +90,10 @@ class AlertRepo(BaseRepo):
                         opened += 1
             elif open_id is not None and runs and runs[0]["status"] != "error":
                 with self.db.tx():
-                    self.db.execute("UPDATE incident SET closed_utc = ? WHERE incident_id = ? AND workspace_id = ?",
-                                    (now_s, open_id, self.workspace_id))
-                    self._incident_alert(open_id, "normal", f"피드 복구: {f['name']}", now_s)
-                closed += 1
+                    if self.db.execute("UPDATE incident SET closed_utc = ? WHERE incident_id = ? AND workspace_id = ? "
+                                       "AND closed_utc IS NULL", (now_s, open_id, self.workspace_id)).rowcount:
+                        self._incident_alert(open_id, "normal", f"피드 복구: {f['name']}", now_s)
+                        closed += 1
         return opened, closed
 
     def _last_polls(self, feed_id: int, n: int) -> list[dict]:

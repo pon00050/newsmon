@@ -165,6 +165,18 @@ class SourceRepo(BaseRepo):
              str(r.error_class) if r.error_class else None, r.error_detail, r.attempts))
         return cur.lastrowid
 
+    def record_failure(self, feed_id: int, started: str, finished: str, detail: str) -> int:
+        """A poll that crashed before it could be recorded normally."""
+        return self.db.execute(
+            "INSERT INTO fetch_run (workspace_id, feed_id, started_utc, finished_utc, status, error_class, error_detail, "
+            "attempt) VALUES (?, ?, ?, ?, 'error', 'io', ?, 1)",
+            (self.workspace_id, feed_id, started, finished, detail[:500])).lastrowid
+
+    def note_run(self, run_id: int, note: str) -> None:
+        """A note on a successful run (e.g. a repaired feed), shown with the run on the source page."""
+        self.db.execute("UPDATE fetch_run SET error_detail = ? WHERE run_id = ? AND workspace_id = ? AND status <> 'error'",
+                        (note[:500], run_id, self.workspace_id))
+
     def update_run_counts(self, run_id: int, *, entries: int, new_articles: int, status: str | None = None,
                           error_class: str | None = None, error_detail: str | None = None) -> None:
         if status:

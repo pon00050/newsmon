@@ -295,9 +295,34 @@ class ArticleRepo(BaseRepo):
     def search(self, query: str, *, aliases: dict[str, list[str]] | None = None, lang: str | None = None,
                source_key: str | None = None, band: str | None = None, since: str | None = None,
                video_only: bool = False, newest_first: bool = False, limit: int = 100) -> list[dict]:
+        built = self._search_where(query, aliases, lang, source_key, band, since, video_only)
+        if built is None:
+            return []
+        where, params = built
+        params.append(min(int(limit), 500))
+        sql = (self._SELECT + ", bm25(search_fts, 3.0, 1.0, 0.5, 1.0) AS rank FROM search_fts "
+               "JOIN article a ON a.article_id = search_fts.rowid JOIN source s ON s.source_id = a.source_id "
+               "JOIN article_revision r ON r.revision_id = a.current_revision_id WHERE " + " AND ".join(where) +
+               (" ORDER BY a.first_seen_utc DESC LIMIT ?" if newest_first else " ORDER BY rank LIMIT ?"))
+        return [dict(r) for r in self.db.query(sql, params)]
+
+    def search_counts(self, query: str, *, aliases: dict[str, list[str]] | None = None, lang: str | None = None,
+                      source_key: str | None = None, band: str | None = None, since: str | None = None,
+                      video_only: bool = False, new_after: str | None = None) -> tuple[int, int]:
+        """(all matches, matches first seen after `new_after`) with the same filters as `search`, counted, not fetched."""
+        built = self._search_where(query, aliases, lang, source_key, band, since, video_only)
+        if built is None:
+            return 0, 0
+        where, params = built
+        r = self.db.one("SELECT count(*), COALESCE(sum(a.first_seen_utc > ?), 0) FROM search_fts "
+                        "JOIN article a ON a.article_id = search_fts.rowid JOIN source s ON s.source_id = a.source_id "
+                        "WHERE " + " AND ".join(where), [new_after or "9999"] + params)
+        return int(r[0]), int(r[1])
+
+    def _search_where(self, query, aliases, lang, source_key, band, since, video_only):
         match = build_match(query, aliases)
         if not match:
-            return []
+            return None
         where = ["search_fts MATCH ?", "a.workspace_id = ?", "a.status <> 'killed'"]
         params: list = [match, self.workspace_id]
         if lang:
@@ -314,12 +339,7 @@ class ArticleRepo(BaseRepo):
             params.append(since)
         if video_only:  # items that carry a wire clip (duty 4: search for footage)
             where.append("EXISTS (SELECT 1 FROM media_asset m WHERE m.article_id = a.article_id AND m.kind IN ('video', 'audio'))")
-        params.append(min(int(limit), 500))
-        sql = (self._SELECT + ", bm25(search_fts, 3.0, 1.0, 0.5, 1.0) AS rank FROM search_fts "
-               "JOIN article a ON a.article_id = search_fts.rowid JOIN source s ON s.source_id = a.source_id "
-               "JOIN article_revision r ON r.revision_id = a.current_revision_id WHERE " + " AND ".join(where) +
-               (" ORDER BY a.first_seen_utc DESC LIMIT ?" if newest_first else " ORDER BY rank LIMIT ?"))
-        return [dict(r) for r in self.db.query(sql, params)]
+        return where, params
 
     def get(self, uid: str) -> dict | None:
         r = self.db.one(self._SELECT + "FROM article a JOIN source s ON s.source_id = a.source_id JOIN article_revision r ON "

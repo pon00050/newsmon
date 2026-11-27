@@ -343,7 +343,25 @@ class App:
             self.media.save(r["asset_id"], r["sha256"], now_s, status=status, probe=probe, faults=faults,
                             notes={"freeze": found.get("freeze", [])}, thumb=thumb)
             out[status] += 1
+        out["thumbs_removed"] = self.cleanup_thumbs()
         return out
+
+    def cleanup_thumbs(self) -> int:
+        """Delete thumbnail files this app generated that no current check of a live, unrestricted item uses (replaced
+        by a re-check, withdrawn, or restricted later). Only `data_dir/thumbs/*.jpg` is ever touched."""
+        d = self.cfg.paths.data_dir / "thumbs"
+        if not d.is_dir():
+            return 0
+        keep = {Path(p).name for p in self.media.wanted_thumbs()}
+        removed = 0
+        for f in d.glob("*.jpg"):
+            if f.name not in keep:
+                try:
+                    f.unlink()
+                    removed += 1
+                except OSError:
+                    pass
+        return removed
 
     def search(self, q: str, *, lang: str | None = None, source: str | None = None, band: str | None = None,
                hours: int | None = None, since: str | None = None, video_only: bool = False,
@@ -360,6 +378,15 @@ class App:
                                     band=band or None, since=since, video_only=video_only, newest_first=newest_first,
                                     limit=limit)
         return rows, aliases
+
+    def search_counts(self, q: str, *, lang=None, source=None, band=None, hours=None, video_only=False,
+                      new_after: str | None = None) -> tuple[int, int]:
+        from datetime import timedelta
+        aliases = self.search_aliases(q)
+        query = f'"{q.strip()}"' if aliases else q
+        since = iso(self.clock.now() - timedelta(hours=int(hours))) if hours else None
+        return self.articles.search_counts(query, aliases=aliases, lang=lang or None, source_key=source or None,
+                                           band=band or None, since=since, video_only=video_only, new_after=new_after)
 
     def search_aliases(self, query: str) -> dict[str, list[str]]:
         """Gazetteer expansion: a query equal to any alias of an entity also searches its other aliases."""
