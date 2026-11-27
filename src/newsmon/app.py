@@ -4,6 +4,7 @@ The CLI, the web UI and the tests all construct an `App`; nothing else wires ada
 """
 from __future__ import annotations
 
+import subprocess
 import threading
 import time
 from collections.abc import Callable
@@ -26,6 +27,7 @@ from newsmon.repo.ai import AIRepo
 from newsmon.repo.alerts import AlertRepo
 from newsmon.repo.articles import ArticleRepo
 from newsmon.repo.assessments import AssessmentRepo
+from newsmon.repo.media import MediaRepo
 from newsmon.repo.db import Database
 from newsmon.repo.migrate import ensure_workspace, migrate
 from newsmon.repo.sources import SourceRepo
@@ -60,6 +62,12 @@ class App:
         self.articles = ArticleRepo(self.db)
         self.assessments = AssessmentRepo(self.db)
         self.alerts = AlertRepo(self.db)
+        self.media = MediaRepo(self.db)
+        from newsmon.adapters.ffmpeg_media import FfmpegMedia
+        self.media_tool = FfmpegMedia.available()  # None without ffmpeg/ffprobe on PATH: clips stay unchecked
+        self.media_async = False  # True (web UI, collect --loop): checks run on their own thread, outside collect_lock
+        self._media_lock = threading.Lock()
+        self._media_thread: threading.Thread | None = None
         f = self.settings.fetch
         self.fetcher = fetcher or HttpxFetcher(user_agent=f.user_agent, policy=ssrf_policy or SsrfPolicy(),
                                                max_bytes=f.max_bytes, timeout=f.timeout_seconds)
@@ -247,6 +255,80 @@ class App:
         if "feed_incident" in enabled:
             out["incidents_opened"], out["incidents_closed"] = self.alerts.update_incidents(
                 failures=self.INCIDENT_FAILURES, now_s=now_s)
+        return out
+
+    MEDIA_PER_CYCLE = 5
+    MEDIA_BUDGET_S = 300.0  # a batch stops starting new clips after this much wall time
+
+    def kick_media(self) -> dict:
+        """Called at the end of a cycle. Synchronous by default (one-shot CLI, tests); with `media_async` the check runs
+        on its own thread so a slow clip never holds up feed collection, and at most one such thread runs at a time."""
+        if not self.media_async:
+            return self.check_media()
+        if self._media_thread is not None and self._media_thread.is_alive():
+            return {"tool": self.media_tool is not None, "started": False}
+
+        def run():
+            try:
+                self.check_media()
+            except Exception as exc:  # recorded; the next cycle starts a new thread
+                obslog.event("media_check_failed", 40, stage="presentation", detail=f"{exc.__class__.__name__}: {exc}")
+        self._media_thread = threading.Thread(target=run, name="newsmon-media", daemon=True)
+        self._media_thread.start()
+        return {"tool": self.media_tool is not None, "started": True}
+
+    def check_media(self, limit: int | None = None) -> dict:
+        """Check wire clips that have arrived and are not yet checked at their current file hash (duty 2, v1): technical
+        facts, black/silence faults (freeze as a note), and a thumbnail strip where the licence stores content in full.
+        The file is located through the inbox ledger and must resolve inside its feed's inbox root."""
+        out = {"tool": self.media_tool is not None, "checked": 0, "ok": 0, "needs_check": 0, "unreadable": 0,
+               "missing": 0}
+        if self.media_tool is None:
+            return out
+        with self._media_lock:
+            return self._check_media(out, self.MEDIA_PER_CYCLE if limit is None else max(0, limit))
+
+    def _check_media(self, out: dict, limit: int) -> dict:
+        from newsmon.adapters.ffmpeg_media import MediaToolError
+        from newsmon.domain.enums import Storage
+        from newsmon.licence.policy import flags_from_snapshot
+        started = time.monotonic()
+        for r in self.media.pending(limit):
+            if time.monotonic() - started > self.MEDIA_BUDGET_S:
+                break
+            now_s = iso(self.clock.now())
+            root = self.resolve_inbox(r["feed_path"]).resolve()
+            path = (root / r["rel_path"]).resolve()
+            out["checked"] += 1
+            if not path.is_relative_to(root) or not path.is_file():
+                why = "file outside the inbox root" if not path.is_relative_to(root) else "file no longer in the inbox"
+                self.media.save(r["asset_id"], r["sha256"], now_s, status="missing", error=why)
+                out["missing"] += 1
+                continue
+            try:
+                probe = self.media_tool.probe(path)
+                found = self.media_tool.detect(path, has_video=bool(probe.get("video")),
+                                               has_audio=bool(probe.get("audio")), duration=probe.get("duration_s"))
+            except Exception as exc:  # any failure on one clip is recorded on that clip, never raised into the cycle
+                self.media.save(r["asset_id"], r["sha256"], now_s, status="unreadable",
+                                error=f"{exc.__class__.__name__}: {exc}"[:300])
+                out["unreadable"] += 1
+                continue
+            faults = {"black": found.get("black", []), "silence": found.get("silence", [])}
+            status = "needs_check" if faults["black"] or faults["silence"] else "ok"
+            thumb = None
+            flags = flags_from_snapshot(r["licence_snapshot"])
+            if (flags.storage is Storage.FULL and not (r["restrictions"] or "").strip() and probe.get("video")
+                    and r["status"] != "killed"):
+                rel = f"thumbs/{r['sha256'][:32]}.jpg"
+                try:
+                    if self.media_tool.thumbnail(path, self.cfg.paths.data_dir / rel, probe.get("duration_s")):
+                        thumb = rel
+                except (MediaToolError, OSError, subprocess.SubprocessError):
+                    thumb = None  # a thumbnail is a convenience; its failure does not fail the check
+            self.media.save(r["asset_id"], r["sha256"], now_s, status=status, probe=probe, faults=faults,
+                            notes={"freeze": found.get("freeze", [])}, thumb=thumb)
+            out[status] += 1
         return out
 
     def search_aliases(self, query: str) -> dict[str, list[str]]:

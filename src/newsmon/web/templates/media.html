@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}영상{% endblock %}
+{% block content %}
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+<h2>외신 영상 분류 · 인제스트</h2>
+<p class="muted">감시 폴더로 들어온 외신 영상 파일을 확인합니다: 기술 정보, 블랙·무음 결함(정지 화면은 참고), 썸네일(원문 저장이 허용된 출처만).
+  분류는 프로필 주제 기준이며, 방송사 자체 분류 체계와 인제스트 시스템 연동은 아직 없습니다. 영상 파일은 복사하지 않습니다.</p>
+{% if not tool %}<div class="warn">ffmpeg/ffprobe가 없어 영상 확인을 하지 않습니다.</div>{% endif %}
+<div class="filters">
+  <a href="/media.csv">인제스트 시트 내려받기 (CSV)</a>
+  <span class="muted">영상 {{ clips|length }}건 · 수집 주기마다 최대 5건씩 확인 (`newsmon media-check`로 즉시 실행)</span>
+</div>
+<table id="clips">
+  <thead><tr><th>상태</th><th>영상</th><th>분류</th><th>출처 · 수집(KST)</th><th>처리</th></tr></thead>
+  <tbody>
+  {% for c in clips %}
+  <tr data-asset-id="{{ c.asset_id }}">
+    <td><span class="st-{{ c.state }}">{{ c.state_ko }}</span>
+      {% if c.filed_by %}<div class="muted">{{ c.filed_by }} {{ c.filed_kst }}</div>{% endif %}</td>
+    <td><a href="/article/{{ c.uid }}"><b>{{ c.headline }}</b></a>
+      {% if c.killed %}<span class="tag err">철회</span>{% endif %}
+      {% if c.restricted %}<span class="tag">사용 제한</span>{% endif %}
+      {% if c.synthetic %}<span class="tag">합성</span>{% endif %}
+      {% if c.urgency is not none and c.urgency <= 2 %}<span class="tag err">긴급 {{ c.urgency }}</span>{% endif %}
+      <div class="muted">{% if c.slugline %}{{ c.slugline }} · {% endif %}{% if c.located %}{{ c.located }} · {% endif %}{{ c.file }}</div>
+      {% if c.tech %}<div class="muted">{{ c.tech }}</div>{% endif %}
+      {% for f in c.faults %}<span class="tag err">{{ f }}</span>{% endfor %}
+      {% for n in c.notes %}<span class="tag">{{ n }}</span>{% endfor %}
+      {% if c.error %}<div class="err">{{ c.error }}</div>{% endif %}
+      {% if c.thumb_url %}<img class="clip-thumb" src="{{ c.thumb_url }}" alt="썸네일" loading="lazy">{% endif %}</td>
+    <td>{% for t in c.topics %}<span class="tag">{{ t }}</span>{% endfor %}</td>
+    <td class="muted">{{ c.source_name }}<br>{{ c.seen_kst }}</td>
+    <td>{% if c.can_file %}
+      {% if c.state == 'filed' %}<form method="post" action="/media/{{ c.asset_id }}/pending" style="margin:0"><button type="submit">표시 취소</button></form>
+      {% else %}<form method="post" action="/media/{{ c.asset_id }}/filed" style="margin:0"><button type="submit">인제스트 완료</button></form>{% endif %}
+      {% else %}<span class="muted">확인 전</span>{% endif %}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5" class="muted">들어온 영상이 없습니다. 감시 폴더에 영상과 사이드카(NewsML-G2, ninjs 등)가 들어오면 표시됩니다.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

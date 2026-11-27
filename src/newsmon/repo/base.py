@@ -9,7 +9,7 @@ ROOT_TABLES = ("source", "feed", "fetch_run", "quarantine", "article", "feed_ent
                "entity", "editorial_assessment", "profile", "alert", "incident", "digest", "outbox", "app_user",
                "audit_log", "spend_day", "app_state")
 CHILD_TABLES = {"inbox_ledger": "feed", "article_revision": "article", "near_dup_link": "article_revision",
-                "media_asset": "article", "event_member": "event", "article_embedding": "article",
+                "media_asset": "article", "media_check": "media_asset", "event_member": "event", "article_embedding": "article",
                 "claim": "article_revision", "entity_mention": "article_revision", "rule_hit": "article",
                 "source_health": "feed", "digest_item": "digest", "delivery_log": "outbox", "api_token": "app_user"}
 

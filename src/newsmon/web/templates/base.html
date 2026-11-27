@@ -42,6 +42,9 @@
   #alert-badge.has-alerts { color:#fff; background:var(--flash); padding:1px 8px; border-radius:10px; }
   .alert-flash { border-left:4px solid var(--flash); } .alert-watch { border-left:4px solid var(--report); }
   .alert-feed_incident { border-left:4px solid #6a1b9a; } tr.done td { opacity:.55; }
+  .clip-thumb { width:480px; max-width:100%; height:auto; border:1px solid var(--line); display:block; margin:4px 0; }
+  .st-ok, .st-filed { color:#2e7d32; font-weight:600; } .st-needs_check, .st-unreadable, .st-missing { color:var(--flash); font-weight:600; }
+  .st-awaiting, .st-queued { color:var(--muted); font-weight:600; }
   @media print { header, .noprint { display:none; } main { max-width:none; } }
 </style>
 </head>
@@ -54,6 +57,7 @@
     <a href="/sources" {% if request.url.path == '/sources' %}class="on"{% endif %}>소스 상태</a>
     <a href="/ai" {% if request.url.path == '/ai' %}class="on"{% endif %}>AI</a>
     <a href="/shift-report" {% if request.url.path == '/shift-report' %}class="on"{% endif %}>교대 보고</a>
+    <a href="/media" {% if request.url.path == '/media' %}class="on"{% endif %}>영상{% if media_attention %} <span class="tag err">{{ media_attention }}</span>{% endif %}</a>
     <a href="/alerts" id="alert-badge" class="{% if alert_count %}has-alerts{% endif %}{% if request.url.path == '/alerts' %} on{% endif %}">🔔 알림 <span id="alert-count">{{ alert_count }}</span></a>
   </nav>
   <div class="right">

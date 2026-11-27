@@ -13,11 +13,12 @@ from datetime import timezone
 from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from newsmon.obs.logging import event
+from newsmon.pipeline.normalise import iso
 from newsmon.web.service import BANDS, DEFAULT_BANDS, VERDICT_KO, Service
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
@@ -109,6 +110,7 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
                 "collecting": collector.running, "collect_error": collector.last_error, "report": app.last_report,
                 "verdict_ko": VERDICT_KO, "editor": app.settings.desk_editor, "here": here,
                 "alert_count": app.alerts.new_count(), "alert_last_id": app.alerts.last_id(),
+                "media_attention": app.media.attention_count(),
                 "profile": app.primary_profile[1] if app.primary_profile else None,
                 "profile_errors": app.profile_errors, **kw}
 
@@ -226,6 +228,44 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
         if not app.alerts.set_status(alert_id, status):
             raise HTTPException(404, "알림을 찾을 수 없습니다")
         return RedirectResponse("/alerts?msg=" + quote("확인 처리" if action == "ack" else "무시 처리"), status_code=303)
+
+    @web.get("/media", response_class=HTMLResponse)
+    def media_page(request: Request, msg: str = ""):
+        return TEMPLATES.TemplateResponse(request, "media.html", ctx(
+            request, clips=svc.clips(), msg=msg, tool=app.media_tool is not None))
+
+    @web.get("/media.csv")
+    def media_csv():
+        stamp = app.clock.now().astimezone(timezone.utc).strftime("%Y%m%dT%H%MZ")
+        return Response(svc.clips_csv(), media_type="text/csv; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="ingest_sheet_{stamp}.csv"'})
+
+    @web.get("/media/thumb/{asset_id}")
+    def media_thumb(asset_id: int):
+        from newsmon.domain.enums import Storage
+        from newsmon.licence.policy import flags_from_snapshot
+        r = app.media.thumb(asset_id)
+        if not r or not r["thumb_path"]:
+            raise HTTPException(404, "no thumbnail")
+        flags = flags_from_snapshot(r["licence_snapshot"])
+        if flags.storage is not Storage.FULL or (r["restrictions"] or "").strip() or r["status"] == "killed":
+            raise HTTPException(404, "no thumbnail")  # the licence, a later restriction or a withdrawal forbids it
+        thumbs = (app.cfg.paths.data_dir / "thumbs").resolve()
+        p = (app.cfg.paths.data_dir / r["thumb_path"]).resolve()
+        if not p.is_relative_to(thumbs) or not p.is_file():
+            raise HTTPException(404, "no thumbnail")
+        return FileResponse(p, media_type="image/jpeg")
+
+    @web.post("/media/{asset_id}/{action}")
+    def media_action(request: Request, asset_id: int, action: str):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        if action not in ("filed", "pending"):
+            raise HTTPException(404, "unknown action")
+        if not app.media.set_ingest(asset_id, action == "filed", app.settings.desk_editor, iso(app.clock.now())):
+            raise HTTPException(404, "확인되지 않은 영상입니다")
+        return RedirectResponse("/media?msg=" + quote("인제스트 완료로 표시" if action == "filed" else "표시 취소"),
+                                status_code=303)
 
     @web.get("/healthz")
     def healthz():
