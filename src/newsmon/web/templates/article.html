@@ -49,5 +49,10 @@
 {% if a.related %}<h3>중복·개정 관계</h3><ul>{% for x in a.related %}
   <li><a href="/article/{{ x.uid }}">{{ x.source_name }}</a> — {{ x.kind }} ({{ x.method }}{% if x.jaccard_est %}, J≈{{ '%.2f'|format(x.jaccard_est) }}{% endif %})</li>{% endfor %}</ul>{% endif %}
 {% if a.revisions|length > 1 %}<h3>개정 이력</h3><ul>{% for v in a.revisions %}<li>v{{ v.version }} {{ v.change_kind }} · {{ v.fetched_utc }}</li>{% endfor %}</ul>{% endif %}
+{% if a.clips %}<h3>영상 확인 (인제스트 준비)</h3><ul>{% for c in a.clips %}
+  <li><span class="st-{{ c.state }}">{{ c.state_ko }}</span> · {{ c.file }}{% if c.tech %} · {{ c.tech }}{% endif %}
+    {% for f in c.faults %}<span class="tag err">{{ f }}</span>{% endfor %}{% for n in c.notes %}<span class="tag">{{ n }}</span>{% endfor %}
+    · 분류 {{ c.topics|join(', ') }} · <a href="/media">영상 페이지</a>
+    {% if c.thumb_url %}<img class="clip-thumb" src="{{ c.thumb_url }}" alt="썸네일">{% endif %}</li>{% endfor %}</ul>{% endif %}
 {% if a.media %}<h3>미디어 (참조만, 복사하지 않음)</h3><ul>{% for m in a.media %}<li>{{ m.kind }} {{ m.href }} {% if m.sha256 %}<span class="muted">sha256 {{ m.sha256[:12] }}… · {{ m.size_bytes }} B</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
 {% endblock %}

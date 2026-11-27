@@ -57,6 +57,8 @@ class CycleReport:
     ai_error: str | None = None
     alerts: dict | None = None
     alert_error: str | None = None
+    media: dict | None = None
+    media_error: str | None = None
 
     @property
     def new_articles(self) -> int:
@@ -102,6 +104,11 @@ def run_cycle(app: "App", *, force: bool = False, only: set[str] | None = None) 
     except Exception as exc:
         report.alert_error = f"{exc.__class__.__name__}: {exc}"
         event("alerts_failed", logging.ERROR, stage="presentation", error_class="io", detail=report.alert_error)
+    try:  # a footage-check defect must never stop collection either (duty 2)
+        report.media = app.kick_media()
+    except Exception as exc:
+        report.media_error = f"{exc.__class__.__name__}: {exc}"
+        event("media_check_failed", logging.ERROR, stage="presentation", error_class="io", detail=report.media_error)
     report.finished_utc = iso(app.clock.now())
     event("cycle_done", feeds=len(report.feeds), new=report.new_articles, failed=len(report.failed), ranked=report.ranked)
     return report

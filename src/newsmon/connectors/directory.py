@@ -106,9 +106,17 @@ class DirectoryConnector:
                 try:
                     if st.st_size > self.max_bytes:
                         sha = _sha256_file(real)
-                        if not self.seen(rel, sha):
+                        if self.seen(rel, sha):
+                            continue
+                        with real.open("rb") as fh:
+                            head = fh.read(16)
+                        if media_kind(head) is None:  # an oversize text file is refused; a video is expected to be big
                             res.refused.append(Refused(rel, f"oversize ({st.st_size} bytes)", st.st_size, st.st_mtime_ns, sha))
-                        continue
+                            continue
+                        res.ready.append(RawUnit(raw_ref=rel, raw_sha256=sha, payload=head, received_utc=self.clock.now(),
+                                                 meta={"rel_path": rel, "size": st.st_size, "mtime_ns": st.st_mtime_ns,
+                                                       "abs_path": str(real), **_ap_name(name)}))
+                        continue  # media is never read into memory whole, only its first bytes (type) and its hash
                     payload = real.read_bytes()
                 except OSError:
                     continue

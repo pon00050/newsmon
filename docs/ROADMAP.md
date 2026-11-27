@@ -15,14 +15,16 @@
 - A static public export behind a deny-by-default redistribution permission ([`publication-policy.md`](publication-policy.md)),
   a synthetic and a live demonstration dashboard, and a Windows launcher.
 - Since v0.1.0 (unreleased): editorial verdicts with notes and a shift report page; in-app alerts for priority items and
-  failing feeds, with browser notifications while a tab is open.
+  failing feeds, with browser notifications while a tab is open; a technical check, classification and ingest tracking
+  for wire video clips.
 
 ## What it does not do
 
 - It lists items, not events. Related stories from different outlets are not grouped.
 - It sends no e-mail and produces no scheduled digests; alerts and the shift report stay inside the app. It has no JSON
   API, authentication or backup.
-- It does not process audio or video. Wire sidecar files are read; the media itself is only referenced.
+- It does no speech-to-text, on-screen text or AI analysis of video. Wire clips are checked technically (unreleased), but
+  never filed into a newsroom or asset-management system.
 - It has no connector for a news agency's own API. Licensed content arrives as files your agency software delivers.
 - It has no social-media sources and no connection to newsroom, archive or asset-management systems.
 - Ranking is keyword- and rule-based. It is transparent and misses meaning that keywords do not capture.
@@ -61,9 +63,11 @@
 
 - Inspecting and converting media files; detecting black, frozen and silent stretches; speech-to-text; scene detection;
   on-screen text; subtitles; search over transcripts and metadata.
-- Some of this has been tried outside the application on public-domain samples (one English clip, synthetic faults):
+- Built (unreleased): technical inspection of wire clips with local ffmpeg, black and silence detection (frozen picture
+  as a note), licence-gated thumbnails, classification by profile topics, ingest tracking and a CSV ingest sheet.
+- Some of the rest has been tried outside the application on public-domain samples (one English clip, synthetic faults):
   see the [multimedia experiment](../research/experiments/multimedia/results.md) and
-  [ADR-007](../research/architecture/adr/ADR-007-video-and-broadcast.md). None of it is integrated. Korean speech recognition,
+  [ADR-007](../research/architecture/adr/ADR-007-video-and-broadcast.md). Speech-to-text is not integrated. Korean speech recognition,
   noisy audio and live streams are untested.
 - Needs: a separate media-processing job type, and media you are permitted to use.
 

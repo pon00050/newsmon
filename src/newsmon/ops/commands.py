@@ -70,6 +70,7 @@ def _collect_cfg(p):
 
 def _collect(args) -> int:
     app = _app(args)
+    app.media_async = bool(args.loop)  # a long-running loop must not wait on footage checks between feed polls
     try:
         n = 0
         while True:
@@ -171,6 +172,7 @@ def _serve(args) -> int:
     if host not in ("127.0.0.1", "localhost", "::1"):
         print(f"newsmon: refusing to bind {host}: Release A serves loopback only (no authentication yet)", file=sys.stderr)
         return 2
+    app.media_async = True  # in the web server, footage checks run on their own thread, never inside a collection
     web = create_app(app, auto_collect=args.auto_collect)
     print(f"newsmon UI on http://{host}:{args.port or app.settings.bind_port}/  ({app.ai_status.header_label()})")
     try:
@@ -181,6 +183,30 @@ def _serve(args) -> int:
 
 
 register("serve", "run the local web UI (loopback only)", _serve_cfg, _serve)
+
+
+# --- media-check (duty 2) ------------------------------------------------------------------------------------------------
+def _media_cfg(p):
+    _common(p)
+    p.add_argument("--limit", type=int, default=20, help="clips to check in this run (default 20)")
+
+
+def _media(args) -> int:
+    app = _app(args)
+    try:
+        if app.media_tool is None:
+            print("ffmpeg/ffprobe not found on PATH: clips are not checked")
+            return 1
+        rep = app.check_media(limit=args.limit)
+        print(f"checked={rep['checked']} ok={rep['ok']} needs_check={rep['needs_check']} unreadable={rep['unreadable']} "
+              f"missing={rep['missing']}")
+    finally:
+        app.close()
+    return 0
+
+
+register("media-check", "check wire video clips now: technical facts, black/silence, thumbnails (duty 2)", _media_cfg,
+         _media)
 
 
 # --- enrich (Release A.1) ----------------------------------------------------------------------------------------------

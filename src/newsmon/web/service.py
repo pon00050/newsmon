@@ -13,6 +13,8 @@ from newsmon.pipeline.normalise import iso
 BANDS = ("flash", "report", "review", "drop")
 DEFAULT_BANDS = ["flash", "report", "review"]
 VERDICT_KO = {"report_to_desk": "보고", "verify": "확인", "ignore": "무시"}
+CLIP_STATE_KO = {"killed": "철회 · 인제스트 금지", "awaiting": "파일 대기", "queued": "확인 대기", "ok": "인제스트 준비됨", "needs_check": "확인 필요",
+                 "unreadable": "읽기 실패", "missing": "파일 없음", "filed": "인제스트 완료"}
 ALERT_KIND_KO = {"flash": "속보", "watch": "보고 등급", "feed_incident": "피드"}
 
 
@@ -92,6 +94,7 @@ class Service:
         v["media"] = self.app.articles.media(r["article_id"])
         v["revisions"] = self.app.articles.revisions(r["article_id"])
         v["version"] = r.get("version")
+        v["clips"] = [self._clip_view(c) for c in self.app.media.for_article(r["article_id"])]
         v["history"] = [{**h, "at_kst": kst(h["created_utc"], self.app.settings.timezone)}
                         for h in self.app.assessments.history(r["article_id"])]
         return v
@@ -142,6 +145,86 @@ class Service:
         return {"hours": hours, "since_kst": kst_full(since, tz), "until_kst": kst_full(iso(now), tz),
                 "editor": self.app.settings.desk_editor, "sections": sections,
                 "count": sum(len(v) for v in sections.values())}
+
+    # --- wire footage: check, classification, ingest tracking (duty 2, v1) ---------------------------------------------
+    @staticmethod
+    def _tc(sec: float) -> str:
+        sec = max(0.0, float(sec))
+        return f"{int(sec // 60):02d}:{sec % 60:04.1f}"
+
+    def _clip_view(self, r: dict) -> dict:
+        from newsmon.domain.enums import Storage
+        tz = self.app.settings.timezone
+        shown = DisplayPolicy.render({**r, "description_text": None, "body_text": None, "ai": None})
+        flags = flags_from_snapshot(r["licence_snapshot"])
+        topics = []
+        for h in self.app.articles.rule_hits(r["article_id"]):
+            if h["rule_id"].startswith("topic:") and h["rule_id"][6:] not in topics:
+                topics.append(h["rule_id"][6:])
+        checked = r["checked_sha"] is not None and r["checked_sha"] == r["sha256"]
+        killed = r["status"] == "killed"
+        restricted_now = bool((r["restrictions"] or "").strip())
+        if killed:
+            state = "killed"  # withdrawn by the agency: never offered for filing, whatever its check says
+        elif r["sha256"] is None:
+            state = "awaiting"
+        elif not checked:
+            state = "queued"
+        elif r["ingest_state"] == "filed":
+            state = "filed"
+        else:
+            state = r["check_status"]
+        p = (r["probe"] or {}) if checked else {}
+        v, a = p.get("video") or {}, p.get("audio") or {}
+        parts = [f"{v['width']}×{v['height']}" if v.get("width") else "",
+                 " ".join(str(y) for y in (v.get("codec"), f"{v['fps']:g}fps" if v.get("fps") else "") if y),
+                 " ".join(str(y) for y in (a.get("codec"), f"{a['channels']}ch" if a.get("channels") else "",
+                                            f"{a['sample_rate'] / 1000:g}kHz" if a.get("sample_rate") else "") if y),
+                 f"{p['duration_s']:.1f}s" if p.get("duration_s") else ""]
+        tech = " · ".join(x for x in parts if x)
+        faults = []
+        if checked and r["faults"]:
+            for kind, label in (("black", "블랙"), ("silence", "무음")):
+                faults += [f"{label} {self._tc(s)}–{self._tc(e)}" for s, e in r["faults"].get(kind, [])]
+        freeze = (r["notes"] or {}).get("freeze", []) if checked else []
+        notes = [f"정지 화면 {self._tc(s)}–{self._tc(e)}" for s, e in freeze]
+        thumb_ok = bool(checked and r["thumb_path"] and flags.storage is Storage.FULL and not restricted_now
+                        and not killed)
+        return {"asset_id": r["asset_id"], "uid": r["uid"], "headline": shown["headline"] or "(표시 제한)",
+                "restricted": shown["restricted"] or restricted_now, "source_name": r["source_name"], "slugline": r["slugline"],
+                "located": r["located"], "urgency": r["urgency"], "file": r["href"], "sha256": r["sha256"],
+                "topics": topics or ["미분류"], "state": state, "state_ko": CLIP_STATE_KO.get(state, state),
+                "tech": tech, "faults": faults, "notes": notes, "error": r["error"] if checked else None,
+                "thumb_url": f"/media/thumb/{r['asset_id']}" if thumb_ok else None,
+                "killed": killed, "synthetic": bool(r["synthetic"]),
+                "filed_by": r["ingest_by"], "filed_kst": kst(r["ingest_utc"], tz) if r["ingest_utc"] else "",
+                "checked_kst": kst(r["checked_utc"], tz) if checked else "",
+                "seen_kst": kst(r["first_seen_utc"], tz), "can_file": checked and not killed}
+
+    def clips(self) -> list[dict]:
+        return [self._clip_view(r) for r in self.app.media.list()]
+
+    def clips_csv(self) -> str:
+        """The ingest sheet: one row per clip, for filing in the broadcaster's own system. Cells that a spreadsheet
+        would read as a formula are prefixed with an apostrophe."""
+        import csv
+        import io
+
+        def cell(x) -> str:
+            s = "" if x is None else str(x)
+            return "'" + s if s[:1] in ("=", "+", "-", "@", "\t", "\r") else s
+
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        w.writerow(["상태", "철회", "사용 제한", "제목", "슬러그", "위치", "긴급도", "분류", "기술 정보", "결함", "참고", "출처",
+                    "파일", "sha256", "수집(KST)", "인제스트 완료"])
+        for c in self.clips():
+            w.writerow([cell(x) for x in (c["state_ko"], "철회" if c["killed"] else "",
+                                          "제한" if c["restricted"] else "", c["headline"], c["slugline"], c["located"], c["urgency"],
+                                          " / ".join(c["topics"]), c["tech"], " / ".join(c["faults"]),
+                                          " / ".join(c["notes"]), c["source_name"], c["file"], c["sha256"],
+                                          c["seen_kst"], f"{c['filed_by'] or ''} {c['filed_kst']}".strip())])
+        return "\ufeff" + buf.getvalue()  # BOM: Excel opens Korean UTF-8 correctly
 
     # --- in-app alerts (M1 v1) ------------------------------------------------------------------------------------------
     def _alert_view(self, r: dict) -> dict:

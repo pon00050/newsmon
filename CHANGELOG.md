@@ -14,6 +14,13 @@
   items raise none; no e-mail yet.
 - The database enforces one alert per item and kind, and one open incident per feed (migration 0003). An `alerts:`
   entry set to `false`, or listing channels without `inapp`, is off.
+- **Wire footage check and ingest tracking** (`/media`, 영상). Each video clip delivered to the watched folder is
+  inspected with the local ffmpeg/ffprobe: technical facts, black picture and silence with timecodes (frozen picture as
+  a note), and a thumbnail strip only where the source's licence stores content and the item has no restriction. Clips
+  are classified by the profile's topics, can be marked "ingest done" (reset when a different file is re-delivered),
+  and are exported as a CSV ingest sheet. Withdrawn clips are never offered for filing. Large clips are hashed in
+  chunks, never read into memory; checks run beside collection in the web server. `newsmon media-check` runs it now.
+  No speech-to-text, OCR or AI classification, and no filing into an asset-management system.
 - Fix: the source-status page counted each retry as a separate failure, so one failed poll showed as 3.
 - Fix: a test hard-coded 2026-11-27 as "tomorrow" and failed from that date.
 

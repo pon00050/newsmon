@@ -117,6 +117,11 @@ class ArticleRepo(BaseRepo):
             # the version is the current one; once present it is kept (stricter wins)
             self.db.execute("UPDATE article SET restrictions = ? WHERE article_id = ? AND workspace_id = ?",
                             (it.restrictions, article_id, self.workspace_id))
+        # an updated clip usually arrives under a new file name (ItemID--2--...), even when its text is unchanged
+        for href in it.media_refs:
+            self.db.execute("INSERT INTO media_asset (article_id, kind, href, recorded_utc) SELECT ?, ?, ?, ? WHERE NOT "
+                            "EXISTS (SELECT 1 FROM media_asset WHERE article_id = ? AND href = ?)",
+                            (article_id, "video" if str(it.type) == "video" else "image", href, now_s, article_id, href))
         same = self.db.one("SELECT revision_id FROM article_revision WHERE article_id = ? AND content_sha256 = ?",
                            (article_id, n.content_sha256))
         if same is not None:
