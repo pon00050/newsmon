@@ -16,6 +16,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import os
 import posixpath
 import re
 import shutil
@@ -39,6 +40,8 @@ except ImportError:  # older markdown
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SITE_SRC = REPO_ROOT / "site"
 DEFAULT_REPO_URL = "https://github.com/pon00050/newsmon"
+DEFAULT_SITE_URL = "https://pon00050.github.io/newsmon/"
+OG_IMAGE = ("social/og-queue-1.png", 1200, 630)  # bump the number when the image changes: link previews cache by URL
 
 SCHEMA = "newsmon-public/1"
 BANDS = ("flash", "report", "review", "drop")
@@ -53,6 +56,37 @@ NAV = [  # key, label, href (relative to site root)
     ("research", "Research", "research/index.html"),
     ("dashboard", "Dashboard", "dashboard.html"),
 ]
+
+# Site chrome per page language. Only the landing page has a Korean version; the other pages are English.
+UI = {
+    "en": {
+        "locale": "en_US", "home": "index.html", "skip": "Skip to content", "nav": NAV,
+        "switch": ("한국어", "ko/index.html", "ko"),
+        "footer_links": ("Source repository", "Report an issue", "Releases"),
+        "footer_notes": (
+            "Software: Apache License 2.0. Research documents and synthetic demo data: CC BY 4.0. "
+            "News headlines on the live dashboard remain the publishers' and link to them.",
+            "This site is static: no cookies, no analytics, no third-party scripts or fonts. Version {version}."),
+    },
+    "ko": {
+        "locale": "ko_KR", "home": "ko/index.html", "skip": "본문으로 건너뛰기",
+        "nav": [("home", "홈", "ko/index.html"), ("download", "내려받기", "download.html"),
+                ("docs", "문서", "docs/index.html"), ("research", "연구 자료", "research/index.html"),
+                ("dashboard", "대시보드", "dashboard.html")],
+        "switch": ("English", "index.html", "en"),
+        "footer_links": ("소스 저장소", "이슈 등록", "릴리스"),
+        "footer_notes": (
+            "소프트웨어는 Apache License 2.0, 연구 문서와 합성 데모 데이터는 CC BY 4.0을 따릅니다. "
+            "실시간 대시보드의 기사 제목은 각 언론사의 것이며, 제목을 누르면 원문으로 이동합니다.",
+            "이 사이트는 정적 페이지로만 이루어져 있습니다. 쿠키, 방문 분석, 외부 스크립트, 외부 웹폰트를 쓰지 않습니다. 버전 {version}."),
+    },
+}
+KO_TITLE = "Newsmon: 외신 모니터링, 뉴스 모니터링 프로그램 (무료 설치형)"
+KO_DESCRIPTION = ("외신 모니터링, 뉴스 모니터링을 내 PC 한 대에서. RSS 수집, 통신사 기사 파일, 중복 기사 제거, 규칙 기반 등급 분류, "
+                  "한국어 검색, 키워드 알림을 지원하는 무료 설치형 프로그램입니다.")
+# The page that exists in both languages: each version lists both (and x-default) as alternates.
+ALTERNATES = {"en": "index.html", "ko": "ko/index.html"}
+VERIFY_TOKEN = re.compile(r"^[A-Za-z0-9_-]{1,100}$")
 
 
 class BuildError(Exception):
@@ -430,6 +464,9 @@ class Site:
         self.repo_root = Path(args.repo_root).resolve()
         self.site_src = Path(args.site_src).resolve()
         self.repo_url = args.repo_url.rstrip("/")
+        self.site_url = args.site_url.rstrip("/") + "/"
+        self.verify = {"naver-site-verification": args.naver_verification or "",
+                       "google-site-verification": args.google_verification or ""}
         self.version = args.version
         self.strict_links = args.strict_links
         self.warnings: list[str] = []
@@ -456,25 +493,80 @@ class Site:
         path.write_text(text, encoding="utf-8", newline="\n")
         self.page_list.append(out_rel)
 
-    def nav_html(self, current: str, root: str) -> str:
+    def nav_html(self, current: str, root: str, lang: str = "en") -> str:
+        ui = UI[lang]
         parts = ["<ul>"]
-        for key, label, href in NAV:
+        for key, label, href in ui["nav"]:
             cur = ' aria-current="page"' if key == current else ""
             parts.append(f'<li><a href="{root}{href}"{cur}>{html.escape(label)}</a></li>')
         parts.append(f'<li><a href="{html.escape(self.repo_url, quote=True)}" rel="noopener">GitHub</a></li>')
+        label, href, code = ui["switch"]
+        parts.append(f'<li><a href="{root}{href}" hreflang="{code}" lang="{code}">{html.escape(label)}</a></li>')
         parts.append("</ul>")
         return "\n      ".join(parts)
 
+    def url(self, out_rel: str) -> str:
+        """Absolute URL of a page, in directory form for index pages (one URL per page for canonical and previews)."""
+        if out_rel == "index.html" or out_rel.endswith("/index.html"):
+            out_rel = out_rel[: -len("index.html")]
+        return self.site_url + quote(out_rel, safe="/")
+
+    def head_html(self, out_rel: str, title: str, description: str, lang: str) -> str:
+        def e(v: str) -> str:
+            return html.escape(v, quote=True)
+
+        img, w, h = OG_IMAGE
+        bilingual = out_rel in ALTERNATES.values()
+        tags = [f'<link rel="canonical" href="{e(self.url(out_rel))}">']
+        if bilingual:
+            tags += [f'<link rel="alternate" hreflang="{c}" href="{e(self.url(alt))}">' for c, alt in ALTERNATES.items()]
+            tags.append(f'<link rel="alternate" hreflang="x-default" href="{e(self.url(ALTERNATES["en"]))}">')
+        tags += [
+            '<meta property="og:type" content="website">',
+            '<meta property="og:site_name" content="Newsmon">',
+            f'<meta property="og:title" content="{e(title)}">',
+            f'<meta property="og:description" content="{e(description)}">',
+            f'<meta property="og:url" content="{e(self.url(out_rel))}">',
+            f'<meta property="og:image" content="{e(self.site_url + img)}">',
+            f'<meta property="og:image:width" content="{w}">',
+            f'<meta property="og:image:height" content="{h}">',
+            f'<meta property="og:locale" content="{UI[lang]["locale"]}">',
+        ]
+        if bilingual:
+            tags += [f'<meta property="og:locale:alternate" content="{UI[c]["locale"]}">' for c in ALTERNATES if c != lang]
+        tags.append('<meta name="twitter:card" content="summary_large_image">')
+        tags += [f'<meta name="{k}" content="{e(v)}">' for k, v in self.verify.items() if v]
+        return "\n".join(tags)
+
+    def footer_html(self, lang: str) -> str:
+        ui = UI[lang]
+        repo = html.escape(self.repo_url, quote=True)
+        items = "".join(f'<li><a href="{repo}{path}" rel="noopener">{html.escape(text)}</a></li>'
+                        for text, path in zip(ui["footer_links"], ("", "/issues", "/releases")))
+        notes = "".join(f"<p>{html.escape(n.format(version=self.version))}</p>" for n in ui["footer_notes"])
+        return f'<footer class="site-footer">\n  <div class="wrap">\n    <ul>{items}</ul>\n    {notes}\n  </div>\n</footer>'
+
     def page(self, out_rel: str, title: str, description: str, content_html: str, current: str,
-             scripts: list[str] | None = None) -> None:
+             scripts: list[str] | None = None, lang: str = "en") -> None:
         root = "../" * out_rel.count("/")
         scripts_html = "\n".join(f'<script src="{root}{s}" defer></script>' for s in (scripts or []))
+        full_title = title if title.startswith("Newsmon") else f"{title} | Newsmon"
         values = {
-            "title": f"{title} | Newsmon" if title != "Newsmon" else "Newsmon",
+            "title": full_title, "lang": lang, "skip_label": UI[lang]["skip"], "home_href": UI[lang]["home"],
+            "head_html": self.head_html(out_rel, full_title, description, lang), "footer_html": self.footer_html(lang),
             "description": description, "root": root, "version": self.version, "repo_url": self.repo_url,
-            "nav_html": self.nav_html(current, root), "content_html": content_html, "scripts_html": scripts_html,
+            "nav_html": self.nav_html(current, root, lang), "content_html": content_html, "scripts_html": scripts_html,
         }
         self.write(out_rel, render_template(self.base, values, out_rel))
+
+    def write_sitemap(self) -> None:
+        """sitemap.xml, for submitting the site by hand to Google Search Console or Naver Search Advisor. No lastmod: the
+        site is rebuilt every few hours, so a build time would claim changes that did not happen."""
+        urls = "".join(f"  <url><loc>{html.escape(self.url(p))}</loc></url>\n"
+                       for p in sorted(self.page_list) if p.endswith(".html"))
+        (self.out / "sitemap.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + urls + "</urlset>\n", encoding="utf-8", newline="\n")
 
     def body(self, name: str, root: str) -> str:
         text = read_text(self.site_src / "templates" / name)
@@ -661,6 +753,7 @@ class Site:
         self.page("index.html", "Newsmon",
                   "Local news monitoring for foreign-news desks: licensed feeds, deduplication, rule-based ranking, a searchable local queue.",
                   self.body("index.body.html", root), "home")
+        self.page("ko/index.html", KO_TITLE, KO_DESCRIPTION, self.body("ko.index.body.html", "../"), "home", lang="ko")
         self.page("download.html", "Download", "Download Newsmon: Windows launcher, standalone executable, or install from source.",
                   self.body("download.body.html", root), "download")
         self.page("dashboard.html", "Dashboard",
@@ -675,6 +768,7 @@ class Site:
 
         if self.failures:
             raise BuildError("\n".join(self.failures))
+        self.write_sitemap()
         print(f"built {len(self.page_list)} pages into {self.out}")
         for p in sorted(self.page_list):
             print("  " + p)
@@ -692,10 +786,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--version", default=None, help="Newsmon version shown on the site (default: from pyproject.toml)")
     ap.add_argument("--repo-root", default=str(REPO_ROOT), help="folder holding docs/ and research/ (default: this repo)")
     ap.add_argument("--site-src", default=str(SITE_SRC), help="folder holding templates, css, js (default: site/)")
+    ap.add_argument("--site-url", default=DEFAULT_SITE_URL,
+                    help="public URL of the site, for canonical links, link previews and sitemap.xml (default: %(default)s)")
+    ap.add_argument("--naver-verification", default=os.environ.get("NEWSMON_NAVER_VERIFICATION", ""),
+                    help="Naver Search Advisor meta-tag token (default: $NEWSMON_NAVER_VERIFICATION)")
+    ap.add_argument("--google-verification", default=os.environ.get("NEWSMON_GOOGLE_VERIFICATION", ""),
+                    help="Google Search Console meta-tag token (default: $NEWSMON_GOOGLE_VERIFICATION)")
     ap.add_argument("--strict-links", action="store_true", help="fail on unresolved relative links in markdown")
     args = ap.parse_args(argv)
     if not _is_http_url(args.repo_url):
         ap.error("--repo-url must be an http(s) URL")
+    if not _is_http_url(args.site_url):
+        ap.error("--site-url must be an http(s) URL")
+    for name in ("naver_verification", "google_verification"):
+        if getattr(args, name) and not VERIFY_TOKEN.match(getattr(args, name)):
+            ap.error(f"--{name.replace('_', '-')} must be letters, digits, '-' or '_'")
     if args.version is None:
         pp = Path(args.repo_root) / "pyproject.toml"
         m = re.search(r'^version\s*=\s*"([^"]+)"', pp.read_text(encoding="utf-8"), re.M) if pp.is_file() else None

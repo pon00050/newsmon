@@ -1,0 +1,64 @@
+<h1>Newsmon: 외신 모니터링, 뉴스 모니터링 프로그램</h1>
+<p class="lead">국제부·외신팀에서 쓰도록 만든 설치형 뉴스 모니터링 프로그램입니다. 쓸 권한이 있는 피드와 통신사 기사만 모아 중복을 걷어 내고, 데스크가 정한 규칙대로 등급을 매겨, 내 PC에서 바로 검색할 수 있는 기사 목록으로 정리합니다. 클라우드 서비스가 아니라 내 PC에 깔아 쓰는 무료 오픈소스입니다.</p>
+<div class="cta-row">
+  <a class="btn" href="{{repo_url}}/releases/latest" rel="noopener">최신 버전 내려받기</a>
+  <a class="btn secondary" href="{{root}}dashboard.html">데모 대시보드 보기</a>
+  <a class="btn secondary" href="{{repo_url}}/blob/main/README.ko.md" rel="noopener">설치·설정 안내 (GitHub)</a>
+</div>
+
+<h2>왜 필요한가</h2>
+<p>국제부 데스크는 근무 시간 내내 영어·한국어·중국어 매체와 통신사 수십 곳을 살핍니다. 같은 사건이 몇 분 사이에 여러 곳에서 잇따라 들어오고, 정작 중요한 기사는 일상적인 기사에 묻히기 쉽습니다. 게다가 출처마다 계약 조건이 달라서 저장해도 되는지, 화면에 띄워도 되는지, AI에 보내도 되는지가 제각각입니다.</p>
+<p>Newsmon은 이 흐름을 등급별 기사 목록 하나로 정리하고, 출처별 이용 조건을 기사 데이터와 함께 관리합니다. 뉴스 가치 판단은 데스크가 하고, 프로그램은 등급마다 매긴 이유를 남깁니다.</p>
+
+<h2>주요 기능 (v{{version}})</h2>
+<div class="grid">
+  <section class="card"><h3>RSS 수집과 통신사 기사 파일</h3><p>RSS·Atom 피드와, 감시 폴더에 들어오는 통신사 기사 파일(NewsML-G2, NITF, ninjs)을 모읍니다. 직접 등록한 출처만 가져오며, 웹페이지를 긁어 오거나 페이월을 우회하지 않습니다.</p></section>
+  <section class="card"><h3>중복 기사 제거</h3><p>같은 기사와 거의 같은 기사를 URL, 본문 해시, MinHash로 찾아 하나로 합치고, 몇 건이 합쳐졌는지 표시합니다. 통신사 기사의 수정·정정·철회도 반영합니다.</p></section>
+  <section class="card"><h3>규칙에 따른 등급 분류</h3><p>한·영·중 키워드로 정한 주제, 감시 대상(기관·인물), 출처별 가중치, 통신사 긴급도, 최신성을 따져 <strong>속보</strong>·<strong>보고</strong>·<strong>검토</strong>·<strong>제외</strong> 가운데 하나로 나누고, 그렇게 나눈 이유를 함께 보여 줍니다.</p></section>
+  <section class="card"><h3>한국어·중국어 검색</h3><p>SQLite FTS5에 두 글자 단위(바이그램) 색인을 더해 한국어와 중국어 검색이 제대로 됩니다. 등급·기간·영상 유무로 걸러 볼 수 있고, 수집이 실패하는 피드는 검색 화면에 따로 알려 주므로 결과가 0건이어도 기사가 없는 것인지 헷갈리지 않습니다.</p></section>
+  <section class="card"><h3>저장 검색과 키워드 알림</h3><p>자주 찾는 검색어를 저장 검색으로 등록해 두면 새로 들어온 기사 수를 세어 주고, 원하면 새 기사마다 알림을 띄웁니다.</p></section>
+  <section class="card"><h3>판정과 교대 보고</h3><p>기사마다 보고·확인·무시 중 하나를 고르고 메모를 남깁니다. 표시해 둔 기사는 교대 보고로 묶어 인쇄할 수 있으며, 판정 뒤에 철회되거나 수정된 기사는 눈에 띄게 표시됩니다.</p></section>
+  <section class="card"><h3>알림</h3><p>속보 기사와, 설정하면 보고 기사까지 앱 안에서 알립니다. 세 번 연달아 수집에 실패한 피드도 알려 줍니다. 브라우저 탭이 열려 있으면 브라우저 알림도 뜹니다.</p></section>
+  <section class="card"><h3>영상 클립 점검</h3><p>감시 폴더에 들어온 통신사 영상 클립을 내 PC의 ffmpeg로 점검합니다. 기술 정보와 블랙·무음 구간을 타임코드와 함께 표시하고 주제별로 분류합니다. 처리한 클립은 '인제스트 완료'로 표시하고, 전체 목록은 CSV 시트로 내려받습니다.</p></section>
+  <section class="card"><h3>출처별 이용 조건 관리</h3><p>출처마다 저장, 화면 표시, AI 전송, 외부 공개를 허용할지 정해 두면 사용 제한·엠바고·철회까지 프로그램이 알아서 지킵니다.</p></section>
+  <section class="card"><h3>AI는 선택 사항</h3><p>기본값은 꺼짐입니다. 켜더라도 AI 처리를 허용한 출처의 기사만 보내고, 하루 비용 한도 안에서만 씁니다. AI를 꺼 두어도 나머지 기능은 그대로 동작합니다.</p></section>
+  <section class="card"><h3>Windows 더블클릭 실행</h3><p>설치가 필요 없는 실행 파일이나 더블클릭 런처로 바로 시작합니다. 명령어를 몰라도 되고, 회원 가입이나 AI 키도 필요 없습니다.</p></section>
+</div>
+
+<h2>화면</h2>
+<p>가상의 데모 기사로 실행한 화면입니다. 기사 내용은 모두 지어낸 것입니다.</p>
+<div class="shots">
+  <figure><a href="{{root}}screenshots/local-queue.png"><img src="{{root}}screenshots/local-queue.png" alt="영어·한국어·중국어 기사를 속보·보고·검토 등급으로 나눈 기사 목록" loading="lazy" width="1280" height="900"></a>
+    <figcaption><strong>기사 목록.</strong> 세 언어의 기사를 중복 없이 정리해 등급별로 보여 줍니다.</figcaption></figure>
+  <figure><a href="{{root}}screenshots/local-item-detail.png"><img src="{{root}}screenshots/local-item-detail.png" alt="기사의 등급 근거(주제, 감시 대상, 통신사 긴급도, 최신성)를 보여 주는 상세 화면" loading="lazy" width="1280" height="900"></a>
+    <figcaption><strong>등급 근거.</strong> 이 기사가 왜 이 등급인지, 걸린 규칙과 키워드를 그대로 보여 줍니다.</figcaption></figure>
+  <figure><a href="{{root}}screenshots/local-search-korean.png"><img src="{{root}}screenshots/local-search-korean.png" alt="검색어 '관세'로 찾은 한국어 기사 네 건" loading="lazy" width="1280" height="760"></a>
+    <figcaption><strong>한국어 검색.</strong> '관세'로 검색해 한국어 기사 네 건을 찾은 화면입니다.</figcaption></figure>
+  <figure><a href="{{root}}screenshots/local-sources.png"><img src="{{root}}screenshots/local-sources.png" alt="출처별 이용 조건과 마지막 수집 결과를 보여 주는 소스 상태 화면" loading="lazy" width="1280" height="620"></a>
+    <figcaption><strong>소스 상태.</strong> 출처마다 저장·표시 허용 여부와 마지막 수집 결과를 한눈에 봅니다.</figcaption></figure>
+</div>
+
+<h2>공개 대시보드</h2>
+<p><a href="{{root}}dashboard.html">대시보드</a>에서 Newsmon을 돌렸을 때 나오는 결과를 볼 수 있습니다. 합성 데이터는 화면을 보여 주려고 지어낸 기사입니다. 실시간 데이터에는 공개 재배포 근거가 확인된 출처의 기사 제목과 링크만 싣고, 출처마다 그 근거를 링크해 둡니다.</p>
+
+<h2>한계</h2>
+<ul>
+  <li>모니터링과 1차 분류를 돕는 도구일 뿐, 편집 판단을 대신하지 않습니다. 등급이 얼마나 정확한지는 직접 작성한 규칙에 달려 있습니다.</li>
+  <li>등록한 출처만 수집합니다. 새 피드를 알아서 찾아 주지는 않습니다.</li>
+  <li>통신사 연동은 API 연결이 아닙니다. 계약한 통신사 프로그램이 내려받은 파일이 쌓이는 폴더를 Newsmon이 지켜보는 방식입니다.</li>
+  <li>기사 단위로 보여 줍니다. 여러 매체가 쓴 같은 사건 기사를 하나로 묶는 기능은 아직 없습니다.</li>
+  <li>이메일 알림, 요약 메일, 로그인, 음성 인식, AI 영상 분석은 아직 지원하지 않습니다.</li>
+  <li>PC 한 대에서 데스크 한 곳이 쓰는 구조입니다. 웹 서비스가 아니며 여러 사용자 계정을 지원하지 않습니다.</li>
+  <li>이용 조건 관리는 실수를 막는 장치일 뿐 법률 검토를 대신하지 않습니다. 계약상 허용 범위는 직접 확인해야 합니다.</li>
+  <li>더블클릭 실행은 Windows에서만 됩니다. 다른 운영체제에서는 소스에서 실행합니다.</li>
+  <li>아직 초기 버전(v{{version}})입니다. 불편한 점은 이슈로 알려 주세요.</li>
+</ul>
+
+<h2>더 보기</h2>
+<ul>
+  <li><a href="{{repo_url}}/blob/main/README.ko.md" rel="noopener">한국어 안내: 설치와 설정 (GitHub)</a></li>
+  <li><a href="{{root}}download.html">내려받기와 설치 방법</a> (영문)</li>
+  <li><a href="{{root}}docs/index.html">문서</a> (영문)</li>
+  <li><a href="{{root}}research/index.html">설계에 참고한 연구 자료</a> (영문)</li>
+  <li><a href="{{repo_url}}/issues" rel="noopener">이슈·질문 남기기</a>: 한국어로 쓰셔도 됩니다.</li>
+</ul>

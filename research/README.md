@@ -4,11 +4,13 @@
 
 Newsmon is a local news-monitoring tool for a foreign-news desk. This folder is the research it was built from: the
 business and legal evidence, the experiments, the architecture decisions and the full MVP specification. The software
-itself is in the parent folder. **Release A + A.1 is what is built.** It collects authorised RSS/Atom feeds and customer
+itself is in the parent folder. **Release A + A.1, extended by version 0.2.0, is what is built.** It collects authorised RSS/Atom feeds and customer
 wire files from a watched folder, normalises and deduplicates them, ranks them with profile rules, and shows a
 searchable queue on a loopback web page. AI assessment of selected articles is optional, off by default, and limited to
-sources whose licence flags permit it. Event grouping, alerts, digests, a JSON API, MCP, authentication, backup and video
-are specified here but **not built**.
+sources whose licence flags permit it. Version 0.2.0 (2026-11-27) added editorial verdicts and a shift report, in-app
+alerts, a local ffmpeg check of wire video clips with an ingest sheet, and saved searches; see the
+[changelog](../CHANGELOG.md). Event grouping, e-mail alerts and digests, a JSON API, MCP, authentication, backup and
+speech or AI video analysis are specified here but **not built**.
 
 ## Status legend
 
