@@ -106,10 +106,9 @@ class Service:
             total = new = 0
             error = s["last_error"]
             try:
-                rows, _ = self.app.search(s["query"], lang=s["lang"], source=s["source_key"], band=s["band"],
-                                          hours=s["hours"], video_only=bool(s["video_only"]), limit=500)
-                total = len(rows)
-                new = sum(1 for r in rows if (r["first_seen_utc"] or "") > s["last_seen_utc"])
+                total, new = self.app.search_counts(s["query"], lang=s["lang"], source=s["source_key"], band=s["band"],
+                                                    hours=s["hours"], video_only=bool(s["video_only"]),
+                                                    new_after=s["last_seen_utc"])
             except Exception as exc:  # a saved query that no longer parses is shown, never a 500
                 error = f"{exc.__class__.__name__}: {exc}"
             out.append({**s, "total": total, "new": new, "error": error, "url": self.search_url(s),
@@ -233,8 +232,14 @@ class Service:
                 "checked_kst": kst(r["checked_utc"], tz) if checked else "",
                 "seen_kst": kst(r["first_seen_utc"], tz), "can_file": checked and not killed}
 
-    def clips(self) -> list[dict]:
-        return [self._clip_view(r) for r in self.app.media.list()]
+    CLIP_PAGE = 200
+
+    def clips(self, limit: int | None = None) -> list[dict]:
+        return [self._clip_view(r) for r in self.app.media.list(limit=limit or self.CLIP_PAGE)]
+
+    def clips_page(self) -> tuple[list[dict], bool]:
+        rows = self.clips(limit=self.CLIP_PAGE + 1)
+        return rows[: self.CLIP_PAGE], len(rows) > self.CLIP_PAGE
 
     def clips_csv(self) -> str:
         """The ingest sheet: one row per clip, for filing in the broadcaster's own system. Cells that a spreadsheet
@@ -250,7 +255,7 @@ class Service:
         w = csv.writer(buf)
         w.writerow(["상태", "철회", "사용 제한", "제목", "슬러그", "위치", "긴급도", "분류", "기술 정보", "결함", "참고", "출처",
                     "파일", "sha256", "수집(KST)", "인제스트 완료"])
-        for c in self.clips():
+        for c in self.clips(limit=100_000):  # the filing sheet is complete, unlike the page
             w.writerow([cell(x) for x in (c["state_ko"], "철회" if c["killed"] else "",
                                           "제한" if c["restricted"] else "", c["headline"], c["slugline"], c["located"], c["urgency"],
                                           " / ".join(c["topics"]), c["tech"], " / ".join(c["faults"]),

@@ -73,6 +73,24 @@ def _cache_fixed_setup_costs():
     mp.undo()
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _shift_system_clock():
+    """Opt-in date-bomb check: NEWSMON_TEST_CLOCK_SHIFT_DAYS=400 runs the suite as if the real date were 400 days
+    later. A test that mixes the real clock with a hard-coded date fails under it (one did on 2026-11-27)."""
+    days = int(os.environ.get("NEWSMON_TEST_CLOCK_SHIFT_DAYS", "0") or 0)
+    if not days:
+        yield
+        return
+    from datetime import timedelta
+
+    from newsmon.domain import ports
+    real = ports.SystemClock.now
+    mp = pytest.MonkeyPatch()
+    mp.setattr(ports.SystemClock, "now", lambda self: real(self) + timedelta(days=days))
+    yield
+    mp.undo()
+
+
 @pytest.fixture(autouse=True)
 def netguard(request):
     if request.node.get_closest_marker("live"):  # opt-in provider tests (NEWSMON_LIVE=1) are the only network users

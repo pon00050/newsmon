@@ -14,6 +14,19 @@
   items raise none; no e-mail yet.
 - The database enforces one alert per item and kind, and one open incident per feed (migration 0003). An `alerts:`
   entry set to `false`, or listing channels without `inapp`, is off.
+- **Feed repair.** When a feed fails to parse and contains bare `&` characters (seen live in a news agency feed, in a
+  URL attribute), those ampersands are escaped and the feed is parsed once more by the same parser, after the
+  entity and encoding guards; CDATA and comments are left untouched and UTF-16/32 documents are never repaired. The
+  run is noted "repaired" and a `feed_repaired` event is logged. Anything else malformed stays an error.
+- **Footage housekeeping.** "다시 확인" queues a failed or timed-out clip again (never a filed or withdrawn one);
+  thumbnails no longer used by a live, unrestricted clip are deleted; the page says when it shows only the newest 200
+  clips, and the CSV sheet is complete.
+- **Feed health.** An incident on a feed that is switched off is closed with one alert; a feed that crashes before or
+  after its poll is recorded counts as exactly one failed poll; closing an incident cannot alert twice.
+- **Saved searches** are counted with `count(*)` instead of fetching up to 500 rows each.
+- **Tests and CI.** `NEWSMON_TEST_CLOCK_SHIFT_DAYS=N` runs the suite as if the date were N days later; it found the
+  synthetic test licences expiring on 2027-12-31 (now 2099-12-31). CI installs ffmpeg on Linux so the footage tests
+  run there, and prints skip reasons.
 - **Search for footage and saved watch searches.** The search page gains band, time (6 h to 7 days) and footage-only
   filters, shows each result's clip state, names feeds that are currently failing (so an empty result is never read as
   "no news") and says "0건 (검색어 확인)". Searches can be saved under a name; the saved-searches page shows totals and

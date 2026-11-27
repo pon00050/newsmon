@@ -420,3 +420,81 @@ def test_a_file_removed_before_its_check_is_reported_missing(desk):
     app.check_media()
     c = check_of(app, "clipgone")
     assert c["status"] == "missing" and "no longer" in c["error"]
+
+
+# --- end-of-day fixes (2026-11-27) -----------------------------------------------------------------------------------------
+def test_recheck_queues_a_failed_clip_again(desk):
+    app = desk
+    app.media_tool = StubTool(fail=True)
+    fake_clip(clip_dir(app) / "t.mp4", b"t")
+    sidecar(app, "t.json", "cliptimeout", "Synthetic clip that timed out", "t.mp4")
+    settle(app)
+    c = check_of(app, "cliptimeout")
+    assert c["status"] == "unreadable"
+    client = TestClient(create_app(app), base_url="http://127.0.0.1:8765")
+    try:
+        assert "다시 확인</button>" in client.get("/media").text
+        assert client.post(f"/media/{c['asset_id']}/recheck").status_code == 403
+        assert client.post(f"/media/{c['asset_id']}/recheck", headers=ORIGIN, follow_redirects=False).status_code == 303
+        assert "확인 대기" in client.get("/media").text
+        app.media_tool = StubTool()  # the cause went away
+        app.check_media()
+        assert check_of(app, "cliptimeout")["status"] == "ok"
+    finally:
+        client.close()
+
+
+def test_unused_thumbnails_are_removed(desk):
+    app = desk
+    app.media_tool = StubTool()
+    fake_clip(clip_dir(app) / "keep.mp4", b"keep")
+    fake_clip(clip_dir(app) / "kill.mp4", b"kill")
+    sidecar(app, "keep.json", "clipkeep", "Synthetic clip kept", "keep.mp4")
+    sidecar(app, "kill.json", "clipkill2", "Synthetic clip withdrawn", "kill.mp4")
+    settle(app)
+    thumbs = app.cfg.paths.data_dir / "thumbs"
+    keep, kill = (check_of(app, u)["thumb_path"] for u in ("clipkeep", "clipkill2"))
+    stray = thumbs / "stray_from_an_old_check.jpg"
+    stray.write_bytes(b"old")
+    other = thumbs / "notes.txt"  # never a .jpg: never touched
+    other.write_text("x")
+    app.db.execute("UPDATE article SET status = 'killed' WHERE source_uri = 'clipkill2'")
+    assert app.cleanup_thumbs() == 2
+    assert (app.cfg.paths.data_dir / keep).is_file() and not (app.cfg.paths.data_dir / kill).exists()
+    assert not stray.exists() and other.exists()
+
+
+def test_page_says_when_it_is_capped_and_the_sheet_is_complete(desk, monkeypatch):
+    from newsmon.web.service import Service
+    app = desk
+    app.media_tool = StubTool()
+    for i in range(3):
+        fake_clip(clip_dir(app) / f"c{i}.mp4", f"c{i}".encode())
+        sidecar(app, f"c{i}.json", f"clipcap{i}", f"Synthetic capped clip {i}", f"c{i}.mp4")
+    settle(app)
+    monkeypatch.setattr(Service, "CLIP_PAGE", 2)
+    client = TestClient(create_app(app), base_url="http://127.0.0.1:8765")
+    try:
+        page = client.get("/media").text
+        assert page.count('data-asset-id="') == 2 and "최근 2건만 표시" in page
+        monkeypatch.setattr(Service, "CLIP_PAGE", 3)  # exactly as many clips as the page holds: no cap note
+        assert "건만 표시" not in client.get("/media").text
+        assert sum("Synthetic capped clip" in line for line in client.get("/media.csv").text.splitlines()) == 3
+    finally:
+        client.close()
+
+
+def test_recheck_never_touches_a_filed_clip(desk):
+    app = desk
+    app.media_tool = StubTool(faults={"silence": [(1.0, 3.0)]})
+    fake_clip(clip_dir(app) / "f.mp4", b"f")
+    sidecar(app, "f.json", "clipfiled", "Synthetic filed clip", "f.mp4")
+    settle(app)
+    asset = check_of(app, "clipfiled")["asset_id"]
+    client = TestClient(create_app(app), base_url="http://127.0.0.1:8765")
+    try:
+        client.post(f"/media/{asset}/filed", headers=ORIGIN)
+        assert client.post(f"/media/{asset}/recheck", headers=ORIGIN).status_code == 404
+        assert check_of(app, "clipfiled")["ingest_state"] == "filed"
+    finally:
+        client.close()

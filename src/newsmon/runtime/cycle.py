@@ -84,6 +84,11 @@ def run_cycle(app: "App", *, force: bool = False, only: set[str] | None = None) 
             outcome = FeedOutcome(feed.source_key, feed.feed_id, "error", "io", "collect", f"{exc.__class__.__name__}: {exc}")
             event("feed_failed", logging.ERROR, source=feed.source_key, stage="collect", error_class="io",
                   detail=outcome.detail)
+            if not getattr(exc, "newsmon_run_recorded", False):
+                try:  # crashed before its poll was recorded: record it as a failed poll, so feed health sees it
+                    app.sources.record_failure(feed.feed_id, iso(now), iso(app.clock.now()), outcome.detail)
+                except Exception:
+                    pass
         report.feeds.append(outcome)
     try:
         report.ranked = app.rerank()
@@ -156,6 +161,19 @@ def _collect_feed(app: "App", feed) -> FeedOutcome:
         event("fetch_attempt", logging.WARNING, source=src.key, stage="collect", status=a.label, attempt=a.attempts)
     final = attempts[-1]
     run_id = app.sources.record_run(feed.feed_id, started, iso(app.clock.now()), final, None, None)
+    try:
+        return _after_poll(app, feed, src, conn, final, attempts, run_id, out, rules, now)
+    except Exception as exc:  # the run row exists: mark it failed, so feed health counts one failed poll, not two rows
+        try:
+            app.sources.update_run_counts(run_id, entries=out.entries, new_articles=out.new, status="error",
+                                          error_class="io", error_detail=f"{exc.__class__.__name__}: {exc}"[:500])
+        except Exception:
+            pass
+        exc.newsmon_run_recorded = True
+        raise
+
+
+def _after_poll(app, feed, src, conn, final, attempts, run_id, out: FeedOutcome, rules, now) -> FeedOutcome:
     out.attempts = len(attempts)
     out.status = str(final.status)
     interval = app.settings.inbox.scan_seconds if feed.kind == "directory" else max(feed.poll_seconds,
@@ -177,6 +195,8 @@ def _collect_feed(app: "App", feed) -> FeedOutcome:
         else:
             try:
                 items = conn.parse(unit)
+                if getattr(conn, "last_repair", None):
+                    app.sources.note_run(run_id, f"repaired: {conn.last_repair}")
             except Exception as exc:  # a FeedParseError message is ours; anything else may quote the feed
                 why = str(exc) if isinstance(exc, FeedParseError) else exc.__class__.__name__
                 out.status, out.error_class, out.stage, out.detail = "error", "parse", "parse", why

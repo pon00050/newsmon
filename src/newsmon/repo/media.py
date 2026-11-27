@@ -90,6 +90,20 @@ class MediaRepo(BaseRepo):
             ("filed" if filed else "pending", editor if filed else None, now_s if filed else None, asset_id,
              self.workspace_id)).rowcount > 0
 
+    def recheck(self, asset_id: int) -> bool:
+        """Queue a checked clip for another check (after a timeout or a fixed file): the stored hash no longer matches."""
+        return self.db.execute(
+            "UPDATE media_check SET sha256 = '' WHERE asset_id = ? AND ingest_state = 'pending' AND asset_id IN "
+            "(SELECT m.asset_id FROM media_asset m JOIN article a ON a.article_id = m.article_id WHERE a.workspace_id = ? "
+            "AND a.status <> 'killed')", (asset_id, self.workspace_id)).rowcount > 0
+
+    def wanted_thumbs(self) -> set[str]:
+        """Thumbnail files still allowed to exist: current checks of live, unrestricted items."""
+        return {r[0] for r in self.db.query(
+            "SELECT c.thumb_path FROM media_check c JOIN media_asset m ON m.asset_id = c.asset_id JOIN article a ON "
+            "a.article_id = m.article_id WHERE a.workspace_id = ? AND c.thumb_path IS NOT NULL AND a.status <> 'killed' "
+            "AND COALESCE(TRIM(a.restrictions), '') = ''", (self.workspace_id,))}
+
     def attention_count(self) -> int:
         """Clips a person should look at: faults, unreadable or missing files, not yet marked filed."""
         return self.db.scalar(

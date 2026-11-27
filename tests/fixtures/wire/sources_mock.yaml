@@ -19,7 +19,7 @@ sources:
     retention_days: 7
     licence_holder: "Synthetic Test Org"
     agreement_ref: "SYNTH-GATED-001"
-    valid_until: "2027-12-31"
+    valid_until: "2099-12-31"
     attested_by: fixture-loader
     attested_on: "2026-11-25"
     synthetic: true
@@ -42,7 +42,7 @@ sources:
     retention_days: 30
     licence_holder: "Synthetic Test Org"
     agreement_ref: "SYNTH-DEMO-001"
-    valid_until: "2027-12-31"
+    valid_until: "2099-12-31"
     attested_by: fixture-loader
     attested_on: "2026-11-25"
     synthetic: true
