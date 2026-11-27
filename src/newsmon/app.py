@@ -23,12 +23,22 @@ from newsmon.pipeline.normalise import fold, iso
 from newsmon.registry.loader import load_sources
 from newsmon.ai.enrich import Enricher, merge_band
 from newsmon.repo.ai import AIRepo
+from newsmon.repo.alerts import AlertRepo
 from newsmon.repo.articles import ArticleRepo
+from newsmon.repo.assessments import AssessmentRepo
 from newsmon.repo.db import Database
 from newsmon.repo.migrate import ensure_workspace, migrate
 from newsmon.repo.sources import SourceRepo
 from newsmon.rules.engine import ItemFacts, evaluate
 from newsmon.rules.profile import Profile, ProfileError, validate_profile
+
+
+def _inapp(cfg) -> bool:
+    """A profile `alerts:` entry turns in-app alerts on unless it is false/empty or lists channels without `inapp`."""
+    if not cfg:
+        return False
+    channels = cfg.get("channels") if isinstance(cfg, dict) else None
+    return channels is None or "inapp" in channels
 
 
 class App:
@@ -48,6 +58,8 @@ class App:
         ensure_workspace(self.db, self.settings.workspace_name, self.settings.use_context, iso(self.clock.now()))
         self.sources = SourceRepo(self.db)
         self.articles = ArticleRepo(self.db)
+        self.assessments = AssessmentRepo(self.db)
+        self.alerts = AlertRepo(self.db)
         f = self.settings.fetch
         self.fetcher = fetcher or HttpxFetcher(user_agent=f.user_agent, policy=ssrf_policy or SsrfPolicy(),
                                                max_bytes=f.max_bytes, timeout=f.timeout_seconds)
@@ -211,6 +223,31 @@ class App:
             results.append((r["article_id"], ev.band, final, ev.score, hits))
         self.articles.save_ranking(pid, results, iso(now))
         return len(results)
+
+    INCIDENT_FAILURES = 3  # FR-04 default N
+    ALERT_WINDOW_HOURS = 24  # enabling alerts on an existing database does not alert on old items
+
+    def alert_kinds(self) -> set[str]:
+        prim = self.primary_profile
+        return {k for k, v in prim[1].alerts.items() if _inapp(v)} if prim else {"feed_incident"}
+
+    def raise_alerts(self) -> dict[str, int]:
+        """In-app alerts after a cycle (M1 v1). The primary profile's `alerts:` keys switch kinds on: `flash` (band 속보),
+        `report` (band 보고, raised as `watch`; opt-in) and `feed_incident` (FR-04 failing feeds). Nothing is sent
+        anywhere: email and other channels need the outbox (T-36)."""
+        from datetime import timedelta
+        enabled = self.alert_kinds()
+        now = self.clock.now()
+        now_s, since = iso(now), iso(now - timedelta(hours=self.ALERT_WINDOW_HOURS))
+        out = {"flash": 0, "watch": 0, "incidents_opened": 0, "incidents_closed": 0}
+        if "flash" in enabled:
+            out["flash"] = self.alerts.raise_for_band("flash", "flash", "속보 등급 (프로필 규칙)", since=since, now_s=now_s)
+        if "report" in enabled:
+            out["watch"] = self.alerts.raise_for_band("watch", "report", "보고 등급", since=since, now_s=now_s)
+        if "feed_incident" in enabled:
+            out["incidents_opened"], out["incidents_closed"] = self.alerts.update_incidents(
+                failures=self.INCIDENT_FAILURES, now_s=now_s)
+        return out
 
     def search_aliases(self, query: str) -> dict[str, list[str]]:
         """Gazetteer expansion: a query equal to any alias of an entity also searches its other aliases."""

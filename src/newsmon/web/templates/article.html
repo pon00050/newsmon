@@ -27,6 +27,20 @@
 </div>
 {% elif a.ai_tag %}<p class="muted">{{ a.ai_tag }}</p>{% endif %}
 {% if ai_active %}<form method="post" action="/article/{{ a.uid }}/enrich"><button type="submit">AI 분석</button></form>{% endif %}
+<h3>편집 판정 (PC등록)</h3>
+{% if a.killed %}<p class="muted">철회된 기사입니다. 판정을 남길 수 없습니다.</p>
+{% else %}<form method="post" action="/article/{{ a.uid }}/verdict" class="verdict-box">
+  <input type="hidden" name="next" value="{{ here }}">
+  <textarea name="note" rows="3" maxlength="1000" placeholder="요지 / 활용 가능성 / 검증 상태 (선택)"></textarea>
+  <div><button type="submit" name="verdict" value="report_to_desk">보고</button>
+       <button type="submit" name="verdict" value="verify">확인 필요</button>
+       <button type="submit" name="verdict" value="ignore">무시</button>
+       <span class="muted">편집자: {{ editor }} (인증 없음)</span></div>
+</form>{% endif %}
+{% if a.history %}<ul class="history">{% for h in a.history %}
+  <li><b>{{ verdict_ko.get(h.verdict, h.verdict) }}</b> · {{ h.editor }} · {{ h.at_kst }}{% if loop.first %} <span class="tag">현재</span>{% endif %}
+    {% if h.note %}<div class="note">{{ h.note }}</div>{% endif %}</li>{% endfor %}</ul>
+{% else %}<p class="muted">아직 판정이 없습니다.</p>{% endif %}
 {% if a.summary %}<h3>요약 (피드 원문)</h3><p>{{ a.summary }}</p>{% endif %}
 {% if a.body %}<h3>본문</h3>{% for p in a.body.split('\n\n') %}<p>{{ p }}</p>{% endfor %}{% endif %}
 <h3>순위 근거</h3>

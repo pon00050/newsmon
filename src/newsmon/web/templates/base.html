@@ -33,17 +33,28 @@
   .ai-box { border:1px dashed #90a4ae; padding:8px; background:#fafafa; }
   .ai-box .label, .ai-line .label { font-size:11px; font-weight:700; color:#546e7a; }
   .ai-line { margin-top:2px; padding-left:6px; border-left:3px solid #90a4ae; }
+  .vform { margin:0; white-space:nowrap; } .vform button { font-size:11px; padding:1px 4px; margin-right:2px; }
+  .vd { font-size:12px; font-weight:600; } .vd-report_to_desk { color:#c62828; } .vd-verify { color:#ef6c00; } .vd-ignore { color:var(--muted); }
+  .verdict-box textarea { width:100%; max-width:640px; font:inherit; }
+  .note { white-space:pre-wrap; background:var(--soft); padding:4px 6px; margin-top:2px; }
+  ul.history li { margin-bottom:4px; }
   @media (max-width: 700px) { .hide-sm { display:none; } }
+  #alert-badge.has-alerts { color:#fff; background:var(--flash); padding:1px 8px; border-radius:10px; }
+  .alert-flash { border-left:4px solid var(--flash); } .alert-watch { border-left:4px solid var(--report); }
+  .alert-feed_incident { border-left:4px solid #6a1b9a; } tr.done td { opacity:.55; }
+  @media print { header, .noprint { display:none; } main { max-width:none; } }
 </style>
 </head>
 <body>
-<header>
+{% if not standalone %}<header>
   <span class="brand">newsmon 외신 모니터</span>
   <nav>
     <a href="/" {% if request.url.path == '/' %}class="on"{% endif %}>큐</a>
     <a href="/search" {% if request.url.path == '/search' %}class="on"{% endif %}>검색</a>
     <a href="/sources" {% if request.url.path == '/sources' %}class="on"{% endif %}>소스 상태</a>
     <a href="/ai" {% if request.url.path == '/ai' %}class="on"{% endif %}>AI</a>
+    <a href="/shift-report" {% if request.url.path == '/shift-report' %}class="on"{% endif %}>교대 보고</a>
+    <a href="/alerts" id="alert-badge" class="{% if alert_count %}has-alerts{% endif %}{% if request.url.path == '/alerts' %} on{% endif %}">🔔 알림 <span id="alert-count">{{ alert_count }}</span></a>
   </nav>
   <div class="right">
     {% if profile %}<span class="muted">프로필: {{ profile.name or profile.key }}</span>{% endif %}
@@ -52,11 +63,38 @@
       <button type="submit" {% if collecting %}disabled{% endif %}>{% if collecting %}수집 중…{% else %}지금 수집{% endif %}</button>
     </form>
   </div>
-</header>
+</header>{% endif %}
 <main>
 {% if collect_error %}<div class="warn">마지막 수집 실패: {{ collect_error }}</div>{% endif %}
 {% for f, e in profile_errors.items() %}<div class="warn">프로필 {{ f }} 거부됨: {{ e }}</div>{% endfor %}
 {% block content %}{% endblock %}
 </main>
+{% if not standalone %}
+<script>
+(function(){  // in-app alerts: badge, tab title, and a browser notification while this page is open (M1 v1)
+  var last = {{ alert_last_id|int }}, base = document.title;
+  function show(n){
+    var c = document.getElementById('alert-count'), b = document.getElementById('alert-badge');
+    if (c) c.textContent = n;
+    if (b) b.classList.toggle('has-alerts', n > 0);
+    document.title = (n > 0 ? '(' + n + ') ' : '') + base;
+  }
+  function poll(){
+    fetch('/alerts/poll?after=' + last, {cache: 'no-store'}).then(function(r){ return r.json(); }).then(function(d){
+      show(d.new_count);
+      if (window.Notification && Notification.permission === 'granted') {
+        d.items.slice(0, 3).forEach(function(it){
+          var n = new Notification('[' + it.kind_ko + '] ' + it.title, {body: it.source_name || '', tag: 'newsmon-' + it.id});
+          n.onclick = function(){ window.focus(); location.href = it.url; };
+        });
+      }
+      last = Math.max(last, d.last_id);
+    }).catch(function(){});
+  }
+  show({{ alert_count|int }});
+  setInterval(poll, 20000);
+})();
+</script>
+{% endif %}
 </body>
 </html>

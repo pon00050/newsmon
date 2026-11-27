@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}알림{% endblock %}
+{% block content %}
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+<h2>알림</h2>
+<p class="muted">켜진 종류: {% for k in enabled %}{{ {'flash': '속보', 'report': '보고 등급', 'feed_incident': '피드 장애·복구'}.get(k, k) }}{% if not loop.last %} · {% endif %}{% endfor %}
+  (프로필의 <code>alerts:</code>). 화면 안 알림만 동작합니다. 이메일·메신저 발송은 아직 없습니다.</p>
+<div class="filters">
+  <button type="button" id="notify-on" onclick="if(window.Notification){Notification.requestPermission().then(function(p){document.getElementById('notify-state').textContent=p;});}">브라우저 알림 켜기</button>
+  <span class="muted">상태: <span id="notify-state">-</span> · 이 탭이 열려 있는 동안 20초마다 확인합니다.</span>
+  {% if show_all %}<a href="/alerts">새 알림만</a>{% else %}<a href="/alerts?all=1">처리한 알림 포함</a>{% endif %}
+  <form method="post" action="/alerts/ack-all" style="margin:0"><button type="submit">모두 확인</button></form>
+</div>
+<script>document.getElementById('notify-state').textContent = window.Notification ? Notification.permission : '지원 안 함';</script>
+<table id="alerts">
+  <thead><tr><th>시각(KST)</th><th>종류</th><th>내용</th><th>출처</th><th>처리</th></tr></thead>
+  <tbody>
+  {% for a in alerts %}
+  <tr class="alert-{{ a.kind }}{% if a.status != 'new' %} done{% endif %}" data-alert-id="{{ a.id }}">
+    <td class="muted">{{ a.at_kst }}</td>
+    <td><span class="tag{% if a.severity == 'high' %} err{% endif %}">{{ a.kind_ko }}</span></td>
+    <td><a href="{{ a.url }}">{{ a.title }}</a>
+      {% if a.killed %}<span class="tag err">철회</span>{% endif %}
+      {% if a.restricted %}<span class="tag">제한 표시</span>{% endif %}
+      {% if a.synthetic %}<span class="tag">합성</span>{% endif %}
+      {% if a.kind == 'feed_incident' and a.closed and a.severity == 'high' %}<span class="tag ok">복구됨</span>{% endif %}
+      {% if a.why %}<div class="muted">근거: {% for h in a.why %}{{ h.rule_id }}{% if h.matched %} '{{ h.matched }}'{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}</div>{% endif %}</td>
+    <td class="muted">{{ a.source_name or '-' }}</td>
+    <td>{% if a.status == 'new' %}
+      <form method="post" action="/alerts/{{ a.id }}/ack" style="display:inline;margin:0"><button type="submit">확인</button></form>
+      <form method="post" action="/alerts/{{ a.id }}/dismiss" style="display:inline;margin:0"><button type="submit">무시</button></form>
+      {% else %}<span class="muted">{{ '확인함' if a.status == 'acknowledged' else '무시함' }}</span>{% endif %}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5" class="muted">{% if show_all %}알림이 없습니다.{% else %}새 알림이 없습니다.{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

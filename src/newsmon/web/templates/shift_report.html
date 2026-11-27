@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}교대 보고 {{ shift.until_kst }}{% endblock %}
+{% block content %}
+<div class="warn"><b>내부용 — 외부 배포 금지.</b> 출처별 라이선스상 재배포가 허용되지 않은 항목이 포함될 수 있습니다.
+  제목·출처·링크·판정 메모만 담고, 피드 요약·본문·AI 생성 문장은 넣지 않습니다.</div>
+<h2>교대 보고 (중요 자료 정리 및 보고)</h2>
+<table style="width:auto">
+  <tr><th>기간 (KST)</th><td>{{ shift.since_kst }} ~ {{ shift.until_kst }} ({{ shift.hours }}시간)</td></tr>
+  <tr><th>편집자</th><td>{{ shift.editor }} <span class="muted">(인증 없음: 설정의 desk_editor)</span></td></tr>
+  <tr><th>항목</th><td>보고 {{ shift.sections.report_to_desk|length }} · 확인 중 {{ shift.sections.verify|length }}</td></tr>
+</table>
+{% if not standalone %}
+<form class="filters noprint" method="get" action="/shift-report">
+  <select name="hours">
+    {% for h in [4, 8, 12, 24, 48] %}<option value="{{ h }}" {% if shift.hours == h %}selected{% endif %}>최근 {{ h }}시간</option>{% endfor %}
+  </select>
+  <button type="submit">적용</button>
+  <a href="/shift-report?hours={{ shift.hours }}&download=1">HTML 파일로 저장</a>
+  <button type="button" onclick="window.print()">인쇄</button>
+</form>
+{% endif %}
+{% for key, title in [("report_to_desk", "보고"), ("verify", "확인 중 (검증 필요)")] %}
+<h3>{{ title }} ({{ shift.sections[key]|length }})</h3>
+{% if shift.sections[key] %}
+<table class="shift">
+  <thead><tr><th>#</th><th>판정</th><th>제목 · 근거 · 메모</th><th>출처</th><th>수집 / 발행</th></tr></thead>
+  <tbody>
+  {% for it in shift.sections[key] %}
+  <tr data-shift-uid="{{ it.uid }}">
+    <td>{{ loop.index }}</td>
+    <td class="muted">{{ it.verdict_kst }}<br>{{ it.editor }}</td>
+    <td>
+      {% if it.killed %}<span class="tag err">⚠ 철회(KILL)</span>{% endif %}
+      {% if it.revised_after %}<span class="tag err">판정 후 개정 v{{ it.revised_after }}</span>{% endif %}
+      {% if it.urgency is not none and it.urgency <= 2 %}<span class="tag err">긴급 {{ it.urgency }}</span>{% endif %}
+      <span class="band band-{{ it.band }}">{{ band_ko.get(it.band, '-') }}</span>
+      {% if standalone %}<b>{{ it.headline or '(표시 제한)' }}</b>{% else %}<a href="/article/{{ it.uid }}"><b>{{ it.headline or '(표시 제한)' }}</b></a>{% endif %}
+      {% if it.restricted %}<span class="tag">사용 제한: 제목만</span>{% endif %}
+      {% if it.synthetic %}<span class="tag">합성</span>{% endif %}
+      {% if it.no_redistribution %}<span class="tag">재배포 금지</span>{% endif %}
+      {% if it.dup_count %}<span class="tag">중복 {{ it.dup_count }}</span>{% endif %}
+      {% if it.merged %}<span class="tag">다른 기사와 중복 병합됨</span>{% endif %}
+      {% if it.reasons %}<div class="muted">근거: {% for h in it.reasons %}{{ h.rule_id }}{% if h.matched %} '{{ h.matched }}'{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}</div>{% endif %}
+      {% if it.note %}<div class="note">{{ it.note }}</div>{% endif %}
+      {% if it.link %}<div class="muted"><a href="{{ it.link }}" rel="noopener noreferrer nofollow" target="_blank">{{ it.link }}</a></div>{% endif %}
+    </td>
+    <td class="muted">{{ it.source_name }}<br>{{ lang_ko.get(it.lang, it.lang or '-') }}</td>
+    <td class="muted">{{ it.seen_kst }}<br>{{ it.published_kst or '-' }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<p class="muted">이 기간에 해당 판정이 없습니다.</p>{% endif %}
+{% endfor %}
+<p class="muted">생성: newsmon · 판정은 기사별 최신 판정 기준. '무시' 판정은 포함하지 않습니다.</p>
+{% endblock %}

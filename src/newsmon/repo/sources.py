@@ -27,6 +27,17 @@ class FeedRow:
     next_due_utc: str | None
 
 
+def poll_finals(rows) -> list:
+    """From fetch_run rows ordered newest first, keep the final attempt of each poll. A retried poll writes one row per
+    attempt (attempt 1, 2, ...), so counting rows would count one failed poll as several failures."""
+    out, newer = [], None
+    for r in rows:
+        if newer is None or newer <= 1 or r["attempt"] >= newer:
+            out.append(r)
+        newer = r["attempt"]
+    return out
+
+
 class SourceRepo(BaseRepo):
     # --- registry sync ------------------------------------------------------------------------------------------------
     def upsert(self, spec: SourceSpec, *, active: bool, reason: str | None, endpoint: str, poll_seconds: int,
@@ -214,9 +225,10 @@ class SourceRepo(BaseRepo):
         out = []
         for r in rows:
             d = dict(r)
-            runs = self.db.query("SELECT status, error_class, error_detail, http_status, started_utc, entries, new_articles "
-                                 "FROM fetch_run WHERE feed_id = ? AND workspace_id = ? ORDER BY run_id DESC LIMIT 20",
-                                 (r["feed_id"], self.workspace_id)) if r["feed_id"] else []
+            runs = poll_finals(self.db.query(
+                "SELECT status, error_class, error_detail, http_status, started_utc, entries, new_articles, attempt "
+                "FROM fetch_run WHERE feed_id = ? AND workspace_id = ? ORDER BY run_id DESC LIMIT 60",
+                (r["feed_id"], self.workspace_id))) if r["feed_id"] else []
             d["last_run"] = dict(runs[0]) if runs else None
             streak = 0
             for x in runs:

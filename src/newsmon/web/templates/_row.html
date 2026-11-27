@@ -21,4 +21,11 @@
   <td class="muted">{{ r.source_name }}</td>
   <td class="muted hide-sm">{{ r.seen_kst }}</td>
   <td class="hide-sm">{% if r.link %}<a href="{{ r.link }}" rel="noopener noreferrer nofollow" target="_blank">원문</a>{% endif %}</td>
+  <td class="verdict-cell">
+    {% if r.verdict %}<div class="vd vd-{{ r.verdict.verdict }}">✔ {{ verdict_ko[r.verdict.verdict] }} <span class="muted">{{ r.verdict.editor }} {{ r.verdict.at_kst }}</span></div>{% endif %}
+    {% if not r.killed %}<form method="post" action="/article/{{ r.uid }}/verdict" class="vform">
+      <input type="hidden" name="next" value="{{ here }}">
+      <button type="submit" name="verdict" value="report_to_desk" data-key="r" title="보고 (r)">보고</button><button type="submit" name="verdict" value="verify" data-key="v" title="확인 필요 (v)">확인</button><button type="submit" name="verdict" value="ignore" data-key="x" title="무시 (x)">무시</button>
+    </form>{% endif %}
+  </td>
 </tr>
