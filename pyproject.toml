@@ -1,6 +1,6 @@
 [project]
 name = "newsmon"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local news monitoring for foreign-news desks: licensed feed and wire collection, deduplication, rule-based ranking, search and a local queue; optional licence-gated AI assessment"
 readme = "README.md"
 requires-python = ">=3.12"

@@ -14,7 +14,7 @@ losing them. Neither needs an AI key.
 
 The app is not code-signed, so Windows SmartScreen may say "Windows protected your PC". Choose **More info** and
 then **Run anyway**. You can check the download against `SHA256SUMS.txt` from the same release:
-`Get-FileHash .\newsmon-0.1.0-windows-portable.zip`. The extracted folder is about 175 MB. The first start takes up
+`Get-FileHash .\newsmon-0.2.0-windows-portable.zip`. The extracted folder is about 175 MB. The first start takes up
 to about 8 seconds.
 
 It is built by GitHub Actions on a clean `windows-latest` runner with PyInstaller (onedir) from `packaging/newsmon.spec`.

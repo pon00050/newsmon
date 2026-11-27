@@ -29,7 +29,7 @@ minutes, and the desk has to respect what each source's licence allows. Newsmon 
 collection, deduplication, first-pass ranking and search. Editorial judgement stays with the desk, and every ranking
 comes with an explanation.
 
-## What it does today (v0.1.0)
+## What it does today (v0.2.0)
 
 | Area | Implemented |
 |---|---|
@@ -38,10 +38,10 @@ comes with an explanation.
 | Ranking | profile rules: topics with KO/EN/ZH keywords, watch entities, source weights and mutes, wire urgency, recency; bands `flash` / `report` / `review` / `drop` with the reasons shown |
 | Search | SQLite FTS5 with CJK bigrams, so Korean and Chinese work; aliases from a watch-list gazetteer |
 | Interface | local web queue, search, item detail and source health on `http://127.0.0.1:8765/` (loopback only) |
-| Editorial workflow | verdicts per item (보고 / 확인 / 무시, with a note, keyboard `r` `v` `x`) and a printable shift report of what was marked, flagged when an item was later withdrawn or revised *(unreleased)* |
-| Search+ | band, time and footage-only filters, a failing-feed banner, and saved searches that count new matches and can alert on them *(unreleased)* |
-| Footage | wire video clips checked with local ffmpeg (technical facts, black/silence with timecodes, licence-gated thumbnails), classified by profile topics, tracked to an "ingest done" mark, exported as a CSV ingest sheet *(unreleased)* |
-| Alerts | in-app alerts for `flash` items, optionally `report`-band items, and failing feeds: a badge, an alerts page and browser notifications while a tab is open *(unreleased)* |
+| Editorial workflow | verdicts per item (보고 / 확인 / 무시, with a note, keyboard `r` `v` `x`) and a printable shift report of what was marked, flagged when an item was later withdrawn or revised |
+| Search+ | band, time and footage-only filters, a failing-feed banner, and saved searches that count new matches and can alert on them |
+| Footage | wire video clips checked with local ffmpeg (technical facts, black/silence with timecodes, licence-gated thumbnails), classified by profile topics, tracked to an "ingest done" mark, exported as a CSV ingest sheet |
+| Alerts | in-app alerts for `flash` items, optionally `report`-band items, and failing feeds: a badge, an alerts page and browser notifications while a tab is open |
 | Licensing controls | per-source flags decide what is stored, displayed, sent to AI and published; restrictions, embargoes and withdrawals are enforced |
 | Optional AI | one structured call per selected item (relevance, importance, topics, Korean rationale, and a Korean headline or summary where the licence allows), off by default, capped by a daily budget, and only for sources that explicitly permit it |
 | Public export | `newsmon export-public` writes a static JSON dataset for a website, behind a separate, deny-by-default public-redistribution permission |
