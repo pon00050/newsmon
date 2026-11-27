@@ -24,6 +24,7 @@
       {% if a.restricted %}<span class="tag">제한 표시</span>{% endif %}
       {% if a.synthetic %}<span class="tag">합성</span>{% endif %}
       {% if a.kind == 'feed_incident' and a.closed and a.severity == 'high' %}<span class="tag ok">복구됨</span>{% endif %}
+      {% if a.saved_search %}<div class="muted">{{ a.reason }}</div>{% endif %}
       {% if a.why %}<div class="muted">근거: {% for h in a.why %}{{ h.rule_id }}{% if h.matched %} '{{ h.matched }}'{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}</div>{% endif %}</td>
     <td class="muted">{{ a.source_name or '-' }}</td>
     <td>{% if a.status == 'new' %}

@@ -28,6 +28,7 @@ from newsmon.repo.alerts import AlertRepo
 from newsmon.repo.articles import ArticleRepo
 from newsmon.repo.assessments import AssessmentRepo
 from newsmon.repo.media import MediaRepo
+from newsmon.repo.searches import SearchRepo
 from newsmon.repo.db import Database
 from newsmon.repo.migrate import ensure_workspace, migrate
 from newsmon.repo.sources import SourceRepo
@@ -63,6 +64,7 @@ class App:
         self.assessments = AssessmentRepo(self.db)
         self.alerts = AlertRepo(self.db)
         self.media = MediaRepo(self.db)
+        self.searches = SearchRepo(self.db)
         from newsmon.adapters.ffmpeg_media import FfmpegMedia
         self.media_tool = FfmpegMedia.available()  # None without ffmpeg/ffprobe on PATH: clips stay unchecked
         self.media_async = False  # True (web UI, collect --loop): checks run on their own thread, outside collect_lock
@@ -255,6 +257,18 @@ class App:
         if "feed_incident" in enabled:
             out["incidents_opened"], out["incidents_closed"] = self.alerts.update_incidents(
                 failures=self.INCIDENT_FAILURES, now_s=now_s)
+        out["saved_search"] = 0
+        for s in self.searches.alerting():  # each saved search with its alert on (duty 4); one failing never stops the rest
+            try:
+                rows, _ = self.search(s["query"], lang=s["lang"], source=s["source_key"], band=s["band"],
+                                      hours=s["hours"], since=max(since, s["created_utc"]),
+                                      video_only=bool(s["video_only"]), newest_first=True, limit=500)
+                out["saved_search"] += self.alerts.raise_for_articles(
+                    "watch", [r["article_id"] for r in rows], f"저장 검색: {s['name']}", since=since,
+                    after=s["created_utc"], now_s=now_s)
+                self.searches.set_error(s["search_id"], None)
+            except Exception as exc:
+                self.searches.set_error(s["search_id"], f"{exc.__class__.__name__}: {exc}")
         return out
 
     MEDIA_PER_CYCLE = 5
@@ -330,6 +344,22 @@ class App:
                             notes={"freeze": found.get("freeze", [])}, thumb=thumb)
             out[status] += 1
         return out
+
+    def search(self, q: str, *, lang: str | None = None, source: str | None = None, band: str | None = None,
+               hours: int | None = None, since: str | None = None, video_only: bool = False,
+               newest_first: bool = False, limit: int = 100) -> tuple[list[dict], dict[str, list[str]]]:
+        """The one search path (page, saved searches, saved-search alerts): gazetteer expansion, then FTS with filters.
+        `hours` limits to items first seen in the last N hours; `since` to items first seen at or after a time."""
+        from datetime import timedelta
+        aliases = self.search_aliases(q)
+        query = f'"{q.strip()}"' if aliases else q
+        if hours:
+            cutoff = iso(self.clock.now() - timedelta(hours=int(hours)))
+            since = max(since, cutoff) if since else cutoff
+        rows = self.articles.search(query, aliases=aliases, lang=lang or None, source_key=source or None,
+                                    band=band or None, since=since, video_only=video_only, newest_first=newest_first,
+                                    limit=limit)
+        return rows, aliases
 
     def search_aliases(self, query: str) -> dict[str, list[str]]:
         """Gazetteer expansion: a query equal to any alias of an entity also searches its other aliases."""

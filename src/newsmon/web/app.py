@@ -87,6 +87,7 @@ def _local_path(next_: str | None, default: str) -> str:
 
 
 FORM_MAX_BYTES = 16_384
+SEARCH_HOURS = (6, 24, 72, 168)
 
 
 def create_app(app, *, auto_collect: bool = False) -> FastAPI:
@@ -124,11 +125,68 @@ def create_app(app, *, auto_collect: bool = False) -> FastAPI:
             source_keys=sorted(app.sources.keys()), counts=app.articles.counts()))
 
     @web.get("/search", response_class=HTMLResponse)
-    def search(request: Request, q: str = "", lang: str = "", source: str = ""):
-        res = svc.search(q, lang=lang, source=source) if q.strip() else {"rows": [], "aliases": []}
+    def search(request: Request, q: str = "", lang: str = "", source: str = "", band: str = "", hours: int = 0,
+               video: int = 0, msg: str = ""):
+        band = band if band in BANDS else ""
+        hours = hours if hours in SEARCH_HOURS else 0
+        res = (svc.search(q, lang=lang, source=source, band=band, hours=hours, video_only=bool(video)) if q.strip()
+               else {"rows": [], "aliases": [], "failing": app.alerts.open_incidents(source or None)})
         return TEMPLATES.TemplateResponse(request, "search.html", ctx(
-            request, q=q, lang=lang, source=source, rows=res["rows"], aliases=res["aliases"],
-            source_keys=sorted(app.sources.keys())))
+            request, q=q, lang=lang, source=source, band=band, hours=hours, video=bool(video), msg=msg,
+            rows=res["rows"], aliases=res["aliases"], failing=res["failing"], all_bands=BANDS,
+            search_hours=SEARCH_HOURS, source_keys=sorted(app.sources.keys())))
+
+    async def _form(request: Request) -> dict:
+        body = await request.body()
+        if len(body) > FORM_MAX_BYTES:
+            raise HTTPException(413, "form too large")
+        return {k: v[0] for k, v in parse_qs(body.decode("utf-8", "replace")).items()}
+
+    @web.post("/searches")
+    async def save_search(request: Request):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        f = await _form(request)
+        q = (f.get("q") or "").strip()
+        if not q or len(q) > 200:
+            raise HTTPException(400, "query must be 1-200 characters")
+        hours = int(f["hours"]) if f.get("hours") in {str(h) for h in SEARCH_HOURS} else None
+        band = f.get("band") if f.get("band") in BANDS else None
+        source = f.get("source") if f.get("source") in app.sources.keys() else None
+        lang = f.get("lang") if f.get("lang") in LANG_KO else None
+        app.searches.add(name=(f.get("name") or q), query=q, lang=lang, source_key=source, band=band, hours=hours,
+                         video_only=f.get("video") == "1", alert=f.get("alert") == "1", editor=app.settings.desk_editor,
+                         now_s=iso(app.clock.now()))
+        return RedirectResponse("/searches?msg=" + quote("검색을 저장했습니다"), status_code=303)
+
+    @web.get("/searches", response_class=HTMLResponse)
+    def searches_page(request: Request, msg: str = ""):
+        return TEMPLATES.TemplateResponse(request, "searches.html", ctx(request, searches=svc.saved_searches(), msg=msg))
+
+    @web.post("/searches/{search_id}/open")
+    def open_search(request: Request, search_id: int):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        s = app.searches.get(search_id)
+        if s is None:
+            raise HTTPException(404, "저장 검색을 찾을 수 없습니다")
+        app.searches.mark_seen(search_id, iso(app.clock.now()))
+        return RedirectResponse(svc.search_url(s), status_code=303)
+
+    @web.post("/searches/{search_id}/{action}")
+    def search_action(request: Request, search_id: int, action: str):
+        if not _same_origin(request):
+            raise HTTPException(403, "cross-origin request refused")
+        s = app.searches.get(search_id)
+        if s is None or action not in ("alert", "delete"):  # "open" is its own route above
+            raise HTTPException(404, "저장 검색을 찾을 수 없습니다")
+        if action == "delete":
+            app.searches.delete(search_id)
+            msg = "삭제했습니다"
+        else:
+            app.searches.set_alert(search_id, not s["alert"])
+            msg = "알림을 껐습니다" if s["alert"] else "새 결과가 들어오면 알림을 띄웁니다"
+        return RedirectResponse("/searches?msg=" + quote(msg), status_code=303)
 
     @web.get("/article/{uid}", response_class=HTMLResponse)
     def article(request: Request, uid: str, msg: str = ""):

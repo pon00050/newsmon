@@ -26,6 +26,39 @@ class AlertRepo(BaseRepo):
             (kind, "high" if kind == "flash" else "normal", reason, now_s, self.workspace_id, band, since, kind, limit))
         return cur.rowcount
 
+    def raise_for_articles(self, kind: str, article_ids: list[int], reason: str, *, since: str, after: str, now_s: str,
+                           limit: int = 50) -> int:
+        """Alert these articles (a saved search's new matches) under the same rules as band alerts: live, primary,
+        unflagged, first seen at or after `since` (the window) and strictly after `after` (when the search was saved),
+        one alert per kind and item."""
+        import json
+        if not article_ids:
+            return 0
+        # a match that is a duplicate (a later copy or a same-source update such as "(종합)") alerts its primary: the
+        # new match is what the monitor needs to hear about, and the queue shows the group under the primary
+        return self.db.execute(
+            "INSERT OR IGNORE INTO alert (workspace_id, kind, severity, article_id, reason, status, created_utc) "
+            "SELECT p.workspace_id, ?, 'normal', p.article_id, ?, 'new', ? FROM article m "
+            "JOIN article p ON p.article_id = COALESCE(m.dup_of, m.article_id) AND p.workspace_id = m.workspace_id "
+            "WHERE m.workspace_id = ? AND m.article_id IN (SELECT value FROM json_each(?)) AND m.status <> 'killed' "
+            "AND COALESCE(m.regex_prefilter_hit, 0) = 0 AND m.first_seen_utc >= ? AND m.first_seen_utc > ? "
+            "AND p.status <> 'killed' AND p.dup_of IS NULL AND COALESCE(p.regex_prefilter_hit, 0) = 0 "
+            "AND NOT EXISTS (SELECT 1 FROM alert x WHERE x.workspace_id = p.workspace_id AND x.kind = ? "
+            "  AND x.article_id = p.article_id) "
+            "GROUP BY p.article_id ORDER BY max(m.first_seen_utc) DESC LIMIT ?",
+            (kind, reason, now_s, self.workspace_id, json.dumps(article_ids), since, after, kind, limit)).rowcount
+
+    def open_incidents(self, source_key: str | None = None) -> list[dict]:
+        """Feeds in an open `failing` incident (the search page's banner, FR-20), optionally for one source."""
+        where, params = "", [self.workspace_id]
+        if source_key:
+            where, params = " AND s.key = ?", [self.workspace_id, source_key]
+        return [dict(r) for r in self.db.query(
+            "SELECT s.key, s.name, i.opened_utc, i.detail FROM incident i JOIN feed f ON f.feed_id = i.feed_id "
+            "JOIN source s ON s.source_id = f.source_id WHERE i.workspace_id = ? AND i.closed_utc IS NULL "
+            "AND i.kind = 'failing' AND f.active = 1 AND s.active = 1" + where +
+            " ORDER BY s.key", params)]
+
     def update_incidents(self, *, failures: int, now_s: str) -> tuple[int, int]:
         """Open a `failing` incident for each active feed whose last `failures` runs all failed, and close open ones whose
         latest run succeeded. Each opening and closing raises one `feed_incident` alert. Returns (opened, closed)."""

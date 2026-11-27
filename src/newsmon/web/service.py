@@ -76,13 +76,45 @@ class Service:
         return self._render(rows)
 
     def search(self, q: str, *, lang: str | None = None, source: str | None = None, band: str | None = None,
-               limit: int = 100) -> dict:
-        aliases = self.app.search_aliases(q)
-        query = f'"{q.strip()}"' if aliases else q
-        rows = self.app.articles.search(query, aliases=aliases, lang=lang or None, source_key=source or None,
-                                        band=band or None, limit=limit)
-        alias_list = [a for v in aliases.values() for a in v]
-        return {"rows": self._render(rows), "aliases": alias_list}
+               hours: int | None = None, video_only: bool = False, limit: int = 100) -> dict:
+        """UI-4: results under DisplayPolicy with their clip state and verdict, the aliases used, and the feeds in an
+        open incident inside the source filter (a result is never read as "no news" while a feed is failing)."""
+        rows, aliases = self.app.search(q, lang=lang, source=source, band=band, hours=hours, video_only=video_only,
+                                        limit=limit)
+        out = self._render(rows)
+        clips: dict[int, list[dict]] = {}
+        for c in self.app.media.for_articles([r["article_id"] for r in rows]):
+            clips.setdefault(c["article_id"], []).append(self._clip_view(c))
+        for v, r in zip(out, rows):
+            v["clips"] = clips.get(r["article_id"], [])
+        return {"rows": out, "aliases": [a for v in aliases.values() for a in v],
+                "failing": self.app.alerts.open_incidents(source or None)}
+
+    # --- saved searches (duty 4) ---------------------------------------------------------------------------------------
+    @staticmethod
+    def search_url(s: dict) -> str:
+        from urllib.parse import urlencode
+        params = [("q", s["query"])] + [(k, v) for k, v in (("lang", s["lang"]), ("source", s["source_key"]),
+                                                            ("band", s["band"]), ("hours", s["hours"]),
+                                                            ("video", 1 if s["video_only"] else None)) if v]
+        return "/search?" + urlencode(params)
+
+    def saved_searches(self) -> list[dict]:
+        tz = self.app.settings.timezone
+        out = []
+        for s in self.app.searches.all():
+            total = new = 0
+            error = s["last_error"]
+            try:
+                rows, _ = self.app.search(s["query"], lang=s["lang"], source=s["source_key"], band=s["band"],
+                                          hours=s["hours"], video_only=bool(s["video_only"]), limit=500)
+                total = len(rows)
+                new = sum(1 for r in rows if (r["first_seen_utc"] or "") > s["last_seen_utc"])
+            except Exception as exc:  # a saved query that no longer parses is shown, never a 500
+                error = f"{exc.__class__.__name__}: {exc}"
+            out.append({**s, "total": total, "new": new, "error": error, "url": self.search_url(s),
+                        "seen_kst": kst(s["last_seen_utc"], tz), "created_kst": kst(s["created_utc"], tz)})
+        return out
 
     def article(self, uid: str) -> dict | None:
         r = self.app.articles.get(uid)
@@ -94,7 +126,7 @@ class Service:
         v["media"] = self.app.articles.media(r["article_id"])
         v["revisions"] = self.app.articles.revisions(r["article_id"])
         v["version"] = r.get("version")
-        v["clips"] = [self._clip_view(c) for c in self.app.media.for_article(r["article_id"])]
+        v["clips"] = [self._clip_view(c) for c in self.app.media.for_articles([r["article_id"]])]
         v["history"] = [{**h, "at_kst": kst(h["created_utc"], self.app.settings.timezone)}
                         for h in self.app.assessments.history(r["article_id"])]
         return v
@@ -230,7 +262,9 @@ class Service:
     def _alert_view(self, r: dict) -> dict:
         """An alert as shown in the list, the poll JSON and a browser notification: the article headline only under
         DisplayPolicy (no summary), or the incident reason."""
-        v = {"id": r["alert_id"], "kind": r["kind"], "kind_ko": ALERT_KIND_KO.get(r["kind"], r["kind"]),
+        saved = (r["reason"] or "").startswith("저장 검색")
+        v = {"id": r["alert_id"], "kind": r["kind"],
+             "kind_ko": "저장 검색" if saved else ALERT_KIND_KO.get(r["kind"], r["kind"]), "saved_search": saved,
              "severity": r["severity"], "status": r["status"], "reason": r["reason"],
              "at_kst": kst(r["created_utc"], self.app.settings.timezone), "uid": r["uid"], "source_name": r["source_name"],
              "killed": r["article_status"] == "killed", "synthetic": bool(r["synthetic"]),
@@ -250,7 +284,7 @@ class Service:
 
     def alert_poll(self, after: int) -> dict:
         return {"new_count": self.app.alerts.new_count(), "last_id": self.app.alerts.last_id(),
-                "items": [{k: v[k] for k in ("id", "kind", "kind_ko", "title", "source_name", "url", "at_kst")}
+                "items": [{k: v[k] for k in ("id", "kind", "kind_ko", "title", "source_name", "url", "at_kst", "reason")}
                           for v in map(self._alert_view, self.app.alerts.after(max(0, int(after))))]}
 
     def ai_overview(self) -> dict:
