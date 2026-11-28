@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- **Event tracking** (`newsmon events`). Items that report the same happening are grouped into events, across outlets,
+  deterministically and without AI: TF-IDF over headline and feed summary (English words, Korean/Chinese character
+  bigrams), incremental per cycle, 48-hour window, tuned for precision. Near-duplicates follow their primary. Each
+  event's timeline marks every item 최초 / 반복 / 진전 / 정정 / 철회 / 취소 (first, repeat, development, correction,
+  withdrawal, kill). `newsmon events` builds events on an existing database and prints them as Markdown or `--json`;
+  `--rebuild` recomputes after `events.threshold` changes. Headlines follow the display licence as in the queue. Events
+  do not link the same story across languages yet. On a 1,354-article live copy, 69 multi-item events were formed;
+  about 9 in 10 were judged correct, and most wrong merges were one source's templated bulletins. A source's own
+  follow-up counts as a development unless it is all but a reissue (under 10% new headline features): on the same copy,
+  wire updates with far more overlap still carried news, so the label errs toward 진전.
 - **Example profile: 한반도 no longer matches a bare 미사일.** Topic keywords match as substrings of title, description
   and body, so 미사일 tagged Russian, US and Indonesian weapons stories 한반도 and lifted them to 보고 (4 of 18 flagged
   items in a 1,285-article public-feed run). It is replaced by 탄도미사일, which in that run occurred only in North Korea

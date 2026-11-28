@@ -77,6 +77,16 @@ class InboxSettings(_Strict):
     max_file_bytes: int = 20 * 1024 * 1024
 
 
+class EventSettings(_Strict):
+    """Event tracking: groups items that report the same happening (deterministic; no AI). See pipeline/events.py."""
+    enabled: bool = True
+    threshold: float = Field(0.35, gt=0, le=1)  # TF-IDF cosine to the event centroid needed to join an event
+    same_source_threshold: float = Field(0.5, gt=0, le=1)  # joining an event only the item's own source reported
+    window_hours: float = Field(48, gt=0, le=24 * 14)  # an event takes new items while updated within this window
+    entity_anchors: bool = False  # gazetteer entities as shared cross-language features (measured: off by default)
+    lookback_days: float = Field(14, gt=0)  # an incremental pass never loads more history than this plus the window
+
+
 class BackupSettings(_Strict):
     keep_daily: int = Field(14, ge=1)
     copy_to: str | None = None
@@ -96,6 +106,7 @@ class Settings(_Strict):
     smtp: SmtpSettings = SmtpSettings()
     fetch: FetchSettings = FetchSettings()
     inbox: InboxSettings = InboxSettings()
+    events: EventSettings = EventSettings()
     backup: BackupSettings = BackupSettings()
 
     @field_validator("timezone")

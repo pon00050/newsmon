@@ -52,7 +52,8 @@ comes with an explanation.
 
 ### Limitations
 
-- The queue lists items, not events: related stories from different outlets are not grouped yet.
+- The queue lists items. `newsmon events` groups related stories from different outlets into events, within one language
+  only; the queue and alerts are not grouped yet.
 - No e-mail, digests, JSON API, authentication, backup, speech-to-text or AI video analysis yet; alerts are in-app only. See
   [`docs/ROADMAP.md`](docs/ROADMAP.md) for what may follow. None of it has a date.
 - Single user on one machine. The web UI binds to loopback only because there is no authentication.

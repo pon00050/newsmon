@@ -59,6 +59,8 @@ class CycleReport:
     alert_error: str | None = None
     media: dict | None = None
     media_error: str | None = None
+    events: dict | None = None
+    events_error: str | None = None
 
     @property
     def new_articles(self) -> int:
@@ -104,6 +106,12 @@ def run_cycle(app: "App", *, force: bool = False, only: set[str] | None = None) 
         except Exception as exc:  # an AI defect must never stop collection, ranking or search
             report.ai_error = f"{exc.__class__.__name__}: {exc}"
             event("ai_failed", logging.ERROR, stage="ai", error_class="io", detail=report.ai_error)
+    try:  # an event defect must never stop collection, ranking or alerts (event tracking)
+        from newsmon.runtime.events import update_events
+        report.events = update_events(app)
+    except Exception as exc:
+        report.events_error = f"{exc.__class__.__name__}: {exc}"
+        event("events_failed", logging.ERROR, stage="events", error_class="io", detail=report.events_error)
     try:  # an alert defect must never stop collection (M1)
         report.alerts = app.raise_alerts()
     except Exception as exc:

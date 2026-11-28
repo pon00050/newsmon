@@ -23,6 +23,7 @@ def register(name: str, help_: str, configure: Configure, run: Run) -> None:
 def _load_builtin_commands() -> None:
     # Imported lazily so `newsmon --version` stays fast and has no side effects.
     from newsmon.ops import commands  # noqa: F401  (registers init, migrate, run-once, ...)
+    from newsmon.ops import events_cmd  # noqa: F401  (registers events)
 
 
 def build_parser() -> argparse.ArgumentParser:

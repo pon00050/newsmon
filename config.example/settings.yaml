@@ -31,5 +31,10 @@ fetch:
   default_poll_seconds: 600
 inbox:
   scan_seconds: 10
+events:                       # groups items reporting the same happening (deterministic, no AI); `newsmon events`
+  enabled: true
+  threshold: 0.35             # higher = fewer, safer merges; after a change run `newsmon events --rebuild`
+  same_source_threshold: 0.5  # bar for joining an event only the item's own source has reported (templated bulletins)
+  window_hours: 48
 backup:
   keep_daily: 14
