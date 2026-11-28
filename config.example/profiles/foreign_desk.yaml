@@ -2,8 +2,9 @@ key: foreign_desk
 name: 외신 데스크 (야간)
 languages: [en, ko, zh]
 countries: [US, CN, JP, KP, TW, RU, UA]
+# CJK keywords match as substrings of title+description+body: avoid generic nouns (미사일 tagged Russian/US weapons news 한반도; 탄도미사일 did not) and short names inside longer words (평양 matches 태평양).
 topics:
-  - {label: 한반도, keywords: {ko: [북한, 김정은, 김여정, 미사일], en: ["North Korea", "Kim Jong Un", Pyongyang], zh: [朝鲜, 金正恩]}}
+  - {label: 한반도, keywords: {ko: [북한, 김정은, 김여정, 탄도미사일], en: ["North Korea", "Kim Jong Un", Pyongyang], zh: [朝鲜, 金正恩]}}
   - {label: 미중, keywords: {en: ["export controls", tariff, Taiwan Strait], ko: [수출통제, 관세], zh: [出口管制, 关税]}}
 entities: [kim_yo_jong, xi_jinping, us_commerce_dept]
 exclude_keywords: {en: [horoscope, "live scores"]}
