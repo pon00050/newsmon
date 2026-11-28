@@ -298,7 +298,11 @@ def _older(a: EventState, b: EventState) -> bool:
 # --- timeline ------------------------------------------------------------------------------------------------------------
 KINDS = ("first", "repeat", "development", "correction", "withdrawal", "kill")
 NOVEL_NEW_SOURCE = 0.0  # a new independent source is a development however it words the story (it confirms it)
-NOVEL_SAME_SOURCE = 0.5  # a source updating its own story must bring this share of new features to be a development
+# A source updating its own story is a development unless it is all but a reissue. Measured on a 1,354-article live copy:
+# same-source follow-ups with 10-50% new headline features included real developments (a deal ratified, a fire brought
+# under control, a second-update wire adding the military's response), mixed with reworded bulletins, so no higher bar
+# separates them. Calling a reworded bulletin a development costs a glance; calling a development a repeat hides it.
+NOVEL_SAME_SOURCE = 0.1
 
 
 @dataclass(frozen=True)

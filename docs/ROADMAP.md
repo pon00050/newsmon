@@ -21,7 +21,8 @@
 
 ## What it does not do
 
-- It lists items, not events. Related stories from different outlets are not grouped.
+- Events are grouped within one language only (`newsmon events`, unreleased): the same story in Korean and English stays
+  two events, and the queue and alerts still work per item.
 - It sends no e-mail and produces no scheduled digests; alerts and the shift report stay inside the app. It has no JSON
   API, authentication or backup.
 - It does no speech-to-text, on-screen text or AI analysis of video. Wire clips are checked technically, but
@@ -82,7 +83,9 @@
 
 ### 5. Event-level intelligence
 
-- Grouping items into events, matching stories across languages, tracking developments, counting independent sources,
+- Built (unreleased): deterministic grouping of items into events within a language, with a timeline marking first,
+  repeat, development, correction, withdrawal and kill, and independent sources counted per event (`newsmon events`).
+- Still possible: matching stories across languages, tracking developments, counting independent sources,
   noting corroboration and conflict, and building timelines.
 - Early measurements are in the [event-clustering experiment](../research/experiments/event-clustering/results.md) and
   [ADR-005](../research/architecture/adr/ADR-005-dedup-and-clustering.md). Deterministic grouping is conservative and misses many
