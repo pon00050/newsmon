@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Example profile: 한반도 no longer matches a bare 미사일.** Topic keywords match as substrings of title, description
+  and body, so 미사일 tagged Russian, US and Indonesian weapons stories 한반도 and lifted them to 보고 (4 of 18 flagged
+  items in a 1,285-article public-feed run). It is replaced by 탄도미사일, which in that run occurred only in North Korea
+  stories. Re-ranking the run's database: 9 band changes, all non-North-Korea items; no North Korea item changed band.
+  A comment in the profile explains the substring pitfall (평양 also matches 태평양).
 - **Korean presentation.** A Korean README (`README.ko.md`) and a Korean landing page on the website (`ko/`), written
   for Korean readers rather than translated. The website now gives each page a canonical URL, link-preview tags
   (Open Graph) with a dedicated image, an English/Korean language pair and a `sitemap.xml`, and can carry Naver or
