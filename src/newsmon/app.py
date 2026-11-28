@@ -27,6 +27,7 @@ from newsmon.repo.ai import AIRepo
 from newsmon.repo.alerts import AlertRepo
 from newsmon.repo.articles import ArticleRepo
 from newsmon.repo.assessments import AssessmentRepo
+from newsmon.repo.events import EventRepo
 from newsmon.repo.media import MediaRepo
 from newsmon.repo.searches import SearchRepo
 from newsmon.repo.db import Database
@@ -65,6 +66,7 @@ class App:
         self.alerts = AlertRepo(self.db)
         self.media = MediaRepo(self.db)
         self.searches = SearchRepo(self.db)
+        self.events = EventRepo(self.db)  # event tracking (runtime/events.py)
         from newsmon.adapters.ffmpeg_media import FfmpegMedia
         self.media_tool = FfmpegMedia.available()  # None without ffmpeg/ffprobe on PATH: clips stay unchecked
         self.media_async = False  # True (web UI, collect --loop): checks run on their own thread, outside collect_lock
